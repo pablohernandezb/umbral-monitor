@@ -142,12 +142,13 @@ async function seed() {
     .from('events_deed')
     .insert(mockDEEDEvents.map(e => ({
       year: e.year,
-      event_type: e.event_type,
-      title: e.title,
-      description: e.description,
+      type: e.type,
       category: e.category,
-      impact_level: e.impact_level,
-      sources: e.sources,
+      description_en: e.description_en,
+      description_es: e.description_es,
+      month: e.month,
+      actors: e.actors,
+      targets: e.targets,
     })))
   
   if (eventsError) {
