@@ -102,8 +102,14 @@ async function seed() {
     .insert(mockPoliticalPrisoners.map(p => ({
       total_count: p.total_count,
       releases_30d: p.releases_30d,
-      new_detentions_30d: p.new_detentions_30d,
-      pending_trials: p.pending_trials,
+      civilians: p.civilians,
+      military: p.military,
+      men: p.men,
+      women: p.women,
+      adults: p.adults,
+      minors: p.minors,
+      unknown: p.unknown,
+      foreign: p.foreign,
       source: p.source,
       data_date: p.data_date,
     })))
