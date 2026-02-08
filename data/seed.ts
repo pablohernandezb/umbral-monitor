@@ -1,19 +1,23 @@
 /**
  * Supabase Seed Script
- * 
+ *
  * Run this script to populate your Supabase database with initial data.
- * 
+ *
  * Prerequisites:
  * 1. Create a Supabase project
  * 2. Run the schema SQL from lib/supabase.ts
  * 3. Set environment variables:
  *    - NEXT_PUBLIC_SUPABASE_URL
  *    - SUPABASE_SERVICE_ROLE_KEY (needed for seeding)
- * 
+ *
  * Usage: npm run seed
  */
 
+import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
+
+// Load environment variables from .env.local
+config({ path: '.env.local' })
 import {
   mockScenarios,
   mockRegimeHistory,

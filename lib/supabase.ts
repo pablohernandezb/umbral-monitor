@@ -55,7 +55,9 @@ CREATE TABLE IF NOT EXISTS regime_history (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   year INTEGER UNIQUE NOT NULL,
   electoral_democracy_index DECIMAL(4,3) CHECK (electoral_democracy_index >= 0 AND electoral_democracy_index <= 1),
+  regime_type INTEGER,
   episode_type TEXT,
+  outcome INTEGER,
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -90,8 +92,14 @@ CREATE TABLE IF NOT EXISTS political_prisoners (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   total_count INTEGER NOT NULL,
   releases_30d INTEGER NOT NULL DEFAULT 0,
-  new_detentions_30d INTEGER NOT NULL DEFAULT 0,
-  pending_trials INTEGER NOT NULL DEFAULT 0,
+  civilians INTEGER DEFAULT 0,
+  military INTEGER DEFAULT 0,
+  men INTEGER DEFAULT 0,
+  women INTEGER DEFAULT 0,
+  adults INTEGER DEFAULT 0,
+  minors INTEGER DEFAULT 0,
+  unknown INTEGER DEFAULT 0,
+  "foreign" INTEGER DEFAULT 0,
   source TEXT NOT NULL,
   data_date DATE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -120,12 +128,13 @@ CREATE INDEX idx_prisoners_by_org_date ON prisoners_by_organization(data_date DE
 CREATE TABLE IF NOT EXISTS events_deed (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   year INTEGER NOT NULL,
-  event_type TEXT NOT NULL,
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('democratic_erosion', 'repression', 'election', 'protest', 'institutional')),
-  impact_level TEXT NOT NULL CHECK (impact_level IN ('low', 'medium', 'high')),
-  sources TEXT[] DEFAULT '{}',
+  type TEXT NOT NULL,
+  category TEXT NOT NULL,
+  description_en TEXT NOT NULL,
+  description_es TEXT NOT NULL,
+  month TEXT,
+  actors TEXT,
+  targets TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
