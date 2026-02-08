@@ -1,0 +1,708 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import {
+  ArrowRight,
+  Play,
+  Activity,
+  Radio,
+  Users,
+  Calendar,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  ExternalLink,
+  BarChart3,
+  Clock,
+  Info,
+  Shield,
+  User,
+  UserCheck,
+  Baby,
+  Mars,
+  Venus,
+  MoveDown,
+  MoveUp
+} from 'lucide-react'
+import Link from 'next/link'
+import { useTranslation } from '@/i18n'
+import { ScenarioCard } from '@/components/ui/ScenarioCard'
+import { NewsCard } from '@/components/ui/NewsCard'
+import { MetricCard } from '@/components/ui/MetricCard'
+import { FAQAccordion } from '@/components/ui/FAQAccordion'
+import { TickerSimple } from '@/components/ui/Ticker'
+import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
+import { 
+  getScenarios, 
+  getRegimeHistory, 
+  getNewsFeed, 
+  getLatestPrisonerStats,
+  getPrisonersByOrganization,
+  getHistoricalEpisodes,
+} from '@/lib/data'
+import { daysSince, cn } from '@/lib/utils'
+import type { 
+  Scenario, 
+  RegimeHistory, 
+  NewsItem, 
+  PoliticalPrisoner,
+  PrisonerByOrganization,
+  HistoricalEpisode 
+} from '@/types'
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+}
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+}
+
+export default function LandingPage() {
+  const { t, locale } = useTranslation()
+  
+  // State for all data
+  const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [regimeHistory, setRegimeHistory] = useState<RegimeHistory[]>([])
+  const [historicalEpisodes, setHistoricalEpisodes] = useState<HistoricalEpisode[]>([])
+  const [news, setNews] = useState<NewsItem[]>([])
+  const [prisonerStats, setPrisonerStats] = useState<PoliticalPrisoner | null>(null)
+  const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Load data on mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [
+          scenariosRes,
+          historyRes,
+          episodesRes,
+          newsRes,
+          prisonersRes,
+          prisonersByOrgRes,
+        ] = await Promise.all([
+          getScenarios(),
+          getRegimeHistory(),
+          getHistoricalEpisodes(),
+          getNewsFeed(5),
+          getLatestPrisonerStats(),
+          getPrisonersByOrganization(),
+        ])
+
+        if (scenariosRes.data) setScenarios(scenariosRes.data)
+        if (historyRes.data) setRegimeHistory(historyRes.data)
+        if (episodesRes.data) setHistoricalEpisodes(episodesRes.data)
+        if (newsRes.data) setNews(newsRes.data)
+        if (prisonersRes.data) setPrisonerStats(prisonersRes.data)
+        if (prisonersByOrgRes.data) setPrisonersByOrg(prisonersByOrgRes.data)
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
+  // FAQ items from translations
+  const faqItems = [
+    { question: t('landing.faq.items.0.question'), answer: t('landing.faq.items.0.answer') },
+    { question: t('landing.faq.items.1.question'), answer: t('landing.faq.items.1.answer') },
+    { question: t('landing.faq.items.2.question'), answer: t('landing.faq.items.2.answer') },
+    { question: t('landing.faq.items.3.question'), answer: t('landing.faq.items.3.answer') },
+    { question: t('landing.faq.items.4.question'), answer: t('landing.faq.items.4.answer') },
+  ]
+
+  // Calculate days since Maduro's and Cilia's capture 
+  const daysSinceCapture = daysSince('2026-01-03')
+
+  return (
+    <div className="relative">
+      {/* ============================================================
+          HERO SECTION
+          ============================================================ */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-signal-teal/5 via-transparent to-transparent" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="space-y-8"
+          >
+            {/* Live badge */}
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-umbral-ash/30 border border-signal-teal/30 text-signal-teal text-sm font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signal-teal opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-signal-teal" />
+                </span>
+                {t('landing.hero.badge')}
+              </span>
+            </motion.div>
+
+            {/* Main heading */}
+            <motion.h1 
+              variants={fadeInUp}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
+            >
+              <span className="text-white">{t('landing.hero.title')}</span>
+              <br />
+              <span className="text-gradient">{t('landing.hero.titleHighlight')}</span>
+              <span className="text-signal-teal">.</span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p 
+              variants={fadeInUp}
+              className="text-lg md:text-xl text-umbral-muted max-w-2xl mx-auto leading-relaxed"
+            >
+              {t('landing.hero.subtitle')}
+            </motion.p>
+
+            {/* CTA buttons */}
+            <motion.div 
+              variants={fadeInUp}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+            >
+              <Link
+                href="#"
+                className="btn btn-primary text-base px-8 py-3 group"
+              >
+                {t('common.participate')}
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/how-did-we-get-here"
+                className="btn btn-secondary text-base px-8 py-3 group"
+              >
+                {t('common.howDidWeGetHere')}
+              </Link>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          >
+            <div className="w-6 h-10 border-2 border-umbral-steel rounded-full p-1">
+              <div className="w-1.5 h-2 bg-signal-teal rounded-full animate-bounce mx-auto" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          SCENARIOS SECTION
+          ============================================================ */}
+      <section className="section relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header - moved inside the terminal */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="relative"
+          >
+
+
+            <div className="bg-umbral-charcoal/80 border border-umbral-ash rounded-xl overflow-hidden relative">
+              {/* Faux code background */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+                <pre className="text-[10px] leading-tight font-mono text-signal-teal p-4 whitespace-pre select-none">
+{`1  function processUserData(user) {
+2    const data = JSON.parse(user.input);
+3    return database.query(\`
+4      SELECT * FROM users WHERE id=\${data.id}
+5    \`);
+6  }
+7
+8  async function analyzeRegime(country) {
+9    const indices = await fetchIndices(country);
+10   const episodes = await getDEEDEvents(country);
+11   
+12   return {
+13     liberalDemocracy: indices.v_dem_libdem,
+14     electoralDemocracy: indices.v_dem_polyarchy,
+15     episodes: episodes.filter(e => e.year >= 1998)
+16   };
+17 }
+18
+19 const transformScenarios = [
+20   { key: 'democratic_transition', probability: 0.15 },
+21   { key: 'reverted_liberalization', probability: 0.35 },
+22   { key: 'prevented_transition', probability: 0.65 },
+23   { key: 'regressive_autocracy', probability: 0.25 },
+24   { key: 'stabilized_autocracy', probability: 0.75 }
+25 ];
+26
+27 export async function monitorSignals() {
+28   const news = await aggregateFeeds(sources);
+29   const prisoners = await fetchPrisonerStats();
+30   return evaluateScenarios(news, prisoners);
+31 }`}
+                </pre>
+              </div>
+
+              {/* Terminal header */}
+              <div className="relative z-10 flex items-center justify-start gap-4 px-6 py-4 border-b border-umbral-ash bg-umbral-black/50">
+                {/* Terminal window decoration */}
+                <div className="relative -top-1 left-1 flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-signal-red" />
+                  <div className="w-3 h-3 rounded-full bg-signal-amber" />
+                  <div className="w-3 h-3 rounded-full bg-signal-teal" />
+                </div>
+                <p className="text-xs text-umbral-muted uppercase tracking-wider font-mono">
+                  {locale === 'es' 
+                    ? 'PROBABILIDADES DE OCURRENCIA DE EPISODIOS DE TRANSFORMACIÓN DE RÉGIMEN'
+                    : 'REGIME TRANSFORMATION EPISODE OCCURRENCE PROBABILITIES'
+                  }
+                </p>
+              </div>
+
+              {/* Scenario cards grid */}
+              <div className="relative z-10 p-6 lg:p-8">
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="card p-5 animate-pulse bg-umbral-black/60 backdrop-blur-sm">
+                        <div className="w-10 h-10 rounded-lg bg-umbral-ash mb-4" />
+                        <div className="h-4 bg-umbral-ash rounded w-3/4 mb-2" />
+                        <div className="h-3 bg-umbral-ash rounded w-full mb-4" />
+                        <div className="h-1.5 bg-umbral-ash rounded" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    {scenarios.map((scenario, index) => (
+                      <motion.div key={scenario.id} variants={fadeInUp} className="h-full">
+                        <ScenarioCard scenario={scenario} className="bg-umbral-black/60 backdrop-blur-sm h-full" />
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Footer stats */}
+                <div className="flex items-center gap-6 mt-6 pt-4 border-t border-umbral-ash">
+                  <div className="flex items-center gap-2">
+                    <span className="status-dot status-dot-stable" />
+                    <span className="text-xs text-umbral-muted">
+                      {t('landing.scenarios.analyzing')}
+                    </span>
+                  </div>
+                  <div className="text-xs text-umbral-muted font-mono">
+                   45 {t('landing.scenarios.analysisIncluded')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Days since capture ticker */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex justify-center mt-12"
+          >
+            <TickerSimple 
+              days={daysSinceCapture}
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          REGIME TRAJECTORY SECTION
+          ============================================================ */}
+      <section className="section bg-umbral-charcoal/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <h2 className="section-title mb-4">
+              {t('landing.trajectory.title')}
+            </h2>
+            <p className="section-subtitle mx-auto">
+              {t('landing.trajectory.subtitle')}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="card p-4 md:p-6">
+              {loading ? (
+                <div className="h-[400px] flex items-center justify-center">
+                  <div className="animate-spin w-8 h-8 border-2 border-signal-teal border-t-transparent rounded-full" />
+                </div>
+              ) : (
+                <TrajectoryChart 
+                  data={regimeHistory}
+                  episodes={historicalEpisodes}
+                  height={400}
+                  showEpisodes={true}
+                />
+              )}
+              
+              {/* Data source */}
+              <div className="mt-4 pt-4 border-t border-umbral-ash flex flex-wrap items-center justify-between gap-4">
+                <p className="text-xs text-umbral-muted">
+                  {t('landing.trajectory.dataSource')}
+                </p>
+                <Link 
+                  href="/how-did-we-get-here" 
+                  className="text-xs text-signal-teal hover:underline flex items-center gap-1"
+                >
+                  {locale === 'es' ? 'Explorar más: ¿cómo llegamos aquí?' : 'Explore more: How did we get here?'}
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Historical episodes */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"
+          >
+            {historicalEpisodes.map((episode) => (
+              <motion.div key={episode.id} variants={fadeInUp} className="h-full">
+                <div className={cn(
+                  'card p-4 border-l-2 h-full flex gap-3',
+                  episode.episode_type === 'democracy' && 'border-l-signal-blue',
+                  episode.episode_type === 'autocracy' && 'border-l-signal-red',
+                  episode.episode_type === 'transition' && 'border-l-signal-amber'
+                )}>
+                  {/* Icon container */}
+                  {episode.episode_type === 'autocracy' && (
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 border border-signal-red/30 bg-signal-red/10">
+                      <TrendingDown className="w-5 h-5 text-signal-red" />
+                    </div>
+                  )}
+                  {episode.episode_type === 'democracy' && (
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 border border-signal-blue/30 bg-signal-blue/10">
+                      <TrendingUp className="w-5 h-5 text-signal-blue" />
+                    </div>
+                  )}
+                  {episode.episode_type === 'transition' && (
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 border border-signal-amber/30 bg-signal-amber/10">
+                      <Minus className="w-5 h-5 text-signal-amber" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className="flex-1 flex flex-col">
+                    <h4 className="text-sm font-semibold text-white mb-1">
+                      {t(`historicalEpisodes.${episode.key}.name`)}
+                    </h4>
+                    <p className="text-xs text-umbral-muted mb-2 font-mono">
+                      {t(`historicalEpisodes.${episode.key}.period`)}
+                    </p>
+                    <p className="text-xs text-umbral-muted leading-relaxed">
+                      {t(`historicalEpisodes.${episode.key}.description`)}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          NEWS FEED SECTION
+          ============================================================ */}
+      <section className="section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="flex items-start justify-between gap-4 mb-8"
+          >
+            <div>
+              <h2 className="section-title mb-2 flex items-center gap-3">
+                <Radio className="w-6 h-6 text-signal-amber" />
+                {t('landing.news.title')}
+              </h2>
+              <p className="section-subtitle">
+                {t('landing.news.subtitle')}
+              </p>
+            </div>
+            
+            <Link 
+              href="#" 
+              className="btn btn-ghost text-sm hidden md:flex"
+            >
+              {t('common.viewAll')}
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+          >
+            {loading ? (
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="card p-4 animate-pulse">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-20 bg-umbral-ash rounded" />
+                    <div className="h-5 w-16 bg-umbral-ash rounded" />
+                  </div>
+                  <div className="h-5 bg-umbral-ash rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-umbral-ash rounded w-full mb-3" />
+                  <div className="h-3 bg-umbral-ash rounded w-1/3" />
+                </div>
+              ))
+            ) : (
+              news.map((item) => (
+                <motion.div key={item.id} variants={fadeInUp}>
+                  <NewsCard item={item} />
+                </motion.div>
+              ))
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          POLITICAL PRISONERS SECTION
+          ============================================================ */}
+      <section className="section bg-umbral-charcoal/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <h2 className="section-title mb-2 flex items-center justify-center gap-3">
+              <Users className="w-6 h-6 text-signal-red" />
+              {t('landing.prisoners.title')}
+            </h2>
+            <p className="section-subtitle mx-auto">
+              {t('landing.prisoners.subtitle')}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+          >
+            {/* Main metrics */}
+            <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.total')}
+                  value={prisonerStats?.total_count || 711}
+                  trend={{ value: 23, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
+                  size="large"
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.releases30d')}
+                  value={prisonerStats?.releases_30d || 45}
+                  size="large"
+                />
+              </motion.div>
+            </div>
+
+            {/* Breakdown metrics */}            
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.civilians')}
+                  value={prisonerStats?.civilians || 68}
+                  icon={<Users className="w-10 h-10" />}
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.military')}
+                  value={prisonerStats?.military || 1203}
+                  icon={<Shield className="w-10 h-10" />}
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.men')}
+                  value={prisonerStats?.men || 0}
+                  icon={<Mars className="w-10 h-10" />}
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.women')}
+                  value={prisonerStats?.women || 0}
+                  icon={<Venus className="w-10 h-10" />}
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.adults')}
+                  value={prisonerStats?.adults || 0}
+                  icon={<UserCheck className="w-10 h-10" />}
+                />
+              </motion.div>
+              
+              <motion.div variants={fadeInUp}>
+                <MetricCard 
+                  label={t('landing.prisoners.minors')}
+                  value={prisonerStats?.minors || 0}
+                  icon={<Baby className="w-10 h-10" />}
+                />
+              </motion.div>
+            </div>
+
+              {/* Footer of Political Prisoners */}
+              <motion.div variants={fadeInUp} className="card p-2 mb-5">              
+                <p className="text-xs text-umbral-muted flex items-center gap-2">
+                  <Info className="w-3 h-3" />
+                  {t('landing.prisoners.foreign_text')}: {prisonerStats?.foreign || 0}. {t('landing.prisoners.unknown_text')}: {prisonerStats?.unknown || 0}.
+                </p>
+              </motion.div>
+
+            {/* By organization */}
+            <motion.div variants={fadeInUp} className="card p-5">
+              <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-umbral-muted" />
+                {t('landing.prisoners.byOrganization')}
+              </h3>
+              
+              <div className="space-y-3">
+                {prisonersByOrg.map((org, index) => {
+                  const maxCount = Math.max(...prisonersByOrg.map(o => o.count))
+                  const percentage = (org.count / maxCount) * 100
+                  
+                  return (
+                    <div key={org.id} className="flex items-center gap-3">
+                      <span className="text-sm text-umbral-muted w-60 truncate">
+                        {org.organization}
+                      </span>
+                      <div className="flex-1 h-2 bg-umbral-ash rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-signal-red rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-mono text-white w-16 text-right">
+                        {org.count.toLocaleString()}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-umbral-ash flex items-center justify-between">
+                <p className="text-xs text-umbral-muted flex items-center gap-2">
+                  <Clock className="w-3 h-3" />
+                  {t('common.lastUpdated')}: {prisonerStats?.data_date || '2024-01-15'}
+                </p>
+                <p className="text-xs text-umbral-muted">
+                  {t('common.sources')}: {prisonerStats?.source || 'Foro Penal, CLIPPVE'}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          FAQ SECTION
+          ============================================================ */}
+      <section className="section">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <h2 className="section-title mb-4">
+              {t('landing.faq.title')}
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <FAQAccordion items={faqItems} />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="py-16 bg-gradient-to-t from-umbral-charcoal to-transparent">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="card p-8 md:p-12 border-signal-teal/30"
+          >
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              {locale === 'es' 
+                ? '¿Quieres acceso temprano?' 
+                : 'Want early access?'
+              }
+            </h3>
+            <p className="text-umbral-muted mb-6 max-w-xl mx-auto">
+              {locale === 'es'
+                ? 'Únete a nuestro programa beta y ayúdanos a construir herramientas de monitoreo democrático.'
+                : 'Join our beta program and help us build democratic monitoring tools.'
+              }
+            </p>
+            <Link href="/about" className="btn btn-primary px-8 py-3 text-base">
+              {t('common.donateToTheProject')}
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  )
+}

@@ -1,0 +1,343 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   ROOT VARIABLES
+   ============================================================ */
+:root {
+  --color-umbral-black: #0a0a0b;
+  --color-umbral-charcoal: #111113;
+  --color-umbral-slate: #1a1a1e;
+  --color-umbral-ash: #252529;
+  --color-umbral-steel: #3a3a42;
+  --color-signal-teal: #14b8a6;
+  --color-signal-red: #dc2626;
+  --color-signal-amber: #f59e0b;
+  --color-signal-green: #22c55e;
+  --color-signal-purple: #a855f7;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-umbral-black text-umbral-light antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    @apply text-white font-semibold tracking-tight;
+  }
+  
+  code, pre, .mono {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-umbral-charcoal;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-umbral-steel rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-umbral-muted;
+  }
+  
+  /* Selection */
+  ::selection {
+    @apply bg-signal-teal/30 text-white;
+  }
+}
+
+/* ============================================================
+   COMPONENT STYLES
+   ============================================================ */
+@layer components {
+  /* Card component */
+  .card {
+    @apply bg-umbral-charcoal border border-umbral-ash rounded-lg;
+    @apply shadow-inner-glow;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-200;
+    @apply hover:border-umbral-steel hover:bg-umbral-slate/50;
+  }
+  
+  /* Grid pattern background */
+  .bg-grid {
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  /* Scanline effect */
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .scanline::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(20, 184, 166, 0.3),
+      transparent
+    );
+    animation: scan 3s linear infinite;
+  }
+  
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  
+  /* Glow effects */
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+  }
+  
+  .glow-red {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+  }
+  
+  .glow-amber {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+  
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  
+  .status-dot-critical {
+    @apply bg-status-critical animate-pulse;
+  }
+  
+  .status-dot-warning {
+    @apply bg-status-warning animate-pulse-slow;
+  }
+  
+  .status-dot-stable {
+    @apply bg-status-stable;
+  }
+  
+  .status-dot-neutral {
+    @apply bg-status-neutral;
+  }
+  
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md;
+    @apply font-medium text-sm transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-umbral-black;
+  }
+  
+  .btn-primary {
+    @apply bg-signal-teal text-umbral-black;
+    @apply hover:bg-signal-teal/90 focus:ring-signal-teal;
+  }
+  
+  .btn-secondary {
+    @apply bg-umbral-ash text-white border border-umbral-steel;
+    @apply hover:bg-umbral-slate hover:border-umbral-muted focus:ring-umbral-steel;
+  }
+  
+  .btn-ghost {
+    @apply text-umbral-light hover:text-white hover:bg-umbral-ash;
+    @apply focus:ring-umbral-steel;
+  }
+  
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+  
+  .badge-live {
+    @apply bg-signal-teal/20 text-signal-teal border border-signal-teal/30;
+  }
+  
+  .badge-breaking {
+    @apply bg-signal-red/20 text-signal-red border border-signal-red/30;
+  }
+  
+  .badge-warning {
+    @apply bg-signal-amber/20 text-signal-amber border border-signal-amber/30;
+  }
+  
+  /* Metric card */
+  .metric-card {
+    @apply card p-4;
+  }
+  
+  .metric-value {
+    @apply text-2xl font-bold text-white font-mono;
+  }
+  
+  .metric-label {
+    @apply text-xs text-umbral-muted uppercase tracking-wider;
+  }
+  
+  .metric-trend {
+    @apply text-xs font-medium;
+  }
+  
+  .metric-trend-up {
+    @apply text-signal-red;
+  }
+  
+  .metric-trend-down {
+    @apply text-signal-teal;
+  }
+  
+  /* Section styles */
+  .section {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+  
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold text-white mb-2;
+  }
+  
+  .section-subtitle {
+    @apply text-umbral-muted max-w-2xl;
+  }
+  
+  /* Divider */
+  .divider {
+    @apply h-px bg-gradient-to-r from-transparent via-umbral-steel to-transparent;
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+@layer utilities {
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #e94b4b, #2291c5);
+  }
+  
+  /* Vertical Text gradient */
+  .text-gradient-vertical {
+    @apply bg-clip-text text-transparent;
+    /* Option 1: Using keywords */
+    background-image: linear-gradient(to bottom, #2291c5, #e94b4b);
+  }
+
+  .icon-gradient-vertical {
+    /* This targets the 'path', 'circle', 'line' etc inside the SVG */
+    & path, & polyline, & line, & circle {
+      stroke: url(#vertical-gradient);
+    }
+  }
+
+  /* Fade animations */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Stagger animation delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  
+  /* Hide scrollbar */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Aspect ratios */
+  .aspect-chart {
+    aspect-ratio: 16 / 9;
+  }
+  
+  .aspect-card {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ============================================================
+   RECHARTS CUSTOMIZATION
+   ============================================================ */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.05);
+}
+
+.recharts-text {
+  fill: #6b6b76;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  background: #111113 !important;
+  border: 1px solid #3a3a42 !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+}
+
+.recharts-tooltip-label {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+}
+
+.recharts-tooltip-item {
+  color: #9ca3af !important;
+}

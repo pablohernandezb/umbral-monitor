@@ -1,0 +1,345 @@
+{
+  "meta": {
+    "title": "Umbral | Regime Transformation Monitor",
+    "description": "Independent analytical platform monitoring regime transformation dynamics in Venezuela.",
+    "keywords": "Venezuela, democracy, regime, political analysis, OSINT, democratization, transition, political prisoners, freedom"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "howDidWeGetHere": "How Did We Get Here?",
+    "readingRoom": "Reading Room",
+    "episodes": "Episodes",
+    "politicalPrisoners": "Political Prisoners"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "lastUpdated": "Last updated",
+    "source": "Source",
+    "sources": "Sources",
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "share": "Share",
+    "download": "Download",
+    "participate": "Participate",
+    "howDidWeGetHere": "How did we get here?",
+    "donateToTheProject": "Donate to the Project",
+    "watchDemo": "Watch Demo",
+    "liveMonitoring": "Live monitoring"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Live monitoring",
+      "title": "Path to",
+      "titleHighlight": "transition",
+      "subtitle": "Analyzing historical data and current events to inform about potential regime change."
+    },
+    "scenarios": {
+      "title": "Transformation Scenarios",
+      "subtitle": "Estimated probabilities of different regime transformation episodes based on historical pattern analysis and current signals.",
+      "probability": "Probability",
+      "low": "low",
+      "mediumLow": "medium low",
+      "medium": "medium",
+      "mediumHigh": "medium high",
+      "high": "high",
+      "analyzing": "Analyzing episodes >",
+      "analysisIncluded": "analyses included"
+    },
+    "trajectory": {
+      "title": "Episodes of Regime Transformation",
+      "subtitle": "Evolution of the Electoral Democracy Index in Venezuela (1900-2024)",
+      "dataSource": "Source: ERT Dataset – Maerz et al. (2023), V-Dem Institute",
+      "episodes": "Historical Episodes",
+      "electoralDemocracyIndex": "Electoral Democracy Index",
+      "year": "Year"
+    },
+    "news": {
+      "title": "Signals & News",
+      "subtitle": "Aggregated monitoring from verified sources",
+      "breakingNews": "Breaking",
+      "hoursAgo": "{hours}h ago",
+      "minutesAgo": "{minutes}m ago"
+    },
+    "prisoners": {
+      "title": "Political Prisoners",
+      "subtitle": "Arbitrary detention monitoring panel",
+      "total": "Total political prisoners",
+      "releases30d": "Releases (30 days)",
+      "newDetentions": "New detentions",
+      "pendingTrials": "Pending trials",
+      "byOrganization": "By organization",
+      "trend": "Trend",
+      "excarcelation_date": "(Since January, 8)",
+      "civilians": "Civilians",
+      "military": "Military",
+      "men": "Men",
+      "women": "Women",
+      "adults": "Adults",
+      "minors": "Minors",
+      "unknown_text": "Total of missing for whom no information is available about their place of detention",
+      "foreign_text": "Total of foreign"  
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "question": "What is Umbral?",
+          "answer": "Umbral is an independent analytical platform that monitors regime transformation dynamics in Venezuela. We use historical data, academic indices, and verified journalistic sources to inform about possible political change scenarios."
+        },
+        {
+          "question": "Where does the data come from?",
+          "answer": "Our main sources include V-Dem (Varieties of Democracy), the ERT Dataset by Maerz et al., DEED (Democratic Episodes Event Dataset), human rights organizations like Foro Penal, and independent Venezuelan media such as Efecto Cocuyo, El Pitazo, and Runrunes."
+        },
+        {
+          "question": "Are the probabilities predictions?",
+          "answer": "No. The probabilities presented are analytical estimates based on historical patterns of regime transitions globally. They do not constitute predictions or forecasts. Political events are inherently unpredictable."
+        },
+        {
+          "question": "How often is the information updated?",
+          "answer": "The news feed is updated continuously. Political prisoner indicators are updated weekly based on human rights organization reports. Scenarios are reviewed monthly."
+        },
+        {
+          "question": "Is Umbral affiliated with any party or movement?",
+          "answer": "No. Umbral is an independent data analysis platform. We do not promote any specific political agenda nor are we affiliated with parties, governments, or political organizations."
+        }
+      ]
+    }
+  },
+  "about": {
+    "title": "About Umbral",
+    "whatIs": {
+      "title": "What is Umbral?",
+      "content": "Umbral is an independent analytical platform designed to monitor and contextualize regime transformation dynamics in Venezuela. We combine rigorous academic data, historical indicators, and monitoring of verified journalistic sources to offer an informed view of possible political change scenarios."
+    },
+    "scope": {
+      "title": "Scope and Purpose",
+      "content": "Our goal is to democratize access to quality analytical information about the Venezuelan political situation. We do not make predictions nor promote political agendas. We provide tools for citizens, journalists, and researchers to interpret signals and historical patterns."
+    },
+    "methodology": {
+      "title": "Methodology",
+      "content": "We use a multi-source approach combining academic democracy indices (V-Dem), historical regime episode datasets (ERT, DEED), independent media monitoring, and human rights organization data. Scenario probabilities are derived from analysis of global historical patterns of regime transitions."
+    },
+    "sources": {
+      "title": "Data Sources",
+      "academic": "Academic Sources",
+      "media": "Media",
+      "humanRights": "Human Rights"
+    },
+    "acknowledgements": {
+      "title": "Acknowledgements",
+      "content": "This project builds on the work of researchers, journalists, and human rights defenders who rigorously document Venezuelan reality. We especially thank the V-Dem teams, the ERT Dataset authors, and Venezuelan civil society organizations."
+    }
+  },
+  "howDidWeGetHere": {
+    "title": "How Did We Get Here?",
+    "subtitle": "A timeline of democratic erosion in Venezuela (1998-2024)",
+    "indexLabel": "Liberal Democracy Index (V-Dem)",
+    "eventsTitle": "Events of the year",
+    "selectYear": "Select a year to view events",
+    "noEvents": "No events recorded for this year"
+  },
+  "readingRoom": {
+    "title": "Reading Room",
+    "subtitle": "Curated analytical archive on Venezuela and regime transitions",
+    "filters": {
+      "all": "All",
+      "books": "Books",
+      "articles": "Academic Articles",
+      "reports": "Reports",
+      "journalisms": "Journalism"
+    },
+    "year": "Year",
+    "language": "Language",
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "footer": {
+    "disclaimer": "Umbral is an independent data analysis project. The information presented does not constitute political advice or predictions.",
+    "openData": "Open data",
+    "methodology": "Methodology",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "copyright": "Umbral • For educational purposes"
+  },
+  "scenarios": {
+    "democraticTransition": {
+      "name": "Democratic Transition",
+      "description": "Path to liberalization"
+    },
+    "revertedLiberalization": {
+      "name": "Reverted Liberalization",
+      "description": "We tried but couldn't"
+    },
+    "preemptedDemocraticTransition": {
+      "name": "Preempted Democratic Transition",
+      "description": "Back to authoritarianism"
+    },
+    "regressedAutocracy": {
+      "name": "Regressed Autocracy",
+      "description": "Worse than we already are"
+    },
+    "stabilizedElectoralAutocracy": {
+      "name": "Stabilized Electoral Autocracy",
+      "description": "The regime consolidates"
+    }
+  },
+"historicalEpisodes": {
+    "revertedLiberalization": {
+      "name": "Reverted Liberalization",
+      "period": "1936-1948",
+      "description": "An episode of liberalization in an autocracy that failed to transition to democracy. While political space opened significantly after Gómez's death (the 'Post-Gómez opening') and during the Trienio Adeco, the process was abruptly reversed by the 1948 military coup, returning the country to closed autocracy."
+    },
+    "regressedAutocracy": {
+      "name": "Regressed Autocracy",
+      "period": "1949-1949",
+      "description": "A deepening of authoritarianism within an existing autocratic regime. Following the 1948 coup, the military junta rapidly dismantled the previous democratic institutions and restricted civil liberties, moving the regime further away from any potential democratization."
+    },
+    "democraticTransition": {
+      "name": "Democratic Transition",
+      "period": "1958-1961",
+      "description": "A successful episode of liberalization in an autocracy that resulted in a transition to democracy. Triggered by the fall of Pérez Jiménez and solidified by the Punto Fijo pact, this period established the competitive electoral institutions that defined the democratic era."
+    },
+    "democraticBreakdown": {
+      "name": "Democratic Breakdown",
+      "period": "1998-2018",
+      "description": "An episode of autocratization in a democracy that resulted in a transition to autocracy. Beginning with the election of Hugo Chávez and the 1999 constitutional changes, the regime experienced a gradual erosion of democratic norms ('preempted democratic transition' turned breakdown) that culminated in a closed authoritarian regime under Maduro."
+    }
+  },
+"regimeHistory": {
+    "revertedLiberalization": "Reverted Liberalization",
+    "regressedAutocracy": "Regressed Autocracy",
+    "democraticTransition": "Democratic Transition",
+    "democraticBreakdown": "Democratic Breakdown"
+  },
+  "ticker": {
+    "daysSince": "{days} days have passed since the events of January 3, 2026"
+  },
+"deedEvents": {
+    "category": {
+      "WeakenedCivilServiceorIntegrityInstitutions": "Weakened Civil Service or Integrity Institutions",
+      "CooptationoftheOpposition": "Co-optation of the Opposition",
+      "MediaRepression": "Media Repression",
+      "DelegitimizingorWeakeningtheLegislature": "Delegitimizing or Weakening the Legislature",
+      "HorizontalCorruption": "Horizontal Corruption",
+      "ExternalInfluenceorInvasion": "External Influence or Invasion",
+      "RevisionoftheConstitution": "Revision of the Constitution",
+      "NonviolentProtest": "Nonviolent Protest",
+      "ReducingAutonomyofSubnationalUnits": "Reducing Autonomy of Subnational Units",
+      "NonstateViolence": "Non-state Violence",
+      "CouporRegimeCollapse": "Coup or Regime Collapse",
+      "ViolentProtest": "Violent Protest",
+      "SuspensionofLawsortheConstitution": "Suspension of Laws or the Constitution",
+      "StateAttemptsatDemocratizationortoPreventBacksliding": "State Attempts at Democratization or to Prevent Backsliding",
+      "ReductioninJudicialIndependence": "Reduction in Judicial Independence",
+      "ElectoralFraudandVoterSuppression": "Electoral Fraud and Voter Suppression",
+      "PressurefromOutsideActor": "Pressure from Outside Actor",
+      "RhetoricalAttacksagainstDemocracyorAccountabilityInstitutions": "Rhetorical Attacks against Democracy or Accountability Institutions",
+      "SystemicReductioninElectionFreedomandFairness": "Systemic Reduction in Election Freedom and Fairness",
+      "IncreasingControloverCivilSociety": "Increasing Control over Civil Society",
+      "ElectoralBoycott": "Electoral Boycott",
+      "StateConductedViolenceorAbuse": "State-Conducted Violence or Abuse",
+      "ChallengefromExtremistPopulistFactions": "Challenge from Extremist/Populist Factions",
+      "StatecontrolledMedia": "State-controlled Media",
+      "IncreaseinCivicCapacity": "Increase in Civic Capacity",
+      "PoliticizationoftheEducationSystem": "Politicization of the Education System",
+      "RepressionoftheOpposition": "Repression of the Opposition",
+      "CreationofParallelStructures": "Creation of Parallel Structures",
+      "RelaxationofTermLimits": "Relaxation of Term Limits",
+      "Malapportionment": "Malapportionment",
+      "IncreaseinOrganizedOpposition": "Increase in Organized Opposition",
+      "ForcedCoercedExile": "Forced/Coerced Exile",
+      "ElectoralViolence": "Electoral Violence",
+      "ExternalShocksEconomicHealthNaturalDisasters": "External Shocks (Economic, Health, Natural Disasters)",
+      "CurtailedCivilLiberties": "Curtailed Civil Liberties",
+      "ReductioninLegislativeOversight": "Reduction in Legislative Oversight",
+      "NoConfidenceVotesorDecreasedVoterTurnout": "No-Confidence Votes or Decreased Voter Turnout",
+      "VerticalCorruption": "Vertical Corruption",
+      "CheckonExecutivebyLegislature": "Check on Executive by Legislature",
+      "LackofLegitimacy": "Lack of Legitimacy",
+      "IncreasedSurveillance": "Increased Surveillance",
+      "PartyWeakness": "Party Weakness",
+      "DemocraticFacade": "Democratic Facade",
+      "PurgingofElites": "Purging of Elites",
+      "DiscriminationagainstMinorities": "Discrimination against Minorities"
+    },
+    "month": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "actors": {
+      "headofstate" : " Head of State (President)",
+      "thegovernment" : " The Government",
+      "rulingparty" : " Ruling Party",
+      "foreignleader" : " Foreign leader (Presidents, Prime Ministers, Kings/Queens)",
+      "citizensvotersthepublic" : " Citizens/voters/the public, not organized through interest or other group (Electorate)",
+      "socialmovementprotestgroup" : " Social movement/protest group, or individual activists/movement’s leader/s",
+      "armedforces" : " Armed Forces",
+      "domesticterrorist" : " Domestic terrorist, or terrorist organization",
+      "opposition" : " Opposition/Opposition Leaders",
+      "foreigncountry" : " Foreign country (or a set of countries)",
+      "highestcourt" : " Highest court, or justice on highest court (Supreme Court justice)",
+      "interestgrouppacunion" : " Interest group/PAC/union",
+      "legislatureparliament" : " Legislature/Parliament",
+      "nonelectedfederalofficials" : " Non-elected federal officials or staff (from agencies, political appointees)",
+      "judiciary" : " Judiciary",
+      "criminalorganizations" : " Criminal organizations (Cartels, mafias)",
+      "police" : " Police (Federal, local)",
+      "watchdog" : " Watchdog (Electoral Institutes)",
+      "cabinetmember" : " Cabinet Member’s (Secretary of State, Minister of Finance)",
+      "candidateforfederaloffice" : " Candidate for federal office (Presidential or legislative candidates)",
+      "other" : " Other",
+      "internationalintergovernmentalorganization" : " International/intergovernmental organization (UN, World Bank, EU)",
+      "stateprovincialelectedofficial" : " State/provincial elected official (Governors, state legislators)",
+      "domesticcorporations" : " Domestic corporations"
+    },
+    "targets": {
+      "armedforces" : " Armed Forces",
+      "interestgrouppacunion" : " Interest group/PAC/union",
+      "citizensvotersthepublic" : " Citizens/voters/the public, not organized through interest or other group (Electorate)",
+      "headofstate" : " Head of State (President)",
+      "thegovernment" : " The Government",
+      "criminalorganizations" : " Criminal organizations (Cartels, mafias)",
+      "police" : " Police (Federal, local)",
+      "religiousinstitutions" : " Religious institutions",
+      "nonelected" : " Non-elected federal officials or staff (from agencies, political appointees)",
+      "highestcourt" : " Highest court, or justice on highest court (Supreme Court justice)",
+      "mediaorganizations" : " Media organizations",
+      "journalist" : " Journalist (Individual or a collective)",
+      "civilsociety" : " Civil society (organization, or a collective of them)",
+      "watchdog" : " Watchdog (Electoral Institutes)",
+      "domesticngos" : " Domestic NGOs",
+      "legislatureparliament" : " Legislature/Parliament",
+      "rulingparty" : " Ruling Party",
+      "universities" : " Universities (Colleges, Professors, Students)",
+      "socialmovementprotestgroup" : " Social movement/protest group, or individual activists/movement’s leader/s",
+      "opposition" : " Opposition/Opposition Leaders",
+      "localcitytowncountymunicipal" : " Local/city/town/county/municipal elected official",
+      "stateprovincialelectedofficial" : " State/provincial elected official",
+      "candidatefornationaloffice" : " Candidate for national office (Presidential or legislative candidates)",
+      "districtornationallowercourt" : " District or national lower court, or judge on court (District Court)",
+      "nonelectedpublic" : " Non-elected public or cultural figure",
+      "candidateforlocalcitytowncountymunicipal" : " Candidate for local/city/town/county/municipal office",
+      "nationalelectedofficial" : " National elected official",
+      "minister" : " Minister",
+      "minoritygroup" : " Minority Group",
+      "domesticterrorist" : " Domestic terrorist, or terrorist organization",
+      "candidateforstateprovincialoffice" : " Candidate for state/provincial office",
+      "unionleader" : " Union leader"
+    }
+  }
+}
