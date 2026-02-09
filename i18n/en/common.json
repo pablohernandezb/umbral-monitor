@@ -169,168 +169,168 @@
   "scenarios": {
     "democraticTransition": {
       "name": "Democratic Transition",
-      "description": "Path to liberalization"
+      "description": "The 1958 moment: path to full liberalization"
     },
     "revertedLiberalization": {
       "name": "Reverted Liberalization",
-      "description": "We tried but couldn't"
+      "description": "The fragile spring: reforms aborted like in 1948"
     },
     "preemptedDemocraticTransition": {
       "name": "Preempted Democratic Transition",
-      "description": "Back to authoritarianism"
+      "description": "The glass ceiling: electoral victory blocked"
     },
     "regressedAutocracy": {
       "name": "Regressed Autocracy",
-      "description": "Worse than we already are"
+      "description": "The closed door: deepening authoritarianism"
     },
     "stabilizedElectoralAutocracy": {
       "name": "Stabilized Electoral Autocracy",
-      "description": "The regime consolidates"
+      "description": "The branch on steroids: new authoritarian equilibrium"
     }
   },
   "scenarioPhases": {
     "democraticTransition": {
       "phases": [
         {
-          "phase": "Phase 1 - Internal Erosion",
-          "title": "Fracture within the ruling elite",
-          "description": "Internal divisions between moderate and radical factions weaken the regime's cohesion."
+          "phase": "Year 1-2 | Sustained Pressure",
+          "title": "Alignment of multiple conditions",
+          "description": "Opposition achieves strategic unity while coordinated international pressure, primarily American, increases. Economic collapse fractures the chavista elite."
         },
         {
-          "phase": "Phase 2 - Popular Pressure",
-          "title": "Sustained protests and social pressure",
-          "description": "Growing citizen mobilizations demand democratic opening and respect for fundamental rights."
+          "phase": "Year 2-3 | Critical Moment",
+          "title": "Defection of key military sectors",
+          "description": "Mid-rank officers break with the regime. A supervised transition similar to Venezuela's 1958 Puntofijo Pact is established."
         },
         {
-          "phase": "Phase 3 - Negotiation",
-          "title": "Mediation and negotiation",
-          "description": "International and national actors facilitate a dialogue process between government and opposition."
+          "phase": "Year 3-4 | Reconstruction",
+          "title": "Deep institutional reforms",
+          "description": "Constitutional reform subordinating armed forces to civilian power. Transitional justice mechanisms and accountability processes are implemented."
         },
         {
-          "phase": "Phase 4 - Agreement",
-          "title": "Transition agreement",
-          "description": "A timeline for free elections with guarantees for all parties is established."
+          "phase": "Year 4-5 | Consolidation",
+          "title": "Economic recovery and free elections",
+          "description": "Macroeconomic stabilization with international support. First fully competitive elections with robust international observation."
         },
         {
-          "phase": "Phase 5 - Consolidation",
-          "title": "Free and fair elections",
-          "description": "Elections are held with international observation and results are recognized."
+          "phase": "Year 5+ | Consolidated Democracy",
+          "title": "Democracy as the only game in town",
+          "description": "Democracy establishes itself as the only viable governance model. Accountability institutions and the rule of law are strengthened."
         }
       ]
     },
     "preemptedDemocraticTransition": {
       "phases": [
         {
-          "phase": "Phase 1 - Tactical Opening",
-          "title": "Initial controlled opening",
-          "description": "The regime allows limited liberalization to relieve internal and external pressure."
+          "phase": "Year 1 | Electoral Victory",
+          "title": "Recognized opposition triumph",
+          "description": "Opposition wins elections and results are recognized after sustained internal and international pressure."
         },
         {
-          "phase": "Phase 2 - Emerging Opposition",
-          "title": "Rise of organized opposition",
-          "description": "Opposition groups gain strength and articulate concrete democratic demands."
+          "phase": "Year 1-2 | Institutional Obstruction",
+          "title": "Chavista deep state resistance",
+          "description": "Judiciary and security forces maintain loyalty to chavismo. Key reforms are blocked generating systematic ungovernability, similar to Argentina 1971-1974."
         },
         {
-          "phase": "Phase 3 - Counteroffensive",
-          "title": "Selective repression",
-          "description": "The regime neutralizes key opposition leaders through judicial persecution or forced exile."
+          "phase": "Year 2-3 | Governance Crisis",
+          "title": "Administrative and economic failure",
+          "description": "Inability to govern effectively generates acute economic crisis. Population loses faith in new government due to lack of tangible results."
         },
         {
-          "phase": "Phase 4 - Authoritarian Consolidation",
-          "title": "Cooptation of institutions",
-          "description": "Electoral, judicial, and media bodies are captured to ensure control."
+          "phase": "Year 3 | Political Fragmentation",
+          "title": "Opposition coalition collapse",
+          "description": "Internal disunity and power disputes weaken the government. Chavista sectors capitalize on social discontent."
         },
         {
-          "phase": "Phase 5 - Regression",
-          "title": "Closing of civic space",
-          "description": "The granted freedoms are reversed and total control is reestablished."
+          "phase": "Year 3-4 | Authoritarian Regression",
+          "title": "Return of authoritarian control",
+          "description": "Manufactured or real crisis justifies military or judicial intervention. Democratic transition is partially or totally reversed."
         }
       ]
     },
     "stabilizedElectoralAutocracy": {
       "phases": [
         {
-          "phase": "Phase 1 - Electoral Simulation",
-          "title": "Recurring controlled elections",
-          "description": "Periodic elections are held with predetermined results to maintain a democratic facade."
+          "phase": "Year 1 | Accommodation",
+          "title": "New equilibrium post-28J",
+          "description": "After events like the July 28, 2024 electoral fraud, a more economically liberal but politically limited competitive autocracy is established."
         },
         {
-          "phase": "Phase 2 - Elimination of Alternatives",
-          "title": "Neutralization of the opposition",
-          "description": "Opposition parties are systematically disqualified, fragmented, or co-opted."
+          "phase": "Year 1-2 | Geopolitical Cooperation",
+          "title": "Selective international legitimation",
+          "description": "Rapprochement with Trump administration and other international actors interested in oil and migration. Economic concessions without real political change."
         },
         {
-          "phase": "Phase 3 - Information Hegemony",
-          "title": "Total media control",
-          "description": "Independent media are closed or controlled; the official narrative dominates public space."
+          "phase": "Year 2-3 | Sustained Selective Repression",
+          "title": "Control through strategic intimidation",
+          "description": "Surgical persecution of key opposition leaders. Mass emigration continues as political escape valve (8+ million Venezuelans abroad)."
         },
         {
-          "phase": "Phase 4 - External Accommodation",
-          "title": "Partial international legitimation",
-          "description": "Some international actors accept the status quo due to geopolitical or economic interests."
+          "phase": "Year 3-4 | Institutionalized Fraud",
+          "title": "Periodic elections without real competition",
+          "description": "Regular elections held with predetermined results. CNE and TSJ operate as regime arms. Viable opposition candidates are disqualified."
         },
         {
-          "phase": "Phase 5 - Consolidation",
-          "title": "Stabilization through clientelism",
-          "description": "Selective distribution of resources maintains the loyalty of key sectors."
+          "phase": "Year 4-5+ | Authoritarian Equilibrium",
+          "title": "Consolidation of a tropical Orbanism",
+          "description": "An electoral autocracy model stabilizes with modest economic recovery. Clientelist resource distribution maintains chavista coalition unity."
         }
       ]
     },
     "revertedLiberalization": {
       "phases": [
         {
-          "phase": "Phase 1 - Democratic Opportunity",
-          "title": "Window of political opening",
-          "description": "Favorable conditions allow advances in civil liberties and political participation."
+          "phase": "Year 1 | Fragile Opening",
+          "title": "Promising initial liberalization",
+          "description": "Favorable conditions generate optimism. Peaceful protests and greater media space are allowed, similar to 1936-1945 period (Gómez's death until before Trienio)."
         },
         {
-          "phase": "Phase 2 - Limited Reformism",
-          "title": "Partial institutional reforms",
-          "description": "Changes are implemented in the legal framework but without altering fundamental power structures."
+          "phase": "Year 1-2 | Superficial Reforms",
+          "title": "Cosmetic changes without real transformation",
+          "description": "Limited institutional reforms that don't alter fundamental power structures. Military and chavista economic elite maintain intact privileges."
         },
         {
-          "phase": "Phase 3 - Obstruction",
-          "title": "Resistance of the state apparatus",
-          "description": "Security forces and bureaucracy block reforms that threaten their privileges."
+          "phase": "Year 2 | Establishment Resistance",
+          "title": "Blockage from armed forces",
+          "description": "Military and security apparatus sectors reject reforms threatening their control over illegal economy (gold, drugs) and political power."
         },
         {
-          "phase": "Phase 4 - Pretext for Reversion",
+          "phase": "Year 2-3 | Pretext for Reversion",
           "title": "Economic or security crisis",
-          "description": "A real or fabricated emergency justifies the rollback of granted freedoms."
+          "description": "Deep economic collapse or security crisis (real or fabricated) generates panic. Conservative sectors demand iron fist."
         },
         {
-          "phase": "Phase 5 - Complete Rollback",
-          "title": "Restoration of authoritarian control",
-          "description": "Reforms are annulled and the previous governance model is reestablished."
+          "phase": "Year 3 | Coup or Self-Coup",
+          "title": "Violent reversion 1948-style",
+          "description": "Abrupt military intervention similar to the coup that ended the 1948 Trienio Adeco. Full authoritarian control is restored eliminating democratic advances."
         }
       ]
     },
     "regressedAutocracy": {
       "phases": [
         {
-          "phase": "Phase 1 - Absolute Power",
-          "title": "Extreme concentration of power",
-          "description": "The leader eliminates all institutional checks and completely personalizes the exercise of power."
+          "phase": "Months 0-6 | Hardening",
+          "title": "Total abandonment of electoral pretenses",
+          "description": "Hard military coup or radical revolutionary figure displaces current leadership. Any democratic facade is abandoned, similar to 1948-1958."
         },
         {
-          "phase": "Phase 2 - State Terror",
-          "title": "Systematic repression",
-          "description": "The persecution of dissidents, journalists, and human rights defenders intensifies."
+          "phase": "Months 6-12 | Systematic Terror",
+          "title": "Massive and indiscriminate repression",
+          "description": "Large-scale arbitrary detentions. Forced disappearances. State violence against journalists, human rights defenders and opponents. Total censorship."
         },
         {
-          "phase": "Phase 3 - International Pariah",
-          "title": "International isolation",
-          "description": "Sanctions and international condemnations deepen the regime's isolation."
+          "phase": "Year 1-2 | Global Pariah",
+          "title": "Extreme international isolation",
+          "description": "Widespread diplomatic rupture and severe sanctions. Venezuela becomes pariah state with links only to Russia, Iran, China. Economy in free fall."
         },
         {
-          "phase": "Phase 4 - Social Collapse",
-          "title": "Humanitarian crisis",
-          "description": "Economic and social deterioration generates a humanitarian emergency with mass migration."
+          "phase": "Year 2-3 | Humanitarian Collapse",
+          "title": "Regional-scale humanitarian crisis",
+          "description": "Widespread famine, non-existent public services, mass migration exceeds 10-12 million. Internal armed conflict or paramilitarization."
         },
         {
-          "phase": "Phase 5 - Critical Point",
-          "title": "Failed state or intervention",
-          "description": "The regime loses effective governance capacity or faces unsustainable external pressure."
+          "phase": "Year 3+ | Failed State",
+          "title": "Loss of governance capacity",
+          "description": "Regime does not effectively control territory. Zones under control of irregular armed groups. Possible external intervention or territorial fragmentation."
         }
       ]
     }
