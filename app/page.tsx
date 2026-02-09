@@ -28,11 +28,13 @@ import {
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
 import { ScenarioCard } from '@/components/ui/ScenarioCard'
+import { ScenarioTimeline } from '@/components/ui/ScenarioTimeline'
 import { NewsCard } from '@/components/ui/NewsCard'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { FAQAccordion } from '@/components/ui/FAQAccordion'
 import { TickerSimple } from '@/components/ui/Ticker'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
+import { getScenarioTimeline } from '@/data/scenario-phases'
 import { 
   getScenarios, 
   getRegimeHistory, 
@@ -76,6 +78,7 @@ export default function LandingPage() {
   const [prisonerStats, setPrisonerStats] = useState<PoliticalPrisoner | null>(null)
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
 
   // Load data on mount
   useEffect(() => {
@@ -292,7 +295,12 @@ export default function LandingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     {scenarios.map((scenario, index) => (
                       <motion.div key={scenario.id} variants={fadeInUp} className="h-full">
-                        <ScenarioCard scenario={scenario} className="bg-umbral-black/60 backdrop-blur-sm h-full" />
+                        <ScenarioCard
+                          scenario={scenario}
+                          className="bg-umbral-black/60 backdrop-blur-sm h-full"
+                          onClick={() => setActiveScenarioId(activeScenarioId === scenario.id ? null : scenario.id)}
+                          isActive={activeScenarioId === scenario.id}
+                        />
                       </motion.div>
                     ))}
                   </div>
@@ -312,6 +320,22 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+
+            {/* Deployable Timeline Panel */}
+            {activeScenarioId && (() => {
+              const activeScenario = scenarios.find(s => s.id === activeScenarioId)
+              const timelineData = activeScenario ? getScenarioTimeline(activeScenario.key) : null
+
+              return activeScenario && timelineData ? (
+                <div className="mt-4">
+                  <ScenarioTimeline
+                    scenario={activeScenario}
+                    phases={timelineData.phases}
+                    onClose={() => setActiveScenarioId(null)}
+                  />
+                </div>
+              ) : null
+            })()}
           </motion.div>
 
           {/* Days since capture ticker */}

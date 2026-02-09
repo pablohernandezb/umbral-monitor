@@ -49,15 +49,35 @@ export function formatPercentage(num: number): string {
 export function getProbabilityColor(label: string): string {
   switch (label) {
     case 'low':
-      return 'text-signal-teal'
+      return '#dc2626' // signal-red
     case 'mediumLow':
-      return 'text-signal-blue'
+      return '#f59e0b' // signal-amber
+    case 'medium':
+      return '#f59e0b' // signal-amber
+    case 'mediumHigh':
+      return '#14b8a6' // signal-teal
+    case 'high':
+      return '#14b8a6' // signal-teal
+    default:
+      return '#6b7280' // umbral-muted
+  }
+}
+
+/**
+ * Get probability label color class (Tailwind classes)
+ */
+export function getProbabilityColorClass(label: string): string {
+  switch (label) {
+    case 'low':
+      return 'text-signal-red'
+    case 'mediumLow':
+      return 'text-signal-amber'
     case 'medium':
       return 'text-signal-amber'
     case 'mediumHigh':
-      return 'text-signal-amber'
+      return 'text-signal-teal'
     case 'high':
-      return 'text-signal-red'
+      return 'text-signal-teal'
     default:
       return 'text-umbral-muted'
   }

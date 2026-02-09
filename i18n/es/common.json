@@ -188,6 +188,153 @@
       "description": "Se afianza el delcynato"
     }
   },
+  "scenarioPhases": {
+    "democraticTransition": {
+      "phases": [
+        {
+          "phase": "Fase 1 - Desgaste interno",
+          "title": "Fractura dentro de la elite gobernante",
+          "description": "Divisiones internas entre facciones moderadas y radicales debilitan la cohesión del régimen."
+        },
+        {
+          "phase": "Fase 2 - Presión popular",
+          "title": "Protestas sostenidas y presión social",
+          "description": "Movilizaciones ciudadanas crecientes exigen apertura democrática y respeto a derechos fundamentales."
+        },
+        {
+          "phase": "Fase 3 - Negociación",
+          "title": "Mediación y negociación",
+          "description": "Actores internacionales y nacionales facilitan un proceso de diálogo entre gobierno y oposición."
+        },
+        {
+          "phase": "Fase 4 - Acuerdo",
+          "title": "Acuerdo de transición",
+          "description": "Se establece un cronograma para elecciones libres con garantías para todas las partes."
+        },
+        {
+          "phase": "Fase 5 - Consolidación",
+          "title": "Elecciones libres y justas",
+          "description": "Se celebran elecciones con observación internacional y se reconocen los resultados."
+        }
+      ]
+    },
+    "preemptedDemocraticTransition": {
+      "phases": [
+        {
+          "phase": "Fase 1 - Apertura táctica",
+          "title": "Apertura controlada inicial",
+          "description": "El régimen permite una liberalización limitada para aliviar presión interna y externa."
+        },
+        {
+          "phase": "Fase 2 - Oposición emergente",
+          "title": "Surgimiento de oposición organizada",
+          "description": "Grupos opositores ganan fuerza y articulan demandas democráticas concretas."
+        },
+        {
+          "phase": "Fase 3 - Contraofensiva",
+          "title": "Represión selectiva",
+          "description": "El régimen neutraliza líderes clave de la oposición mediante persecución judicial o exilio forzado."
+        },
+        {
+          "phase": "Fase 4 - Consolidación autoritaria",
+          "title": "Cooptación de instituciones",
+          "description": "Se capturan órganos electorales, judiciales y mediáticos para asegurar control."
+        },
+        {
+          "phase": "Fase 5 - Regresión",
+          "title": "Cierre del espacio cívico",
+          "description": "Se revierten las libertades concedidas y se restablece el control total."
+        }
+      ]
+    },
+    "stabilizedElectoralAutocracy": {
+      "phases": [
+        {
+          "phase": "Fase 1 - Simulación electoral",
+          "title": "Elecciones controladas recurrentes",
+          "description": "Se celebran elecciones periódicas con resultado predeterminado para mantener fachada democrática."
+        },
+        {
+          "phase": "Fase 2 - Eliminación de alternativas",
+          "title": "Neutralización de la oposición",
+          "description": "Partidos opositores son inhabilitados, fragmentados o cooptados sistemáticamente."
+        },
+        {
+          "phase": "Fase 3 - Hegemonía informativa",
+          "title": "Control mediático total",
+          "description": "Medios independientes son cerrados o controlados; la narrativa oficial domina el espacio público."
+        },
+        {
+          "phase": "Fase 4 - Acomodación externa",
+          "title": "Legitimación internacional parcial",
+          "description": "Algunos actores internacionales aceptan el status quo por intereses geopolíticos o económicos."
+        },
+        {
+          "phase": "Fase 5 - Consolidación",
+          "title": "Estabilización mediante clientelismo",
+          "description": "La distribución selectiva de recursos mantiene la lealtad de sectores clave."
+        }
+      ]
+    },
+    "revertedLiberalization": {
+      "phases": [
+        {
+          "phase": "Fase 1 - Oportunidad democrática",
+          "title": "Ventana de apertura política",
+          "description": "Condiciones favorables permiten avances en libertades civiles y participación política."
+        },
+        {
+          "phase": "Fase 2 - Reformismo limitado",
+          "title": "Reformas institucionales parciales",
+          "description": "Se implementan cambios en el marco legal pero sin alterar las estructuras de poder fundamentales."
+        },
+        {
+          "phase": "Fase 3 - Obstrucción",
+          "title": "Resistencia del aparato estatal",
+          "description": "Las fuerzas de seguridad y la burocracia bloquean reformas que amenacen sus privilegios."
+        },
+        {
+          "phase": "Fase 4 - Pretexto para reversión",
+          "title": "Crisis económica o de seguridad",
+          "description": "Una emergencia real o fabricada justifica el retroceso en las libertades concedidas."
+        },
+        {
+          "phase": "Fase 5 - Retroceso completo",
+          "title": "Restauración del control autoritario",
+          "description": "Se anulan las reformas y se restablece el modelo de gobernanza anterior."
+        }
+      ]
+    },
+    "regressedAutocracy": {
+      "phases": [
+        {
+          "phase": "Fase 1 - Poder absoluto",
+          "title": "Concentración extrema de poder",
+          "description": "El líder elimina todo contrapeso institucional y personaliza completamente el ejercicio del poder."
+        },
+        {
+          "phase": "Fase 2 - Terror estatal",
+          "title": "Represión sistemática",
+          "description": "Se intensifica la persecución de disidentes, periodistas y defensores de derechos humanos."
+        },
+        {
+          "phase": "Fase 3 - Paria internacional",
+          "title": "Aislamiento internacional",
+          "description": "Sanciones y condenas internacionales profundizan el aislamiento del régimen."
+        },
+        {
+          "phase": "Fase 4 - Colapso social",
+          "title": "Crisis humanitaria",
+          "description": "El deterioro económico y social genera una emergencia humanitaria con migración masiva."
+        },
+        {
+          "phase": "Fase 5 - Punto crítico",
+          "title": "Estado fallido o intervención",
+          "description": "El régimen pierde capacidad de gobernanza efectiva o enfrenta presión externa insostenible."
+        }
+      ]
+    }
+  },
 "historicalEpisodes": {
     "revertedLiberalization": {
       "name": "Liberalización revertida",

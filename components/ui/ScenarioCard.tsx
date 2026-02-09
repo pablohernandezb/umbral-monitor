@@ -8,6 +8,8 @@ import type { Scenario } from '@/types'
 interface ScenarioCardProps {
   scenario: Scenario
   className?: string
+  onClick?: () => void
+  isActive?: boolean
 }
 
 const statusIcons = {
@@ -25,9 +27,9 @@ const scenarioIcons = {
   regressedAutocracy: HandFist,
 }
 
-export function ScenarioCard({ scenario, className }: ScenarioCardProps) {
+export function ScenarioCard({ scenario, className, onClick, isActive }: ScenarioCardProps) {
   const { t } = useTranslation()
-  
+
   const Icon = statusIcons[scenario.status] || Shield
   const ScenarioIcon = scenarioIcons[scenario.key] || Shield
   const name = t(`scenarios.${scenario.key}.name`)
@@ -36,11 +38,14 @@ export function ScenarioCard({ scenario, className }: ScenarioCardProps) {
 
   return (
     <div
+      onClick={onClick}
       className={cn(
         'relative card p-5 transition-all duration-300',
         'hover:border-umbral-steel hover:bg-umbral-slate/30',
         'group',
         'flex flex-col justify-between',
+        onClick && 'cursor-pointer',
+        isActive && 'border-signal-teal bg-umbral-slate/30',
         className
       )}
     >
