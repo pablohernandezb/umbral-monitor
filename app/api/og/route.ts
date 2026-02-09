@@ -3,14 +3,21 @@ import { join } from 'path'
 import { NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
-  // Get the referer to check for lang parameter
-  const referer = request.headers.get('referer') || ''
+  // Try to get language from query parameter first, then referer as fallback
+  const searchParams = request.nextUrl.searchParams
+  const langParam = searchParams.get('lang')
 
-  // Check if the referer contains lang=en
-  const isEnglish = referer.includes('lang=en') || referer.includes('lang%3Den')
+  let lang = 'es' // default
 
-  // Determine which image to serve
-  const lang = isEnglish ? 'en' : 'es'
+  if (langParam === 'en' || langParam === 'es') {
+    lang = langParam
+  } else {
+    // Fallback to checking referer if no query param
+    const referer = request.headers.get('referer') || ''
+    const isEnglish = referer.includes('lang=en') || referer.includes('lang%3Den')
+    lang = isEnglish ? 'en' : 'es'
+  }
+
   const imagePath = join(process.cwd(), 'public', 'images', `og_${lang}.png`)
 
   try {
@@ -19,7 +26,7 @@ export async function GET(request: NextRequest) {
     return new Response(imageBuffer, {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=31536000, immutable',
       },
     })
   } catch (error) {
@@ -30,7 +37,7 @@ export async function GET(request: NextRequest) {
     return new Response(fallbackBuffer, {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=31536000, immutable',
       },
     })
   }
