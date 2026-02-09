@@ -5,6 +5,7 @@ import {
   Database,
   BookOpen,
   Users,
+  Handshake,
   FileText,
   ExternalLink,
   CheckCircle,
@@ -402,7 +403,7 @@ export default function AboutPage() {
               className="flex items-center gap-4 mb-8"
             >
               <div className="w-12 h-12 rounded-xl bg-signal-blue/10 border border-signal-blue/30 flex items-center justify-center">
-                <Users className="w-6 h-6 text-signal-blue" />
+                <Handshake className="w-6 h-6 text-signal-blue" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold">
                 {t('about.allies.title')}

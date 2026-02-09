@@ -40,7 +40,7 @@
     },
     "scenarios": {
       "title": "Escenarios de Transformación",
-      "subtitle": "Probabilidades estimadas de diferentes episodios de transformación de régimen basadas en análisis de patrones históricos y señales actuales.",
+      "subtitle": "Probabilidades estimadas de diferentes episodios de transformación de régimen basados en análisis de élites y encuestas públicas.",
       "probability": "Probabilidad",
       "low": "baja",
       "mediumLow": "medio baja",
@@ -52,7 +52,7 @@
     },
     "trajectory": {
       "title": "Episodios de Transformación de Régimen",
-      "subtitle": "Evolución del Índice de Democracia Electoral en Venezuela (1900-2024)",
+      "subtitle": "Momentos en la historia venezolana donde han ocurrido episodios de democratización o autocratización",
       "dataSource": "Fuente: Base de datos ERT – Maerz et al. (2023), Instituto V-Dem",
       "episodes": "Episodios Históricos",
       "electoralDemocracyIndex": "Índice de Democracia Electoral",
@@ -93,19 +93,23 @@
         },
         {
           "question": "¿De dónde provienen los datos?",
-          "answer": "Nuestras fuentes principales incluyen V-Dem (Varieties of Democracy), el ERT Dataset de Maerz et al., DEED (Democratic Episodes Event Dataset), organizaciones de derechos humanos como Foro Penal y medios independientes venezolanos como Efecto Cocuyo, El Pitazo y Runrunes."
+          "answer": "Nuestras fuentes principales incluyen el Instituto V-Dem, la base de datos ERT, la base de datos DEED (Eventos de Erosión Democrática), organizaciones de derechos humanos como Foro Penal y medios de comunicación independientes venezolanos."
         },
         {
           "question": "¿Las probabilidades son predicciones?",
-          "answer": "No. Las probabilidades presentadas son estimaciones analíticas basadas en patrones históricos de transiciones de régimen a nivel global. No constituyen predicciones ni pronósticos. Los eventos políticos son inherentemente impredecibles."
+          "answer": "No. Las probabilidades presentadas son estimaciones analíticas basadas en análisis de expertos y encuestas públicas. No constituyen predicciones ni pronósticos. Los eventos políticos son inherentemente impredecibles."
         },
         {
           "question": "¿Con qué frecuencia se actualiza la información?",
-          "answer": "El feed de noticias se actualiza continuamente. Los indicadores de presos políticos se actualizan semanalmente según los reportes de organizaciones de derechos humanos. Los escenarios se revisan mensualmente."
+          "answer": "El feed de noticias se actualiza continuamente. Los indicadores de presos políticos se actualizan semanalmente según los reportes de organizaciones de derechos humanos. Los escenarios se revisan a medida que ingresan respuestas a las encuestas."
         },
         {
           "question": "¿Umbral está afiliado a algún partido o movimiento?",
           "answer": "No. Umbral es una plataforma independiente dedicada al análisis de datos. No promovemos ninguna agenda política específica ni estamos afiliados a partidos, gobiernos u organizaciones políticas."
+        },
+        {
+          "question": "¿Cómo puedo citar o colaborar con el proyecto?",
+          "answer": "Para citar Umbral, por favor utilice nuestra URL <a href=\"https://umbral.watch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">umbral.watch</a>. Para consultas de medios o investigación, envíe un correo electrónico a <a href=\"mailto:hi@pablohernandezb.dev\" class=\"text-signal-teal hover:underline\">hi@pablohernandezb.dev</a>. Si este proyecto te sirve de ayuda y quieres colaborar, puedes <a href=\"https://buymeacoffee.com/pablohernandezb\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">comprarnos un café</a>."
         }
       ]
     }

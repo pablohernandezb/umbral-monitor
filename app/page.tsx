@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -23,7 +23,11 @@ import {
   Mars,
   Venus,
   MoveDown,
-  MoveUp
+  MoveUp,
+  CircleQuestionMark,
+  SquareActivity,
+  ChartArea,
+  MessageCircleWarning
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
@@ -50,7 +54,7 @@ import type {
   NewsItem, 
   PoliticalPrisoner,
   PrisonerByOrganization,
-  HistoricalEpisode 
+  HistoricalEpisode
 } from '@/types'
 
 // Animation variants
@@ -79,6 +83,10 @@ export default function LandingPage() {
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
+
+  // Refs for scrolling
+  const scenarioCardsRef = useRef<HTMLDivElement>(null)
+  const scenarioTimelineRef = useRef<HTMLDivElement>(null)
 
   // Load data on mount
   useEffect(() => {
@@ -116,6 +124,19 @@ export default function LandingPage() {
     loadData()
   }, [])
 
+  // Scroll to timeline when scenario is selected, scroll to cards when closed
+  useEffect(() => {
+    if (activeScenarioId && scenarioTimelineRef.current) {
+      // Scroll to timeline when a scenario is selected
+      setTimeout(() => {
+        scenarioTimelineRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        })
+      }, 100) // Small delay to let the timeline render
+    }
+  }, [activeScenarioId])
+
   // FAQ items from translations
   const faqItems = [
     { question: t('landing.faq.items.0.question'), answer: t('landing.faq.items.0.answer') },
@@ -123,6 +144,7 @@ export default function LandingPage() {
     { question: t('landing.faq.items.2.question'), answer: t('landing.faq.items.2.answer') },
     { question: t('landing.faq.items.3.question'), answer: t('landing.faq.items.3.answer') },
     { question: t('landing.faq.items.4.question'), answer: t('landing.faq.items.4.answer') },
+    { question: t('landing.faq.items.5.question'), answer: t('landing.faq.items.5.answer') },
   ]
 
   // Calculate days since Maduro's and Cilia's capture 
@@ -214,6 +236,21 @@ export default function LandingPage() {
           ============================================================ */}
       <section className="section relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+              <SquareActivity className="w-6 h-6 text-signal-teal" />
+              {t('landing.scenarios.title')}
+            </h2>
+            <p className="section-subtitle mx-auto">
+              {t('landing.scenarios.subtitle')}
+            </p>
+          </motion.div>
           {/* Section header - moved inside the terminal */}
           <motion.div
             initial="hidden"
@@ -224,7 +261,7 @@ export default function LandingPage() {
           >
 
 
-            <div className="bg-umbral-charcoal/80 border border-umbral-ash rounded-xl overflow-hidden relative">
+            <div ref={scenarioCardsRef} className="bg-umbral-charcoal/80 border border-umbral-ash rounded-xl overflow-hidden relative">
               {/* Faux code background */}
               <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
                 <pre className="text-[10px] leading-tight font-mono text-signal-teal p-4 whitespace-pre select-none">
@@ -272,8 +309,8 @@ export default function LandingPage() {
                 </div>
                 <p className="text-xs text-umbral-muted uppercase tracking-wider font-mono">
                   {locale === 'es' 
-                    ? 'PROBABILIDADES DE OCURRENCIA DE EPISODIOS DE TRANSFORMACIÓN DE RÉGIMEN'
-                    : 'REGIME TRANSFORMATION EPISODE OCCURRENCE PROBABILITIES'
+                    ? 'HAZ CLICK EN UN ESCENARIO PARA VER SU LÍNEA DE TIEMPO DE EVENTOS'
+                    : 'CLICK ON A SCENARIO TO SEE ITS TIMELINE OF EVENTS'
                   }
                 </p>
               </div>
@@ -327,11 +364,17 @@ export default function LandingPage() {
               const timelineData = activeScenario ? getScenarioTimeline(activeScenario.key) : null
 
               return activeScenario && timelineData ? (
-                <div className="mt-4">
+                <div ref={scenarioTimelineRef} className="mt-4">
                   <ScenarioTimeline
                     scenario={activeScenario}
                     phases={timelineData.phases}
-                    onClose={() => setActiveScenarioId(null)}
+                    onClose={() => {
+                      scenarioCardsRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      })
+                      setTimeout(() => setActiveScenarioId(null), 500)
+                    }}
                   />
                 </div>
               ) : null
@@ -364,11 +407,24 @@ export default function LandingPage() {
             variants={fadeInUp}
             className="text-center mb-8"
           >
-            <h2 className="section-title mb-4">
+            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+              <ChartArea className="w-6 h-6 text-signal-blue" />
               {t('landing.trajectory.title')}
             </h2>
             <p className="section-subtitle mx-auto">
-              {t('landing.trajectory.subtitle')}
+              {locale === 'es' ? (
+                <>
+                  Momentos en la historia venezolana donde han ocurrido episodios de{' '}
+                  <span className="text-signal-blue font-semibold">democratización</span> o{' '}
+                  <span className="text-signal-red font-semibold">autocratización</span>
+                </>
+              ) : (
+                <>
+                  Moments in Venezuelan history where episodes of{' '}
+                  <span className="text-signal-blue font-semibold">democratization</span> or{' '}
+                  <span className="text-signal-red font-semibold">autocratization</span> have occurred
+                </>
+              )}
             </p>
           </motion.div>
 
@@ -684,7 +740,8 @@ export default function LandingPage() {
             variants={fadeInUp}
             className="text-center mb-8"
           >
-            <h2 className="section-title mb-4">
+            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+              <CircleQuestionMark className="w-5 h-5 text-signal-amber" />
               {t('landing.faq.title')}
             </h2>
           </motion.div>
@@ -710,19 +767,24 @@ export default function LandingPage() {
             className="card p-8 md:p-12 border-signal-teal/30"
           >
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              <MessageCircleWarning className="w-7 h-7 text-signal-teal inline-block mr-2 mb-2" />
               {locale === 'es' 
-                ? '¿Quieres acceso temprano?' 
-                : 'Want early access?'
+                ? 'Haz oír tu voz' 
+                : 'Make your voice heard'
               }
             </h3>
             <p className="text-umbral-muted mb-6 max-w-xl mx-auto">
               {locale === 'es'
-                ? 'Únete a nuestro programa beta y ayúdanos a construir herramientas de monitoreo democrático.'
-                : 'Join our beta program and help us build democratic monitoring tools.'
+                ? 'Súmate a Umbral y ayuda al monitoreo dando tu opinión.'
+                : 'Join Umbral and support monitoring by sharing your insights.'
               }
             </p>
-            <Link href="/about" className="btn btn-primary px-8 py-3 text-base">
-              {t('common.donateToTheProject')}
+            <Link href="#" className="btn btn-primary px-8 py-3 text-base">
+              {locale === 'es'
+                ? 'Participa'
+                : 'Participate'
+              }
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         </div>

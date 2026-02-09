@@ -1,6 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 // Import translations
 import esTranslations from './es/common.json'
@@ -27,7 +28,12 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, defaultLocale = 'es' }: I18nProviderProps) {
-  const [locale, setLocale] = useState<Locale>(defaultLocale)
+  const searchParams = useSearchParams()
+  const urlLang = searchParams.get('lang') as Locale | null
+
+  // Set initial locale from URL parameter or default
+  const initialLocale = (urlLang === 'es' || urlLang === 'en') ? urlLang : defaultLocale
+  const [locale, setLocale] = useState<Locale>(initialLocale)
 
   const t = useCallback((key: string, params?: Record<string, string | number>): string => {
     const keys = key.split('.')

@@ -46,9 +46,10 @@ export function FAQAccordion({ items, className }: FAQAccordionProps) {
             )}
           >
             <div className="px-5 pb-4 pt-0">
-              <p className="text-sm text-umbral-muted leading-relaxed">
-                {item.answer}
-              </p>
+              <p
+                className="text-sm text-umbral-muted leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: item.answer }}
+              />
             </div>
           </div>
         </div>

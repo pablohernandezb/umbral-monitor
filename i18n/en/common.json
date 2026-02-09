@@ -40,7 +40,7 @@
     },
     "scenarios": {
       "title": "Transformation Scenarios",
-      "subtitle": "Estimated probabilities of different regime transformation episodes based on historical pattern analysis and current signals.",
+      "subtitle": "Estimated probabilities of different regime transformation episodes based on elite analysis and public surveys.",
       "probability": "Probability",
       "low": "low",
       "mediumLow": "medium low",
@@ -52,7 +52,7 @@
     },
     "trajectory": {
       "title": "Episodes of Regime Transformation",
-      "subtitle": "Evolution of the Electoral Democracy Index in Venezuela (1900-2024)",
+      "subtitle": "Moments in Venezuelan history where episodes of democratization or autocratization have occurred",
       "dataSource": "Source: ERT Dataset – Maerz et al. (2023), V-Dem Institute",
       "episodes": "Historical Episodes",
       "electoralDemocracyIndex": "Electoral Democracy Index",
@@ -93,19 +93,23 @@
         },
         {
           "question": "Where does the data come from?",
-          "answer": "Our main sources include V-Dem (Varieties of Democracy), the ERT Dataset by Maerz et al., DEED (Democratic Episodes Event Dataset), human rights organizations like Foro Penal, and independent Venezuelan media such as Efecto Cocuyo, El Pitazo, and Runrunes."
+          "answer": "Our main sources include V-Dem Institute, the ERT Dataset, the DEED dataset (Democratic Erosions Event), human rights organizations like Foro Penal, and independent Venezuelan media."
         },
         {
           "question": "Are the probabilities predictions?",
-          "answer": "No. The probabilities presented are analytical estimates based on historical patterns of regime transitions globally. They do not constitute predictions or forecasts. Political events are inherently unpredictable."
+          "answer": "No. The probabilities presented are analytical estimates based on expert analysis and public opinion polls. They are not predictions or forecasts. Political events are inherently unpredictable."
         },
         {
           "question": "How often is the information updated?",
-          "answer": "The news feed is updated continuously. Political prisoner indicators are updated weekly based on human rights organization reports. Scenarios are reviewed monthly."
+          "answer": "The news feed is continuously updated. The political prisoner indicators are updated weekly based on reports from human rights organizations. Scenarios are revised as survey responses are received."
         },
         {
           "question": "Is Umbral affiliated with any party or movement?",
           "answer": "No. Umbral is an independent data analysis platform. We do not promote any specific political agenda nor are we affiliated with parties, governments, or political organizations."
+        },
+        {
+        "question": "How can I cite or collaborate with the project?",
+        "answer": "To cite Umbral, please use our URL <a href=\"https://umbral.watch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">umbral.watch</a>. For media or research inquiries, email <a href=\"mailto:hi@pablohernandezb.dev\" class=\"text-signal-teal hover:underline\">hi@pablohernandezb.dev</a>. If you find this project helpful and would like to collaborate, you can <a href=\"https://buymeacoffee.com/pablohernandezb\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">buy us a coffee</a>."
         }
       ]
     }
