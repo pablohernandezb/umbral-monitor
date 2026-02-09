@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description: 'Plataforma analítica independiente que monitorea las dinámicas de transformación de régimen en Venezuela.',
     images: [
       {
-        url: '/api/og',
+        url: '/images/og.png',
         width: 1200,
         height: 630,
         alt: 'Umbral - Monitor de Transformación de Régimen',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Umbral | Monitor de Transformación de Régimen',
     description: 'Plataforma analítica independiente que monitorea las dinámicas de transformación de régimen en Venezuela.',
-    images: ['/api/og'],
+    images: ['/images/og.png'],
   },
   robots: {
     index: true,
