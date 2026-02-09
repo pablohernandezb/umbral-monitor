@@ -188,6 +188,153 @@
       "description": "The regime consolidates"
     }
   },
+  "scenarioPhases": {
+    "democraticTransition": {
+      "phases": [
+        {
+          "phase": "Phase 1 - Internal Erosion",
+          "title": "Fracture within the ruling elite",
+          "description": "Internal divisions between moderate and radical factions weaken the regime's cohesion."
+        },
+        {
+          "phase": "Phase 2 - Popular Pressure",
+          "title": "Sustained protests and social pressure",
+          "description": "Growing citizen mobilizations demand democratic opening and respect for fundamental rights."
+        },
+        {
+          "phase": "Phase 3 - Negotiation",
+          "title": "Mediation and negotiation",
+          "description": "International and national actors facilitate a dialogue process between government and opposition."
+        },
+        {
+          "phase": "Phase 4 - Agreement",
+          "title": "Transition agreement",
+          "description": "A timeline for free elections with guarantees for all parties is established."
+        },
+        {
+          "phase": "Phase 5 - Consolidation",
+          "title": "Free and fair elections",
+          "description": "Elections are held with international observation and results are recognized."
+        }
+      ]
+    },
+    "preemptedDemocraticTransition": {
+      "phases": [
+        {
+          "phase": "Phase 1 - Tactical Opening",
+          "title": "Initial controlled opening",
+          "description": "The regime allows limited liberalization to relieve internal and external pressure."
+        },
+        {
+          "phase": "Phase 2 - Emerging Opposition",
+          "title": "Rise of organized opposition",
+          "description": "Opposition groups gain strength and articulate concrete democratic demands."
+        },
+        {
+          "phase": "Phase 3 - Counteroffensive",
+          "title": "Selective repression",
+          "description": "The regime neutralizes key opposition leaders through judicial persecution or forced exile."
+        },
+        {
+          "phase": "Phase 4 - Authoritarian Consolidation",
+          "title": "Cooptation of institutions",
+          "description": "Electoral, judicial, and media bodies are captured to ensure control."
+        },
+        {
+          "phase": "Phase 5 - Regression",
+          "title": "Closing of civic space",
+          "description": "The granted freedoms are reversed and total control is reestablished."
+        }
+      ]
+    },
+    "stabilizedElectoralAutocracy": {
+      "phases": [
+        {
+          "phase": "Phase 1 - Electoral Simulation",
+          "title": "Recurring controlled elections",
+          "description": "Periodic elections are held with predetermined results to maintain a democratic facade."
+        },
+        {
+          "phase": "Phase 2 - Elimination of Alternatives",
+          "title": "Neutralization of the opposition",
+          "description": "Opposition parties are systematically disqualified, fragmented, or co-opted."
+        },
+        {
+          "phase": "Phase 3 - Information Hegemony",
+          "title": "Total media control",
+          "description": "Independent media are closed or controlled; the official narrative dominates public space."
+        },
+        {
+          "phase": "Phase 4 - External Accommodation",
+          "title": "Partial international legitimation",
+          "description": "Some international actors accept the status quo due to geopolitical or economic interests."
+        },
+        {
+          "phase": "Phase 5 - Consolidation",
+          "title": "Stabilization through clientelism",
+          "description": "Selective distribution of resources maintains the loyalty of key sectors."
+        }
+      ]
+    },
+    "revertedLiberalization": {
+      "phases": [
+        {
+          "phase": "Phase 1 - Democratic Opportunity",
+          "title": "Window of political opening",
+          "description": "Favorable conditions allow advances in civil liberties and political participation."
+        },
+        {
+          "phase": "Phase 2 - Limited Reformism",
+          "title": "Partial institutional reforms",
+          "description": "Changes are implemented in the legal framework but without altering fundamental power structures."
+        },
+        {
+          "phase": "Phase 3 - Obstruction",
+          "title": "Resistance of the state apparatus",
+          "description": "Security forces and bureaucracy block reforms that threaten their privileges."
+        },
+        {
+          "phase": "Phase 4 - Pretext for Reversion",
+          "title": "Economic or security crisis",
+          "description": "A real or fabricated emergency justifies the rollback of granted freedoms."
+        },
+        {
+          "phase": "Phase 5 - Complete Rollback",
+          "title": "Restoration of authoritarian control",
+          "description": "Reforms are annulled and the previous governance model is reestablished."
+        }
+      ]
+    },
+    "regressedAutocracy": {
+      "phases": [
+        {
+          "phase": "Phase 1 - Absolute Power",
+          "title": "Extreme concentration of power",
+          "description": "The leader eliminates all institutional checks and completely personalizes the exercise of power."
+        },
+        {
+          "phase": "Phase 2 - State Terror",
+          "title": "Systematic repression",
+          "description": "The persecution of dissidents, journalists, and human rights defenders intensifies."
+        },
+        {
+          "phase": "Phase 3 - International Pariah",
+          "title": "International isolation",
+          "description": "Sanctions and international condemnations deepen the regime's isolation."
+        },
+        {
+          "phase": "Phase 4 - Social Collapse",
+          "title": "Humanitarian crisis",
+          "description": "Economic and social deterioration generates a humanitarian emergency with mass migration."
+        },
+        {
+          "phase": "Phase 5 - Critical Point",
+          "title": "Failed state or intervention",
+          "description": "The regime loses effective governance capacity or faces unsustainable external pressure."
+        }
+      ]
+    }
+  },
 "historicalEpisodes": {
     "revertedLiberalization": {
       "name": "Reverted Liberalization",
