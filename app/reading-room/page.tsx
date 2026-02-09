@@ -174,7 +174,7 @@ export default function ReadingRoomPage() {
 
       {/* Filters section */}
       <section className="sticky top-16 z-40 bg-umbral-black/90 backdrop-blur-md border-b border-umbral-ash">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
@@ -393,13 +393,16 @@ export default function ReadingRoomPage() {
             </h3>
             <p className="text-umbral-muted mb-6 max-w-xl mx-auto">
               {locale === 'es'
-                ? 'Estamos siempre buscando expandir nuestro archivo con recursos de calidad sobre Venezuela y transiciones de régimen.'
-                : "We're always looking to expand our archive with quality resources on Venezuela and regime transitions."
+                ? 'Estamos siempre buscando expandir nuestro archivo con recursos de calidad sobre Venezuela, democracia, autoritarismo y transiciones de régimen.'
+                : "We're always looking to expand our archive with quality resources on Venezuela, democracy, authoritarianism, and regime transitions."
               }
             </p>
-            <button className="btn btn-primary">
+            <a
+              href="mailto:hi@pablohernandezb.dev?subject=Suggestion for Reading Room"
+              className="btn btn-primary"
+            >
               {locale === 'es' ? 'Sugerir un recurso' : 'Suggest a resource'}
-            </button>
+            </a>
           </motion.div>
         </div>
       </section>

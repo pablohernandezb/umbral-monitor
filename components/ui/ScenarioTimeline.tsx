@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { X } from 'lucide-react'
+import { useState, forwardRef } from 'react'
+import { X, Info } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { cn, getProbabilityColor } from '@/lib/utils'
 import type { Scenario } from '@/types'
@@ -13,7 +13,8 @@ interface ScenarioTimelineProps {
   onClose: () => void
 }
 
-export function ScenarioTimeline({ scenario, phases, onClose }: ScenarioTimelineProps) {
+export const ScenarioTimeline = forwardRef<HTMLDivElement, ScenarioTimelineProps>(
+  function ScenarioTimeline({ scenario, phases, onClose }, ref) {
   const { t } = useTranslation()
   const [hoveredStep, setHoveredStep] = useState<number | null>(null)
 
@@ -30,7 +31,8 @@ export function ScenarioTimeline({ scenario, phases, onClose }: ScenarioTimeline
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-6 py-4 border-b border-umbral-ash"
+        ref={ref}
+        className="flex items-center justify-between px-6 py-4 border-b border-umbral-ash scroll-mt-32"
         style={{
           background: `linear-gradient(135deg, ${color}08, transparent)`,
         }}
@@ -137,6 +139,21 @@ export function ScenarioTimeline({ scenario, phases, onClose }: ScenarioTimeline
           })}
         </div>
       </div>
+
+      {/* Disclaimer */}
+      <div
+        className="px-6 py-4 border-t border-umbral-ash/50"
+        style={{
+          background: `linear-gradient(135deg, ${color}05, transparent)`,
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <Info className="w-4 h-4 text-umbral-muted flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-umbral-muted leading-relaxed">
+            {t('scenarios.timeline.disclaimer')}
+          </p>
+        </div>
+      </div>
     </div>
   )
-}
+})

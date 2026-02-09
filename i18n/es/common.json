@@ -160,7 +160,7 @@
   },
   "readingRoom": {
     "title": "Sala de Lectura",
-    "subtitle": "Archivo analítico curado sobre Venezuela y transiciones de régimen",
+    "subtitle": "Archivo analítico curado sobre Venezuela, democracia, autoritarismo y transiciones de régimen",
     "filters": {
       "all": "Todos",
       "books": "Libros",
@@ -201,6 +201,9 @@
     "stabilizedElectoralAutocracy": {
       "name": "Autocracia Electoral Estabilizada",
       "description": "El Branch con esteroides: nuevo equilibrio autoritario"
+    },
+    "timeline": {
+      "disclaimer": "Estos eventos están basados en experiencias previas tanto en el país como a nivel mundial y no representan una predicción de lo que va a suceder."
     }
   },
   "scenarioPhases": {

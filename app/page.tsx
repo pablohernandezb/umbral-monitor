@@ -129,10 +129,16 @@ export default function LandingPage() {
     if (activeScenarioId && scenarioTimelineRef.current) {
       // Scroll to timeline when a scenario is selected
       setTimeout(() => {
-        scenarioTimelineRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        })
+        const element = scenarioTimelineRef.current
+        if (element) {
+          const elementPosition = element.getBoundingClientRect().top
+          const offsetPosition = elementPosition + window.pageYOffset - 100 // 100px offset for header
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+        }
       }, 100) // Small delay to let the timeline render
     }
   }, [activeScenarioId])
@@ -234,7 +240,7 @@ export default function LandingPage() {
       {/* ============================================================
           SCENARIOS SECTION
           ============================================================ */}
-      <section className="section relative">
+      <section id="scenarios" className="section relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div 
             initial="hidden"
@@ -364,8 +370,9 @@ export default function LandingPage() {
               const timelineData = activeScenario ? getScenarioTimeline(activeScenario.key) : null
 
               return activeScenario && timelineData ? (
-                <div ref={scenarioTimelineRef} className="mt-4">
+                <div className="mt-4">
                   <ScenarioTimeline
+                    ref={scenarioTimelineRef}
                     scenario={activeScenario}
                     phases={timelineData.phases}
                     onClose={() => {
@@ -398,7 +405,7 @@ export default function LandingPage() {
       {/* ============================================================
           REGIME TRAJECTORY SECTION
           ============================================================ */}
-      <section className="section bg-umbral-charcoal/30">
+      <section id="trajectory" className="section bg-umbral-charcoal/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial="hidden"
@@ -519,7 +526,7 @@ export default function LandingPage() {
       {/* ============================================================
           NEWS FEED SECTION
           ============================================================ */}
-      <section className="section">
+      <section id="news" className="section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial="hidden"
@@ -580,7 +587,7 @@ export default function LandingPage() {
       {/* ============================================================
           POLITICAL PRISONERS SECTION
           ============================================================ */}
-      <section className="section bg-umbral-charcoal/30">
+      <section id="prisoners" className="section bg-umbral-charcoal/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial="hidden"
@@ -731,7 +738,7 @@ export default function LandingPage() {
       {/* ============================================================
           FAQ SECTION
           ============================================================ */}
-      <section className="section">
+      <section id="faq" className="section">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial="hidden"

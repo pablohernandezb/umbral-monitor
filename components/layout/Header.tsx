@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Globe, TrendingUpDown, Coffee, TrendingUpDownIcon } from 'lucide-react'
+import { Menu, X, Globe, Coffee, HelpCircle, BookOpen } from 'lucide-react'
 import { useI18n, useTranslation, type Locale } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -14,7 +14,9 @@ export function Header() {
   const pathname = usePathname()
 
   const navigation = [
-    { name: locale === 'es' ? 'Episodios' : 'Episodes', href: '/how-did-we-get-here' },
+    { name: locale === 'es' ? 'Monitor' : 'Monitor', href: '/#scenarios' },
+    { name: locale === 'es' ? 'Episodios' : 'Episodes', href: '/#trajectory' },
+    { name: locale === 'es' ? 'Noticias' : 'News', href: '/#news' },
     { name: locale === 'es' ? 'Presos Políticos' : 'Political Prisoners', href: '/#prisoners' },
     { name: locale === 'es' ? 'Acerca' : 'About', href: '/about' },
   ]
@@ -67,6 +69,22 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+
+            {/* Icon buttons */}
+            <Link
+              href="/#faq"
+              className="p-2 text-umbral-light hover:text-white hover:bg-umbral-ash rounded-md transition-colors"
+              title={locale === 'es' ? 'Preguntas Frecuentes' : 'FAQ'}
+            >
+              <HelpCircle className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/reading-room"
+              className="p-2 text-umbral-light hover:text-white hover:bg-umbral-ash rounded-md transition-colors"
+              title={locale === 'es' ? 'Sala de Lectura' : 'Reading Room'}
+            >
+              <BookOpen className="w-4 h-4" />
+            </Link>
           </div>
 
           {/* Right side buttons */}
@@ -124,6 +142,24 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+
+              {/* Icon links */}
+              <Link
+                href="/#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-umbral-light hover:text-white hover:bg-umbral-ash"
+              >
+                <HelpCircle className="w-4 h-4" />
+                {locale === 'es' ? 'Preguntas Frecuentes' : 'FAQ'}
+              </Link>
+              <Link
+                href="/reading-room"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-umbral-light hover:text-white hover:bg-umbral-ash"
+              >
+                <BookOpen className="w-4 h-4" />
+                {locale === 'es' ? 'Sala de Lectura' : 'Reading Room'}
+              </Link>
             </div>
           </div>
         )}

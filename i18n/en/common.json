@@ -160,7 +160,7 @@
   },
   "readingRoom": {
     "title": "Reading Room",
-    "subtitle": "Curated analytical archive on Venezuela and regime transitions",
+    "subtitle": "Curated analytical archive on Venezuela, democracy, authoritarianism, and regime transitions",
     "filters": {
       "all": "All",
       "books": "Books",
@@ -201,6 +201,9 @@
     "stabilizedElectoralAutocracy": {
       "name": "Stabilized Electoral Autocracy",
       "description": "The branch on steroids: new authoritarian equilibrium"
+    },
+    "timeline": {
+      "disclaimer": "These events are based on previous experiences both in the country and worldwide and do not represent a prediction of what is going to happen."
     }
   },
   "scenarioPhases": {
