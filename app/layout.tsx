@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import { I18nProvider } from '@/i18n'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -69,27 +70,29 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-umbral-black text-umbral-light antialiased">
-        <I18nProvider defaultLocale="es">
-          {/* Background grid pattern */}
-          <div className="fixed inset-0 bg-grid opacity-50 pointer-events-none" />
-          
-          {/* Gradient overlay */}
-          <div 
-            className="fixed inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at top, rgba(20, 184, 166, 0.05) 0%, transparent 50%)',
-            }}
-          />
-          
-          {/* Main content */}
-          <div className="relative z-10 flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 pt-16">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </I18nProvider>
+        <Suspense fallback={null}>
+          <I18nProvider defaultLocale="es">
+            {/* Background grid pattern */}
+            <div className="fixed inset-0 bg-grid opacity-50 pointer-events-none" />
+
+            {/* Gradient overlay */}
+            <div
+              className="fixed inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at top, rgba(20, 184, 166, 0.05) 0%, transparent 50%)',
+              }}
+            />
+
+            {/* Main content */}
+            <div className="relative z-10 flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1 pt-16">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </I18nProvider>
+        </Suspense>
       </body>
     </html>
   )
