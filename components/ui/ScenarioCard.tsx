@@ -45,7 +45,11 @@ export function ScenarioCard({ scenario, className, onClick, isActive }: Scenari
         'group',
         'flex flex-col justify-between',
         onClick && 'cursor-pointer',
-        isActive && 'border-signal-teal bg-umbral-slate/30',
+        isActive && 'bg-umbral-slate/30',
+        isActive && scenario.status === 'critical' && '!border-signal-red',
+        isActive && scenario.status === 'warning' && '!border-signal-amber',
+        isActive && scenario.status === 'stable' && '!border-signal-teal',
+        isActive && scenario.status === 'neutral' && '!border-umbral-muted',
         className
       )}
     >

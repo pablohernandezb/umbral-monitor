@@ -130,9 +130,20 @@
       "media": "Medios",
       "humanRights": "Derechos Humanos"
     },
+    "allies": {
+      "title": "Aliados",
+      "description": "Organizaciones que apoyan la construcción de herramientas digitales para la democracia y el empoderamiento ciudadano."
+    },
     "acknowledgements": {
       "title": "Agradecimientos",
       "content": "Este proyecto se basa en el trabajo de investigadores, periodistas y defensores de derechos humanos que documentan rigurosamente la realidad venezolana. Agradecemos especialmente a los equipos de V-Dem, a los autores del ERT Dataset, y a las organizaciones de la sociedad civil venezolana."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "description": "¿Preguntas, sugerencias o simplemente quieres conversar sobre transformaciones de régimen? ¡Nos encantaría saber de ti!",
+      "email": "Correo electrónico",
+      "website": "Sitio web",
+      "responseTime": "Normalmente respondemos en 24-48 horas. Ten en cuenta que somos un equipo pequeño trabajando en este proyecto en nuestro tiempo libre."
     }
   },
   "howDidWeGetHere": {
@@ -159,7 +170,7 @@
     "english": "Inglés"
   },
   "footer": {
-    "disclaimer": "Umbral es un proyecto independiente de análisis de datos. La información presentada no constituye asesoría política ni predicciones.",
+    "disclaimer": "Umbral es un proyecto independiente de análisis de datos para monitorear transformaciones de régimen. La información presentada no constituye asesoría política ni predicciones.",
     "openData": "Datos abiertos",
     "methodology": "Metodología",
     "contact": "Contacto",
