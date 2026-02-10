@@ -9,11 +9,13 @@ const isMockMode = !supabaseUrl || supabaseUrl === 'https://your-project.supabas
 
 // Create Supabase client
 // In mock mode, this will fail gracefully and we'll use local data instead
-export const supabase = isMockMode 
-  ? null 
+export const supabase = isMockMode
+  ? null
   : createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false, // For public read-only access
+        persistSession: true, // Enable session persistence for authenticated operations
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
       realtime: {
         params: {
@@ -90,22 +92,23 @@ CREATE INDEX idx_news_feed_category ON news_feed(category);
 -- ============================================================
 CREATE TABLE IF NOT EXISTS political_prisoners (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  total_count INTEGER NOT NULL,
-  releases_30d INTEGER NOT NULL DEFAULT 0,
+  date DATE NOT NULL,
+  total INTEGER NOT NULL,
+  released INTEGER DEFAULT 0,
   civilians INTEGER DEFAULT 0,
   military INTEGER DEFAULT 0,
   men INTEGER DEFAULT 0,
   women INTEGER DEFAULT 0,
   adults INTEGER DEFAULT 0,
   minors INTEGER DEFAULT 0,
-  unknown INTEGER DEFAULT 0,
   "foreign" INTEGER DEFAULT 0,
-  source TEXT NOT NULL,
-  data_date DATE NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  unknown INTEGER DEFAULT 0,
+  source TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_political_prisoners_date ON political_prisoners(data_date DESC);
+CREATE INDEX idx_political_prisoners_date ON political_prisoners(date DESC);
 
 -- ============================================================
 -- PRISONERS_BY_ORGANIZATION TABLE
@@ -115,11 +118,12 @@ CREATE TABLE IF NOT EXISTS prisoners_by_organization (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization TEXT NOT NULL,
   count INTEGER NOT NULL,
-  data_date DATE NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  date DATE NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_prisoners_by_org_date ON prisoners_by_organization(data_date DESC);
+CREATE INDEX idx_prisoners_by_org_date ON prisoners_by_organization(date DESC);
 
 -- ============================================================
 -- EVENTS_DEED TABLE
@@ -221,6 +225,59 @@ CREATE TRIGGER scenarios_updated_at
   BEFORE UPDATE ON scenarios
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
+
+-- ============================================================
+-- AUTHENTICATED WRITE POLICIES
+-- Allow authenticated users to manage content
+-- ============================================================
+
+-- Political Prisoners policies
+CREATE POLICY "Authenticated insert political_prisoners"
+  ON political_prisoners FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated update political_prisoners"
+  ON political_prisoners FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete political_prisoners"
+  ON political_prisoners FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- Prisoners by Organization policies
+CREATE POLICY "Authenticated insert prisoners_by_organization"
+  ON prisoners_by_organization FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated update prisoners_by_organization"
+  ON prisoners_by_organization FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete prisoners_by_organization"
+  ON prisoners_by_organization FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- Reading Room policies
+CREATE POLICY "Authenticated insert reading_room"
+  ON reading_room FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated update reading_room"
+  ON reading_room FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete reading_room"
+  ON reading_room FOR DELETE
+  TO authenticated
+  USING (true);
 `
 
 // Export for reference

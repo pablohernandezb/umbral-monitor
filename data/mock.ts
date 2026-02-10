@@ -397,8 +397,9 @@ export const mockNewsFeed: NewsItem[] = [
 export const mockPoliticalPrisoners: PoliticalPrisoner[] = [
   {
     id: '1',
-    total_count: 687,
-    releases_30d: 368,
+    date: '2024-01-28',
+    total: 687,
+    released: 368,
     civilians: 505,
     military: 182,
     men: 600,
@@ -408,17 +409,17 @@ export const mockPoliticalPrisoners: PoliticalPrisoner[] = [
     foreign: 59,
     unknown: 51,
     source: 'Foro Penal',
-    data_date: '2024-01-28',
     created_at: '2024-01-15T00:00:00Z',
+    updated_at: '2024-01-15T00:00:00Z',
   },
 ]
 
 export const mockPrisonersByOrg: PrisonerByOrganization[] = [
-  { id: '1', organization: 'Foro Penal', count: 771, data_date: '2024-01-28', created_at: '2024-01-15T00:00:00Z' },
-  { id: '2', organization: 'CLIPPVE', count: 850, data_date: '2024-01-28', created_at: '2024-01-15T00:00:00Z' },
-  { id: '3', organization: 'Justicia Encuentro y Perdón', count: 780, data_date: '2024-01-28', created_at: '2024-01-15T00:00:00Z' },
-  { id: '4', organization: 'Realidad Helicoide', count: 650, data_date: '2024-01-28', created_at: '2024-01-15T00:00:00Z' },
-  { id: '5', organization: 'Plataforma Unitaria de Venezuela', count: 900, data_date: '2024-01-28', created_at: '2024-01-15T00:00:00Z' },
+  { id: '1', organization: 'Foro Penal', count: 771, date: '2024-01-28', created_at: '2024-01-15T00:00:00Z', updated_at: '2024-01-15T00:00:00Z' },
+  { id: '2', organization: 'CLIPPVE', count: 850, date: '2024-01-28', created_at: '2024-01-15T00:00:00Z', updated_at: '2024-01-15T00:00:00Z' },
+  { id: '3', organization: 'Justicia Encuentro y Perdón', count: 780, date: '2024-01-28', created_at: '2024-01-15T00:00:00Z', updated_at: '2024-01-15T00:00:00Z' },
+  { id: '4', organization: 'Realidad Helicoide', count: 650, date: '2024-01-28', created_at: '2024-01-15T00:00:00Z', updated_at: '2024-01-15T00:00:00Z' },
+  { id: '5', organization: 'Plataforma Unitaria de Venezuela', count: 900, date: '2024-01-28', created_at: '2024-01-15T00:00:00Z', updated_at: '2024-01-15T00:00:00Z' },
 ]
 
 // ============================================================

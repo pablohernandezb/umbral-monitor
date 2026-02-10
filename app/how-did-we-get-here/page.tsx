@@ -184,17 +184,30 @@ export default function HowDidWeGetHerePage() {
               </div>
 
               {loading ? (
-                <div className="h-[400px] flex items-center justify-center">
+                <div className="h-[200px] md:h-[400px] flex items-center justify-center">
                   <div className="animate-spin w-8 h-8 border-2 border-signal-teal border-t-transparent rounded-full" />
                 </div>
               ) : (
-                <TrajectoryChart 
-                  data={filteredHistory}
-                  episodes={historicalEpisodes}
-                  height={400}
-                  showEpisodes={false}
-                  onYearClick={handleYearClick}
-                />
+                <>
+                  <div className="block md:hidden">
+                    <TrajectoryChart
+                      data={filteredHistory}
+                      episodes={historicalEpisodes}
+                      height={200}
+                      showEpisodes={false}
+                      onYearClick={handleYearClick}
+                    />
+                  </div>
+                  <div className="hidden md:block">
+                    <TrajectoryChart
+                      data={filteredHistory}
+                      episodes={historicalEpisodes}
+                      height={400}
+                      showEpisodes={false}
+                      onYearClick={handleYearClick}
+                    />
+                  </div>
+                </>
               )}
 
               <p className="text-xs text-umbral-muted mt-4 text-center">
@@ -220,7 +233,7 @@ export default function HowDidWeGetHerePage() {
                   {locale === 'es' ? 'Años con eventos' : 'Years with events'}
                 </h3>
                 
-                <div className="space-y-1 max-h-[400px] overflow-y-auto no-scrollbar">
+                <div className="space-y-1 max-h-[100px] md:max-h-[300px] overflow-y-auto">
                   {yearsWithEvents.map((year) => {
                     const yearEvents = allEvents.filter(e => e.year === year)
                     const yearData = demBreakdownHistory.find(d => d.year === year)

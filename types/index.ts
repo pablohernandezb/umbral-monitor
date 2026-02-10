@@ -50,28 +50,33 @@ export interface NewsItem {
 
 export interface PoliticalPrisoner {
   id: string
-  total_count: number
-  releases_30d: number
+  date: string
+  total: number
+  released: number
   civilians: number
   military: number
   men: number
   women: number
   adults: number
   minors: number
-  unknown: number
   foreign: number
-  source: string
-  data_date: string
+  unknown: number
+  source: string | null
   created_at: string
+  updated_at: string
 }
 
 export interface PrisonerByOrganization {
   id: string
   organization: string
   count: number
-  data_date: string
+  date: string  // Changed from data_date for consistency
   created_at: string
+  updated_at: string  // Added for admin operations
 }
+
+// Alias for backward compatibility and clarity
+export type PrisonersByOrganization = PrisonerByOrganization
 
 export interface DEEDEvent {
   id: string

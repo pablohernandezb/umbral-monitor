@@ -153,7 +153,7 @@ export default function LandingPage() {
     { question: t('landing.faq.items.5.question'), answer: t('landing.faq.items.5.answer') },
   ]
 
-  // Calculate days since Maduro's and Cilia's capture 
+  // Calculate days since Maduro's and Cilia's extraction
   const daysSinceCapture = daysSince('2026-01-03')
 
   return (
@@ -250,7 +250,7 @@ export default function LandingPage() {
             className="text-center mb-8"
           >
             <h2 className="section-title mb-4 flex items-center justify-center gap-3">
-              <SquareActivity className="w-6 h-6 text-signal-teal" />
+              <SquareActivity className="w-7 h-7 text-signal-teal" />
               {t('landing.scenarios.title')}
             </h2>
             <p className="section-subtitle mx-auto">
@@ -414,8 +414,8 @@ export default function LandingPage() {
             variants={fadeInUp}
             className="text-center mb-8"
           >
-            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
-              <ChartArea className="w-6 h-6 text-signal-blue" />
+            <h2 className="section-title mb-4 inline-flex items-start gap-3 mx-auto">
+              <ChartArea className="w-7 h-7 mt-1 ml-2 text-signal-blue flex-shrink-0" />
               {t('landing.trajectory.title')}
             </h2>
             <p className="section-subtitle mx-auto">
@@ -443,16 +443,28 @@ export default function LandingPage() {
           >
             <div className="card p-4 md:p-6">
               {loading ? (
-                <div className="h-[400px] flex items-center justify-center">
+                <div className="h-[200px] md:h-[400px] flex items-center justify-center">
                   <div className="animate-spin w-8 h-8 border-2 border-signal-teal border-t-transparent rounded-full" />
                 </div>
               ) : (
-                <TrajectoryChart 
-                  data={regimeHistory}
-                  episodes={historicalEpisodes}
-                  height={400}
-                  showEpisodes={true}
-                />
+                <>
+                  <div className="block md:hidden">
+                    <TrajectoryChart
+                      data={regimeHistory}
+                      episodes={historicalEpisodes}
+                      height={200}
+                      showEpisodes={true}
+                    />
+                  </div>
+                  <div className="hidden md:block">
+                    <TrajectoryChart
+                      data={regimeHistory}
+                      episodes={historicalEpisodes}
+                      height={400}
+                      showEpisodes={true}
+                    />
+                  </div>
+                </>
               )}
               
               {/* Data source */}
@@ -614,18 +626,18 @@ export default function LandingPage() {
             {/* Main metrics */}
             <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
               <motion.div variants={fadeInUp}>
-                <MetricCard 
+                <MetricCard
                   label={t('landing.prisoners.total')}
-                  value={prisonerStats?.total_count || 711}
+                  value={prisonerStats?.total || 711}
                   trend={{ value: 23, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
                   size="large"
                 />
               </motion.div>
               
               <motion.div variants={fadeInUp}>
-                <MetricCard 
+                <MetricCard
                   label={t('landing.prisoners.releases30d')}
-                  value={prisonerStats?.releases_30d || 45}
+                  value={prisonerStats?.released || 45}
                   size="large"
                 />
               </motion.div>
@@ -724,7 +736,7 @@ export default function LandingPage() {
               <div className="mt-4 pt-4 border-t border-umbral-ash flex items-center justify-between">
                 <p className="text-xs text-umbral-muted flex items-center gap-2">
                   <Clock className="w-3 h-3" />
-                  {t('common.lastUpdated')}: {prisonerStats?.data_date || '2024-01-15'}
+                  {t('common.lastUpdated')}: {prisonerStats?.date || '2024-01-15'}
                 </p>
                 <p className="text-xs text-umbral-muted">
                   {t('common.sources')}: {prisonerStats?.source || 'Foro Penal, CLIPPVE'}
@@ -747,8 +759,8 @@ export default function LandingPage() {
             variants={fadeInUp}
             className="text-center mb-8"
           >
-            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
-              <CircleQuestionMark className="w-5 h-5 text-signal-amber" />
+            <h2 className="section-title mb-4 inline-flex items-start gap-3 mx-auto">
+              <CircleQuestionMark className="w-6 h-6 mt-1 ml-2 text-signal-amber flex-shrink-0" />
               {t('landing.faq.title')}
             </h2>
           </motion.div>

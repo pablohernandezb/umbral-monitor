@@ -6,6 +6,7 @@ import type {
   NewsItem,
   PoliticalPrisoner,
   PrisonerByOrganization,
+  PrisonersByOrganization,
   DEEDEvent,
   ReadingRoomItem,
   HistoricalEpisode,
@@ -335,4 +336,269 @@ export function subscribeToScenarios(
   return () => {
     client.removeChannel(channel)
   }
+}
+
+// ============================================================
+// ADMIN WRITE OPERATIONS
+// Functions for authenticated users to create, update, delete content
+// ============================================================
+
+import { mockAdminState } from './mock-admin-state'
+
+// Political Prisoners CRUD
+export async function getAllPrisonerStats(): Promise<ApiResponse<PoliticalPrisoner[]>> {
+  if (IS_MOCK_MODE) {
+    return { data: mockAdminState.getAllPrisoners(), error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data, error } = await supabase
+    .from('political_prisoners')
+    .select('*')
+    .order('date', { ascending: false })
+
+  return { data: data as PoliticalPrisoner[] | null, error: error?.message || null }
+}
+
+export async function createPrisonerStats(
+  data: Omit<PoliticalPrisoner, 'id' | 'created_at' | 'updated_at'>
+): Promise<ApiResponse<PoliticalPrisoner>> {
+  if (IS_MOCK_MODE) {
+    const newPrisoner = mockAdminState.createPrisoner(data)
+    return { data: newPrisoner, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: created, error } = await supabase
+    .from('political_prisoners')
+    .insert(data)
+    .select()
+    .single()
+
+  return { data: created as PoliticalPrisoner | null, error: error?.message || null }
+}
+
+export async function updatePrisonerStats(
+  id: string,
+  data: Partial<PoliticalPrisoner>
+): Promise<ApiResponse<PoliticalPrisoner>> {
+  if (IS_MOCK_MODE) {
+    const updated = mockAdminState.updatePrisoner(id, data)
+    if (!updated) {
+      return { data: null, error: 'Record not found' }
+    }
+    return { data: updated, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: updated, error } = await supabase
+    .from('political_prisoners')
+    .update(data)
+    .eq('id', id)
+    .select()
+    .single()
+
+  return { data: updated as PoliticalPrisoner | null, error: error?.message || null }
+}
+
+export async function deletePrisonerStats(id: string): Promise<ApiResponse<null>> {
+  if (IS_MOCK_MODE) {
+    const success = mockAdminState.deletePrisoner(id)
+    if (!success) {
+      return { data: null, error: 'Record not found' }
+    }
+    return { data: null, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { error } = await supabase
+    .from('political_prisoners')
+    .delete()
+    .eq('id', id)
+
+  return { data: null, error: error?.message || null }
+}
+
+// Prisoners by Organization CRUD
+export async function getAllPrisonersByOrg(): Promise<ApiResponse<PrisonersByOrganization[]>> {
+  if (IS_MOCK_MODE) {
+    return { data: mockAdminState.getAllPrisonersByOrg(), error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data, error } = await supabase
+    .from('prisoners_by_organization')
+    .select('*')
+    .order('date', { ascending: false })
+
+  return { data: data as PrisonersByOrganization[] | null, error: error?.message || null }
+}
+
+export async function createPrisonerByOrg(
+  data: Omit<PrisonersByOrganization, 'id' | 'created_at' | 'updated_at'>
+): Promise<ApiResponse<PrisonersByOrganization>> {
+  if (IS_MOCK_MODE) {
+    const newRecord = mockAdminState.createPrisonerByOrg(data)
+    return { data: newRecord, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: created, error } = await supabase
+    .from('prisoners_by_organization')
+    .insert(data)
+    .select()
+    .single()
+
+  return { data: created as PrisonersByOrganization | null, error: error?.message || null }
+}
+
+export async function updatePrisonerByOrg(
+  id: string,
+  data: Partial<PrisonersByOrganization>
+): Promise<ApiResponse<PrisonersByOrganization>> {
+  if (IS_MOCK_MODE) {
+    const updated = mockAdminState.updatePrisonerByOrg(id, data)
+    if (!updated) {
+      return { data: null, error: 'Record not found' }
+    }
+    return { data: updated, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: updated, error } = await supabase
+    .from('prisoners_by_organization')
+    .update(data)
+    .eq('id', id)
+    .select()
+    .single()
+
+  return { data: updated as PrisonersByOrganization | null, error: error?.message || null }
+}
+
+export async function deletePrisonerByOrg(id: string): Promise<ApiResponse<null>> {
+  if (IS_MOCK_MODE) {
+    const success = mockAdminState.deletePrisonerByOrg(id)
+    if (!success) {
+      return { data: null, error: 'Record not found' }
+    }
+    return { data: null, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { error } = await supabase
+    .from('prisoners_by_organization')
+    .delete()
+    .eq('id', id)
+
+  return { data: null, error: error?.message || null }
+}
+
+// Reading Room CRUD
+export async function getAllReadingRoomItems(): Promise<ApiResponse<ReadingRoomItem[]>> {
+  if (IS_MOCK_MODE) {
+    return { data: mockAdminState.getAllReadingRoom(), error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data, error } = await supabase
+    .from('reading_room')
+    .select('*')
+    .order('year', { ascending: false })
+
+  return { data: data as ReadingRoomItem[] | null, error: error?.message || null }
+}
+
+export async function createReadingRoomItem(
+  data: Omit<ReadingRoomItem, 'id' | 'created_at'>
+): Promise<ApiResponse<ReadingRoomItem>> {
+  if (IS_MOCK_MODE) {
+    const newItem = mockAdminState.createReadingRoomItem(data)
+    return { data: newItem, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: created, error } = await supabase
+    .from('reading_room')
+    .insert(data)
+    .select()
+    .single()
+
+  return { data: created as ReadingRoomItem | null, error: error?.message || null }
+}
+
+export async function updateReadingRoomItem(
+  id: string,
+  data: Partial<ReadingRoomItem>
+): Promise<ApiResponse<ReadingRoomItem>> {
+  if (IS_MOCK_MODE) {
+    const updated = mockAdminState.updateReadingRoomItem(id, data)
+    if (!updated) {
+      return { data: null, error: 'Item not found' }
+    }
+    return { data: updated, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { data: updated, error } = await supabase
+    .from('reading_room')
+    .update(data)
+    .eq('id', id)
+    .select()
+    .single()
+
+  return { data: updated as ReadingRoomItem | null, error: error?.message || null }
+}
+
+export async function deleteReadingRoomItem(id: string): Promise<ApiResponse<null>> {
+  if (IS_MOCK_MODE) {
+    const success = mockAdminState.deleteReadingRoomItem(id)
+    if (!success) {
+      return { data: null, error: 'Item not found' }
+    }
+    return { data: null, error: null }
+  }
+
+  if (!supabase) {
+    return { data: null, error: 'Database not configured' }
+  }
+
+  const { error } = await supabase
+    .from('reading_room')
+    .delete()
+    .eq('id', id)
+
+  return { data: null, error: error?.message || null }
 }
