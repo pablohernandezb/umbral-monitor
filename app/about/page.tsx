@@ -230,7 +230,7 @@ export default function AboutPage() {
       </section>
 
       {/* Methodology */}
-      <section className="section">
+      <section id="methodology" className="section">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -479,7 +479,7 @@ export default function AboutPage() {
       </section>
 
       {/* Contact */}
-      <section className="section bg-umbral-charcoal/30">
+      <section id="contact" className="section bg-umbral-charcoal/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"

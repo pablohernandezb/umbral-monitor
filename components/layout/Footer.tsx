@@ -14,7 +14,7 @@ const CustomGradientIcon = ({ className = "w-5 h-5" }) => (
   );
 
 export function Footer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   return (
     <footer className="bg-umbral-charcoal border-t border-umbral-ash">
@@ -40,6 +40,16 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4">Recursos</h4>
             <ul className="space-y-2">
               <li>
+                <a href="/#scenarios" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('footer.monitor')}
+                </a>
+              </li>
+              <li>
+                <a href="/how-did-we-get-here" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('footer.howDidWeGetHere')}
+                </a>
+              </li>
+              <li>
                 <Link href="/about" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {t('nav.about')}
                 </Link>
@@ -49,16 +59,6 @@ export function Footer() {
                   {t('nav.readingRoom')}
                 </Link>
               </li>
-              <li>
-                <a href="#" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
-                  {t('footer.methodology')}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
-                  {t('footer.openData')}
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -67,12 +67,17 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
-                  {t('footer.privacy')}
+                <Link href="/privacy-terms" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {locale === 'es' ? 'Privacidad y Términos' : 'Privacy and Terms'}
+                </Link>
+              </li>
+              <li>
+                <a href="https://buymeacoffee.com/pablohernandezb" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('footer.support')}
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                <a href="/about#contact" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {t('footer.contact')}
                 </a>
               </li>

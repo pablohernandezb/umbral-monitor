@@ -12,7 +12,7 @@ import {
   Shield,
   Info,
   TrendingDown,
-  ArrowRight,
+  BookOpen,
   Zap
 } from 'lucide-react'
 import Link from 'next/link'
@@ -439,20 +439,20 @@ export default function HowDidWeGetHerePage() {
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">
                     {locale === 'es' 
-                      ? 'Un declive de 25 años' 
-                      : 'A 25-year decline'
+                      ? 'Un declive de 26 años' 
+                      : 'A 26-year decline'
                     }
                   </h3>
                   <p className="text-umbral-muted leading-relaxed">
                     {locale === 'es'
-                      ? `El Índice de Democracia Liberal de Venezuela cayó de 0.48 en 1998 a 0.04 en 2024, 
+                      ? `El Índice de Democracia Electoral de Venezuela cayó de 0.73 en 1998 a 0.19 en 2024, 
                          una reducción del 92%. Este declive gradual pero constante ilustra cómo 
                          la autocratización ocurre paso a paso, a través de eventos que individualmente 
-                         pueden parecer pequeños pero acumulativamente transforman el régimen.`
-                      : `Venezuela's Liberal Democracy Index fell from 0.48 in 1998 to 0.04 in 2024, 
+                         pueden parecer pequeños pero acumulativamente transforman el régimen lo que se denomina como Erosión Democrática.`
+                      : `Venezuela's Electoral Democracy Index fell from 0.73 in 1998 to 0.19 in 2024, 
                          a 92% reduction. This gradual but steady decline illustrates how 
                          autocratization occurs step by step, through events that individually 
-                         may seem small but cumulatively transform the regime.`
+                         may seem small but cumulatively transform the regime, which is known as Democratic Erosion.`
                     }
                   </p>
                 </div>
@@ -470,7 +470,7 @@ export default function HowDidWeGetHerePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-umbral-muted mb-6">
+            <p className="text-2xl text-umbral-muted mb-6">
               {locale === 'es'
                 ? '¿Quieres profundizar en el análisis?'
                 : 'Want to dive deeper into the analysis?'
@@ -478,10 +478,10 @@ export default function HowDidWeGetHerePage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/reading-room" className="btn btn-primary px-6 py-2.5">
+                <BookOpen className="mr-2 w-6 h-6" />
                 {locale === 'es' ? 'Sala de Lectura' : 'Reading Room'}
-                <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
-              <Link href="/about" className="btn btn-secondary px-6 py-2.5">
+              <Link href="/about#methodology" className="btn btn-secondary px-6 py-2.5">
                 {locale === 'es' ? 'Metodología' : 'Methodology'}
               </Link>
             </div>
