@@ -1,6 +1,6 @@
 'use client'
 
-import { ExternalLink, Clock, Zap, Landmark, Undo2, Vote, RotateCcw, ShieldOff, type LucideIcon } from 'lucide-react'
+import { ExternalLink, Clock, Zap, Landmark, Undo, Vote, RotateCcw, HandFist, type LucideIcon} from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import type { NewsItem } from '@/types'
@@ -23,10 +23,10 @@ const categoryColors: Record<string, string> = {
 // Scenario icons and config
 const scenarioConfig: { key: string; icon: LucideIcon; number: number }[] = [
   { key: 'democraticTransition', icon: Landmark, number: 1 },
-  { key: 'preemptedDemocraticTransition', icon: Undo2, number: 2 },
+  { key: 'preemptedDemocraticTransition', icon: Undo, number: 2 },
   { key: 'stabilizedElectoralAutocracy', icon: Vote, number: 3 },
   { key: 'revertedLiberalization', icon: RotateCcw, number: 4 },
-  { key: 'regressedAutocracy', icon: ShieldOff, number: 5 },
+  { key: 'regressedAutocracy', icon: HandFist, number: 5 },
 ]
 
 export function NewsCard({ item, compact = false, className, onVote }: NewsCardProps) {
@@ -151,7 +151,7 @@ export function NewsCard({ item, compact = false, className, onVote }: NewsCardP
               key={scenario.key}
               onClick={(e) => handleVote(e, scenario.number)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-signal-blue/20 hover:bg-signal-blue/30 border border-signal-blue/30 hover:border-signal-blue/50 transition-all text-xs text-signal-blue"
-              title={t(`scenarios.${scenario.key}.title`)}
+              title={t(`scenarios.${scenario.key}.name`)}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{locale === 'es' ? 'Escenario' : 'Scenario'} {scenario.number}</span>
