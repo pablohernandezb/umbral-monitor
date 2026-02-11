@@ -143,7 +143,7 @@ export default function ReadingRoomAdminPage() {
 
   const cancelEdit = () => {
     setEditingId(null)
-    setFormData({ tags: [] })
+    setFormData({ tags_en: [], tags_es: [] })
   }
 
   if (loading) {
