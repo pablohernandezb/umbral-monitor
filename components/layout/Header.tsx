@@ -98,14 +98,25 @@ export function Header() {
               <span className="uppercase">{locale}</span>
             </button>
 
-            {/* Donate button (desktop) */}
+            {/* Donate button (mobile - icon only) */}
+            <Link
+              href="https://buymeacoffee.com/pablohernandezb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sm:hidden btn btn-primary p-2"
+              title={t('common.donateToTheProject')}
+            >
+              <Coffee className="w-4 h-4" />
+            </Link>
+
+            {/* Donate button (desktop - with text) */}
             <Link
               href="https://buymeacoffee.com/pablohernandezb"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex gap-2 btn btn-primary text-xs"
             >
-              <Coffee className="w-4 h-4" /> 
+              <Coffee className="w-4 h-4" />
               {t('common.donateToTheProject')}
             </Link>
 

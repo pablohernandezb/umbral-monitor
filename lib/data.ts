@@ -112,7 +112,7 @@ export async function getNewsFeed(
 ): Promise<ApiResponse<NewsItem[]>> {
   if (IS_MOCK_MODE || !supabase) {
     let data = mockNewsFeed
-    if (category) data = data.filter(d => d.category === category)
+    if (category) data = data.filter(d => d.category_en === category)
     return { data: data.slice(0, limit), error: null }
   }
 
@@ -122,7 +122,7 @@ export async function getNewsFeed(
     .order('published_at', { ascending: false })
     .limit(limit)
 
-  if (category) query = query.eq('category', category)
+  if (category) query = query.eq('category_en', category)
 
   const { data, error } = await query
 

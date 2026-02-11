@@ -39,13 +39,22 @@ export interface NewsItem {
   id: string
   source: string
   source_url: string
-  headline: string
-  summary: string | null
+  headline_en: string
+  headline_es: string
+  summary_en: string | null
+  summary_es: string | null
   external_url: string
-  category: 'political' | 'economic' | 'social' | 'international'
+  category_en: 'political' | 'economic' | 'social' | 'international'
+  category_es: 'política' | 'economía' | 'social' | 'internacional'
   is_breaking: boolean
   published_at: string
   created_at: string
+  // Scenario vote counts
+  votes_scenario_1: number  // democraticTransition
+  votes_scenario_2: number  // preemptedDemocraticTransition
+  votes_scenario_3: number  // stabilizedElectoralAutocracy
+  votes_scenario_4: number  // revertedLiberalization
+  votes_scenario_5: number  // regressedAutocracy
 }
 
 export interface PoliticalPrisoner {

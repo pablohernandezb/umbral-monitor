@@ -57,21 +57,23 @@ export function MetricCard({
             )}>
               {formattedValue}
             </p>
-            
+
             {trend && (
-              <div className={cn(
-                'flex items-center gap-1 text-xs font-medium pb-1',
-                trend.direction === 'up' && 'text-signal-red',
-                trend.direction === 'down' && 'text-signal-teal',
-                trend.direction === 'neutral' && 'text-umbral-muted'
-              )}>
-                <TrendIcon className="w-3 h-3" />
-                <span>
-                  {trend.direction !== 'neutral' && (trend.direction === 'up' ? '+' : '-')}
-                  {Math.abs(trend.value)}
-                </span>
+              <div className="flex flex-col items-end gap-0.5 pb-1">
+                <div className={cn(
+                  'flex items-center gap-1 text-xs font-medium',
+                  trend.direction === 'up' && 'text-signal-red',
+                  trend.direction === 'down' && 'text-signal-teal',
+                  trend.direction === 'neutral' && 'text-umbral-muted'
+                )}>
+                  <TrendIcon className="w-3 h-3" />
+                  <span>
+                    {trend.direction !== 'neutral' && (trend.direction === 'up' ? '+' : '-')}
+                    {Math.abs(trend.value)}
+                  </span>
+                </div>
                 {trend.label && (
-                  <span className="text-umbral-muted">{trend.label}</span>
+                  <span className="text-[10px] text-umbral-muted text-right">{trend.label}</span>
                 )}
               </div>
             )}

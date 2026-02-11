@@ -8,9 +8,9 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 /**
- * Format a date relative to now
+ * Format a date relative to now with locale support
  */
-export function formatRelativeTime(date: string | Date): string {
+export function formatRelativeTime(date: string | Date, locale: string = 'en'): string {
   const now = new Date()
   const then = new Date(date)
   const diffMs = now.getTime() - then.getTime()
@@ -19,13 +19,14 @@ export function formatRelativeTime(date: string | Date): string {
   const diffDays = Math.floor(diffMs / 86400000)
 
   if (diffMins < 60) {
-    return `${diffMins}m`
+    return locale === 'es' ? `hace ${diffMins}m` : `${diffMins}m ago`
   } else if (diffHours < 24) {
-    return `${diffHours}h`
+    return locale === 'es' ? `hace ${diffHours}h` : `${diffHours}h ago`
   } else if (diffDays < 7) {
-    return `${diffDays}d`
+    return locale === 'es' ? `hace ${diffDays}d` : `${diffDays}d ago`
   } else {
-    return then.toLocaleDateString('es-VE', { month: 'short', day: 'numeric' })
+    const dateLocale = locale === 'es' ? 'es-VE' : 'en-US'
+    return then.toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })
   }
 }
 

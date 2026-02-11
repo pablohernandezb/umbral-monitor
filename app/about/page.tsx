@@ -14,7 +14,8 @@ import {
   Heart,
   Brain,
   Mail,
-  Globe as Website
+  Globe as Website,
+  SearchCheck
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
@@ -88,6 +89,12 @@ const humanRightsSources = [
   { name: 'Human Rights Watch', url: 'https://www.hrw.org/americas/venezuela' },
   { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
   { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' }
+]
+
+const factcheckingSources = [
+  { name: 'Cazadores de Fake News', url: 'https://cazadoresdefakenews.info' },
+  { name: 'Cotejo.info', url: 'https://cotejo.info' },
+  { name: 'Factchequeado', url: 'https://factchequeado.com' }
 ]
 
 export default function AboutPage() {
@@ -370,6 +377,30 @@ export default function AboutPage() {
                 <div className="card p-5">
                   <div className="flex flex-wrap gap-3">
                     {humanRightsSources.map((source) => (
+                      <a
+                        key={source.name}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-umbral-ash rounded-md text-sm text-umbral-light hover:text-signal-teal hover:bg-umbral-slate transition-colors"
+                      >
+                        {source.name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Fact Checking Sources */}
+              <motion.div variants={fadeInUp}>
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <SearchCheck className="w-5 h-5 text-signal-green" />
+                  {t('about.sources.factChecking')}
+                </h3>
+                <div className="card p-5">
+                  <div className="flex flex-wrap gap-3">
+                    {factcheckingSources.map((source) => (
                       <a
                         key={source.name}
                         href={source.url}

@@ -68,19 +68,28 @@ CREATE INDEX idx_regime_history_year ON regime_history(year);
 
 -- ============================================================
 -- NEWS_FEED TABLE
--- Aggregated news from verified sources
+-- Aggregated news from verified sources (bilingual support)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS news_feed (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   source TEXT NOT NULL,
   source_url TEXT NOT NULL,
-  headline TEXT NOT NULL,
-  summary TEXT,
+  headline_en TEXT NOT NULL,
+  headline_es TEXT NOT NULL,
+  summary_en TEXT,
+  summary_es TEXT,
   external_url TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('political', 'economic', 'social', 'international')),
+  category_en TEXT NOT NULL CHECK (category_en IN ('political', 'economic', 'social', 'international')),
+  category_es TEXT NOT NULL CHECK (category_es IN ('política', 'economía', 'social', 'internacional')),
   is_breaking BOOLEAN DEFAULT FALSE,
   published_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  -- Scenario vote counts
+  votes_scenario_1 INTEGER DEFAULT 0,  -- democraticTransition
+  votes_scenario_2 INTEGER DEFAULT 0,  -- preemptedDemocraticTransition
+  votes_scenario_3 INTEGER DEFAULT 0,  -- stabilizedElectoralAutocracy
+  votes_scenario_4 INTEGER DEFAULT 0,  -- revertedLiberalization
+  votes_scenario_5 INTEGER DEFAULT 0   -- regressedAutocracy
 );
 
 CREATE INDEX idx_news_feed_published ON news_feed(published_at DESC);

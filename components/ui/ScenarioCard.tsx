@@ -27,6 +27,14 @@ const scenarioIcons = {
   regressedAutocracy: HandFist,
 }
 
+const scenarioNumbers: Record<string, string> = {
+  democraticTransition: '/images/scenario_number_5.png',
+  preemptedDemocraticTransition: '/images/scenario_number_4.png',
+  stabilizedElectoralAutocracy: '/images/scenario_number_3.png',
+  revertedLiberalization: '/images/scenario_number_2.png',
+  regressedAutocracy: '/images/scenario_number_1.png',
+}
+
 export function ScenarioCard({ scenario, className, onClick, isActive }: ScenarioCardProps) {
   const { t } = useTranslation()
 
@@ -53,21 +61,30 @@ export function ScenarioCard({ scenario, className, onClick, isActive }: Scenari
         className
       )}
     >
-      {/* Scenario icon */}
-      <div
-        className={cn(
-          'w-20 h-20 mx-auto mb-4 rounded-lg flex items-center justify-center shrink-0',
-          'border transition-colors',
-          getScenarioBgColor(scenario.key)
+      {/* Scenario number + icon */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        {scenarioNumbers[scenario.key] && (
+          <img
+            src={scenarioNumbers[scenario.key]}
+            alt=""
+            aria-hidden="true"
+            className="w-20 h-20 object-contain shrink-0"
+          />
         )}
-      >
-        <ScenarioIcon
+        <div
           className={cn(
-          // 'block' ensures the SVG behaves predictably within the flex container
-          'w-10 h-10 block transition-transform group-hover:scale-110',
-          'text-signal-blue'
+            'w-20 h-20 rounded-lg flex items-center justify-center shrink-0',
+            'border transition-colors',
+            getScenarioBgColor(scenario.key)
           )}
-        />
+        >
+          <ScenarioIcon
+            className={cn(
+            'w-10 h-10 block transition-transform group-hover:scale-110',
+            'text-signal-blue'
+            )}
+          />
+        </div>
       </div>
 
       {/* Content */}

@@ -47,6 +47,7 @@ import {
   getPrisonersByOrganization,
   getHistoricalEpisodes,
 } from '@/lib/data'
+import { voteForScenario } from '@/app/actions/news-votes'
 import { daysSince, cn } from '@/lib/utils'
 import type { 
   Scenario, 
@@ -155,6 +156,39 @@ export default function LandingPage() {
 
   // Calculate days since Maduro's and Cilia's extraction
   const daysSinceCapture = daysSince('2026-01-03')
+
+  // Handle voting on news scenarios
+  const handleNewsVote = async (newsId: string, scenarioNumber: number) => {
+    // Optimistic update
+    setNews(prevNews => 
+      prevNews.map(item => {
+        if (item.id !== newsId) return item
+        const key = `votes_scenario_${scenarioNumber}` as keyof NewsItem
+        return {
+          ...item,
+          [key]: (item[key] as number) + 1
+        }
+      })
+    )
+
+    // Call server action
+    const result = await voteForScenario(newsId, scenarioNumber)
+    
+    if (!result.success) {
+      // Revert on error
+      setNews(prevNews => 
+        prevNews.map(item => {
+          if (item.id !== newsId) return item
+          const key = `votes_scenario_${scenarioNumber}` as keyof NewsItem
+          return {
+            ...item,
+            [key]: (item[key] as number) - 1
+          }
+        })
+      )
+      console.error('Vote failed:', result.error)
+    }
+  }
 
   return (
     <div className="relative">
@@ -545,25 +579,15 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={fadeInUp}
-            className="flex items-start justify-between gap-4 mb-8"
+            className="text-center mb-8"
           >
-            <div>
-              <h2 className="section-title mb-2 flex items-center gap-3">
-                <Radio className="w-6 h-6 text-signal-amber" />
-                {t('landing.news.title')}
-              </h2>
-              <p className="section-subtitle">
-                {t('landing.news.subtitle')}
-              </p>
-            </div>
-            
-            <Link 
-              href="#" 
-              className="btn btn-ghost text-sm hidden md:flex"
-            >
-              {t('common.viewAll')}
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
+            <h2 className="section-title mb-2 flex items-center justify-center gap-3">
+              <Radio className="w-6 h-6 text-signal-amber" />
+              {t('landing.news.title')}
+            </h2>
+            <p className="section-subtitle mx-auto">
+              {t('landing.news.subtitle')}
+            </p>
           </motion.div>
 
           <motion.div
@@ -588,10 +612,27 @@ export default function LandingPage() {
             ) : (
               news.map((item) => (
                 <motion.div key={item.id} variants={fadeInUp}>
-                  <NewsCard item={item} />
+                  <NewsCard item={item} onVote={handleNewsVote} />
                 </motion.div>
               ))
             )}
+          </motion.div>
+
+          {/* View All button - centered at bottom */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex justify-center mt-8"
+          >
+            <Link 
+              href="#" 
+              className="btn btn-secondary px-6 py-2.5 text-sm group"
+            >
+              {t('common.viewAll')}
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </motion.div>
         </div>
       </section>
