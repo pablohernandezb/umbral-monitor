@@ -17,8 +17,8 @@ export function Ticker({ captureDate, className }: TickerProps) {
   return (
     <div className={className}>
       <div className="bg-umbral-charcoal/80 backdrop-blur-sm border border-umbral-ash rounded-full px-6 py-3 inline-flex items-center gap-3">
-        <Clock className="w-4 h-4 text-signal-amber animate-pulse" />
-        <p className="text-sm text-umbral-light">
+        <Clock className="w-6 h-6 md:w-6 md:h-6 text-signal-amber animate-pulse" />
+        <p className="text-sm md:text-xl text-umbral-light">
           {text.split(String(days)).map((part, i, arr) => (
             <span key={i}>
               {part}
@@ -49,8 +49,8 @@ export function TickerSimple({ days }: { days: number }) {
 
   return (
     <div className="bg-umbral-charcoal/80 backdrop-blur-sm border border-umbral-ash rounded-full px-6 py-3 inline-flex items-center gap-3">
-      <Clock className="w-4 h-4 text-signal-amber animate-pulse" />
-      <p className="text-sm text-umbral-light">
+      <Clock className="w-6 h-6 md:w-6 md:h-6 text-signal-amber animate-pulse" />
+      <p className="text-sm md:text-xl text-umbral-light">
         {text}{' '}
         <span className="text-signal-teal font-bold font-mono">
           {days}

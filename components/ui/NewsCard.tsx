@@ -153,9 +153,9 @@ export function NewsCard({ item, compact = false, className, onVote }: NewsCardP
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-signal-blue/20 hover:bg-signal-blue/30 border border-signal-blue/30 hover:border-signal-blue/50 transition-all text-xs text-signal-blue"
               title={t(`scenarios.${scenario.key}.name`)}
             >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{locale === 'es' ? 'Escenario' : 'Scenario'} {scenario.number}</span>
-              <span className="font-bold text-white ml-1">{voteCount}</span>
+              <Icon className="w-4 h-4" />
+              {/* <span>{locale === 'es' ? 'Escenario' : 'Scenario'} {scenario.number}</span> */}
+              <span className="text-base font-bold text-white ml-1">{voteCount}</span>
             </button>
           )
         })}
