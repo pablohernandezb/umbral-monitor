@@ -93,14 +93,17 @@ export interface DEEDEvent {
 
 export interface ReadingRoomItem {
   id: string
-  title: string
+  title_en: string
+  title_es: string | null
   author: string
   year: number
   type: 'book' | 'article' | 'report' | 'journalism'
   language: 'es' | 'en' | 'both'
-  description: string
+  description_en: string
+  description_es: string | null
   external_url: string | null
-  tags: string[]
+  tags_en: string[]
+  tags_es: string[] | null
   created_at: string
 }
 

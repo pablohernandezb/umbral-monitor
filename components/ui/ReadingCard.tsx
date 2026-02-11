@@ -2,6 +2,7 @@
 
 import { Book, FileText, Newspaper, GraduationCap, ExternalLink, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/i18n'
 import type { ReadingRoomItem } from '@/types'
 
 interface ReadingCardProps {
@@ -24,8 +25,14 @@ const typeColors = {
 }
 
 export function ReadingCard({ item, className }: ReadingCardProps) {
+  const { locale } = useTranslation()
   const Icon = typeIcons[item.type] || FileText
-  
+
+  // Use Spanish if available and locale is 'es', otherwise use English
+  const title = locale === 'es' && item.title_es ? item.title_es : item.title_en
+  const description = locale === 'es' && item.description_es ? item.description_es : item.description_en
+  const tags = locale === 'es' && item.tags_es ? item.tags_es : item.tags_en
+
   const content = (
     <div
       className={cn(
@@ -65,22 +72,22 @@ export function ReadingCard({ item, className }: ReadingCardProps) {
       {/* Content */}
       <div className="flex-1">
         <h3 className="text-base font-semibold text-white leading-snug mb-1 group-hover:text-signal-teal transition-colors">
-          {item.title}
+          {title}
         </h3>
-        
+
         <p className="text-sm text-umbral-muted mb-2">
           {item.author} · {item.year}
         </p>
-        
+
         <p className="text-sm text-umbral-muted leading-relaxed line-clamp-3">
-          {item.description}
+          {description}
         </p>
       </div>
 
       {/* Tags */}
-      {item.tags.length > 0 && (
+      {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-4 pt-4 border-t border-umbral-ash">
-          {item.tags.slice(0, 3).map((tag) => (
+          {tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
               className="text-xs px-2 py-0.5 rounded bg-umbral-ash text-umbral-muted"

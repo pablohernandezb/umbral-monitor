@@ -147,18 +147,21 @@ CREATE INDEX idx_events_deed_category ON events_deed(category);
 
 -- ============================================================
 -- READING_ROOM TABLE
--- Curated analytical resources
+-- Curated analytical resources (bilingual support)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS reading_room (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  title TEXT NOT NULL,
+  title_en TEXT NOT NULL,
+  title_es TEXT,
   author TEXT NOT NULL,
   year INTEGER NOT NULL,
   type TEXT NOT NULL CHECK (type IN ('book', 'article', 'report', 'journalism')),
   language TEXT NOT NULL CHECK (language IN ('es', 'en', 'both')),
-  description TEXT NOT NULL,
+  description_en TEXT NOT NULL,
+  description_es TEXT,
   external_url TEXT,
-  tags TEXT[] DEFAULT '{}',
+  tags_en TEXT[] DEFAULT '{}',
+  tags_es TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

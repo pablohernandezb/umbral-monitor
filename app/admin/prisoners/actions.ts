@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase-server'
+import { createClient, createAdminClient } from '@/lib/supabase-server'
 import type { PoliticalPrisoner, PrisonersByOrganization } from '@/types'
 
 // Political Prisoners Actions
@@ -45,10 +45,10 @@ export async function getAllPrisonerStatsAction() {
 export async function createPrisonerStatsAction(
   prisonerData: Omit<PoliticalPrisoner, 'id' | 'created_at' | 'updated_at'>
 ) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   // Map TypeScript field names to database column names
@@ -106,10 +106,10 @@ export async function updatePrisonerStatsAction(
   id: string,
   prisonerData: Partial<Omit<PoliticalPrisoner, 'id' | 'created_at' | 'updated_at'>>
 ) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   // Map TypeScript field names to database column names
@@ -164,10 +164,10 @@ export async function updatePrisonerStatsAction(
 }
 
 export async function deletePrisonerStatsAction(id: string) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   const { error } = await supabase
@@ -217,10 +217,10 @@ export async function getAllPrisonersByOrgAction() {
 export async function createPrisonerByOrgAction(
   orgData: Omit<PrisonersByOrganization, 'id' | 'created_at' | 'updated_at'>
 ) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   // Map TypeScript field names to database column names
@@ -260,10 +260,10 @@ export async function updatePrisonerByOrgAction(
   id: string,
   orgData: Partial<Omit<PrisonersByOrganization, 'id' | 'created_at' | 'updated_at'>>
 ) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   // Map TypeScript field names to database column names
@@ -300,10 +300,10 @@ export async function updatePrisonerByOrgAction(
 }
 
 export async function deletePrisonerByOrgAction(id: string) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (!supabase) {
-    return { data: null, error: 'Database not configured' }
+    return { data: null, error: 'Database not configured (missing service role key)' }
   }
 
   const { error } = await supabase

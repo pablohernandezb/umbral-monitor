@@ -1,4 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { IS_MOCK_MODE } from './supabase'
 
@@ -31,6 +32,25 @@ export async function createClient() {
       },
     }
   )
+}
+
+/**
+ * Admin client using service role key — bypasses RLS.
+ * Only use in server actions that are already auth-protected.
+ */
+export function createAdminClient() {
+  if (IS_MOCK_MODE) {
+    return null
+  }
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+  if (!serviceKey) {
+    return null
+  }
+
+  return createSupabaseClient(url, serviceKey)
 }
 
 export async function getCurrentUser() {

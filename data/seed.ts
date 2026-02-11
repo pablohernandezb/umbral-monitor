@@ -43,6 +43,34 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 async function seed() {
   console.log('🌱 Starting database seed...\n')
 
+  // Clear existing data (optional - comment out if you want to keep existing data)
+  console.log('🧹 Clearing existing data...')
+  const clearErrors = []
+
+  const { error: newsDeleteError } = await supabase.from('news_feed').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (newsDeleteError) clearErrors.push(`news_feed: ${newsDeleteError.message}`)
+
+  const { error: eventsDeleteError } = await supabase.from('events_deed').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (eventsDeleteError) clearErrors.push(`events_deed: ${eventsDeleteError.message}`)
+
+  const { error: readingDeleteError } = await supabase.from('reading_room').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (readingDeleteError) clearErrors.push(`reading_room: ${readingDeleteError.message}`)
+
+  const { error: prisonersDeleteError } = await supabase.from('political_prisoners').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (prisonersDeleteError) clearErrors.push(`political_prisoners: ${prisonersDeleteError.message}`)
+
+  const { error: orgsDeleteError } = await supabase.from('prisoners_by_organization').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (orgsDeleteError) clearErrors.push(`prisoners_by_organization: ${orgsDeleteError.message}`)
+
+  const { error: episodesDeleteError } = await supabase.from('historical_episodes').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+  if (episodesDeleteError) clearErrors.push(`historical_episodes: ${episodesDeleteError.message}`)
+
+  if (clearErrors.length > 0) {
+    console.log('  ⚠️ Some tables could not be cleared:', clearErrors.join(', '))
+  } else {
+    console.log('  ✅ Existing data cleared\n')
+  }
+
   // Seed scenarios
   console.log('📊 Seeding scenarios...')
   const { error: scenariosError } = await supabase
@@ -166,14 +194,17 @@ async function seed() {
   const { error: readingError } = await supabase
     .from('reading_room')
     .insert(mockReadingRoom.map(r => ({
-      title: r.title,
+      title_en: r.title_en,
+      title_es: r.title_es,
       author: r.author,
       year: r.year,
       type: r.type,
       language: r.language,
-      description: r.description,
+      description_en: r.description_en,
+      description_es: r.description_es,
       external_url: r.external_url,
-      tags: r.tags,
+      tags_en: r.tags_en,
+      tags_es: r.tags_es,
     })))
   
   if (readingError) {

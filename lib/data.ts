@@ -358,9 +358,28 @@ export async function getAllPrisonerStats(): Promise<ApiResponse<PoliticalPrison
   const { data, error } = await supabase
     .from('political_prisoners')
     .select('*')
-    .order('date', { ascending: false })
+    .order('data_date', { ascending: false })
 
-  return { data: data as PoliticalPrisoner[] | null, error: error?.message || null }
+  // Map database column names to TypeScript field names
+  const mappedData = data?.map(item => ({
+    id: item.id,
+    date: item.data_date,
+    total: item.total_count,
+    released: item.releases_30d,
+    civilians: item.civilians,
+    military: item.military,
+    men: item.men,
+    women: item.women,
+    adults: item.adults,
+    minors: item.minors,
+    foreign: item.foreign,
+    unknown: item.unknown,
+    source: item.source,
+    created_at: item.created_at,
+    updated_at: item.updated_at,
+  })) || null
+
+  return { data: mappedData as PoliticalPrisoner[] | null, error: error?.message || null }
 }
 
 export async function createPrisonerStats(

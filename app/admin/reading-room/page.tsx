@@ -24,7 +24,8 @@ export default function ReadingRoomAdminPage() {
 
   // Form state
   const [formData, setFormData] = useState<Partial<ReadingRoomItem>>({
-    tags: [],
+    tags_en: [],
+    tags_es: [],
   })
 
   useEffect(() => {
@@ -39,9 +40,11 @@ export default function ReadingRoomAdminPage() {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (item) =>
-          item.title.toLowerCase().includes(query) ||
+          item.title_en.toLowerCase().includes(query) ||
+          (item.title_es && item.title_es.toLowerCase().includes(query)) ||
           item.author.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query)
+          item.description_en.toLowerCase().includes(query) ||
+          (item.description_es && item.description_es.toLowerCase().includes(query))
       )
     }
 
@@ -70,13 +73,20 @@ export default function ReadingRoomAdminPage() {
 
   const handleCreate = async () => {
     try {
-      const result = await createReadingRoomItemAction(formData as any)
+      // Ensure arrays are properly initialized
+      const cleanFormData = {
+        ...formData,
+        tags_en: formData.tags_en || [],
+        tags_es: formData.tags_es || null,
+      }
+
+      const result = await createReadingRoomItemAction(cleanFormData as any)
       if (result.error) {
         setToast({ message: result.error || 'Failed to create item', type: 'error' })
       } else {
         setToast({ message: 'Item created successfully', type: 'success' })
         setShowCreateForm(false)
-        setFormData({ tags: [] })
+        setFormData({ tags_en: [], tags_es: [] })
         await loadData()
       }
     } catch (error) {
@@ -88,13 +98,21 @@ export default function ReadingRoomAdminPage() {
     try {
       // Exclude id and created_at from update data
       const { id: _id, created_at, ...updateData } = formData as ReadingRoomItem
-      const result = await updateReadingRoomItemAction(id, updateData)
+
+      // Ensure arrays are properly initialized
+      const cleanUpdateData = {
+        ...updateData,
+        tags_en: updateData.tags_en || [],
+        tags_es: updateData.tags_es || null,
+      }
+
+      const result = await updateReadingRoomItemAction(id, cleanUpdateData)
       if (result.error) {
         setToast({ message: result.error || 'Failed to update item', type: 'error' })
       } else {
         setToast({ message: 'Item updated successfully', type: 'success' })
         setEditingId(null)
-        setFormData({ tags: [] })
+        setFormData({ tags_en: [], tags_es: [] })
         await loadData()
       }
     } catch (error) {
@@ -189,7 +207,7 @@ export default function ReadingRoomAdminPage() {
           onSave={handleCreate}
           onCancel={() => {
             setShowCreateForm(false)
-            setFormData({ tags: [] })
+            setFormData({ tags_en: [], tags_es: [] })
           }}
           title="Create New Item"
         />
@@ -228,9 +246,11 @@ export default function ReadingRoomAdminPage() {
                       <span className="text-gray-500 text-sm">{item.year}</span>
                       <span className="text-gray-500 text-sm uppercase">{item.language}</span>
                     </div>
-                    <h3 className="text-white text-lg font-bold mb-1">{item.title}</h3>
+                    <h3 className="text-white text-lg font-bold mb-1">{item.title_en}</h3>
+                    {item.title_es && <h4 className="text-gray-400 text-md font-semibold mb-1">{item.title_es}</h4>}
                     <p className="text-gray-400 text-sm mb-3">{item.author}</p>
-                    <p className="text-gray-300 text-sm mb-3">{item.description}</p>
+                    <p className="text-gray-300 text-sm mb-3">{item.description_en}</p>
+                    {item.description_es && <p className="text-gray-400 text-sm mb-3 italic">{item.description_es}</p>}
                     {item.external_url && (
                       <a
                         href={item.external_url}
@@ -249,9 +269,23 @@ export default function ReadingRoomAdminPage() {
                         </svg>
                       </a>
                     )}
-                    {item.tags && item.tags.length > 0 && (
+                    {item.tags_en && item.tags_en.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-3">
-                        {item.tags.map((tag, i) => (
+                        <span className="text-xs text-gray-500 mr-2">EN:</span>
+                        {item.tags_en.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {item.tags_es && item.tags_es.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <span className="text-xs text-gray-500 mr-2">ES:</span>
+                        {item.tags_es.map((tag, i) => (
                           <span
                             key={i}
                             className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded"
@@ -308,23 +342,37 @@ function ReadingRoomForm({
   onCancel: () => void
   title: string
 }) {
-  const [tagInput, setTagInput] = useState('')
+  const [tagInputEn, setTagInputEn] = useState('')
+  const [tagInputEs, setTagInputEs] = useState('')
 
   const handleChange = (field: keyof ReadingRoomItem, value: any) => {
     onChange({ ...data, [field]: value })
   }
 
-  const addTag = () => {
-    if (tagInput.trim()) {
-      const tags = data.tags || []
-      onChange({ ...data, tags: [...tags, tagInput.trim()] })
-      setTagInput('')
+  const addTagEn = () => {
+    if (tagInputEn.trim()) {
+      const tags = data.tags_en || []
+      onChange({ ...data, tags_en: [...tags, tagInputEn.trim()] })
+      setTagInputEn('')
     }
   }
 
-  const removeTag = (index: number) => {
-    const tags = data.tags || []
-    onChange({ ...data, tags: tags.filter((_, i) => i !== index) })
+  const removeTagEn = (index: number) => {
+    const tags = data.tags_en || []
+    onChange({ ...data, tags_en: tags.filter((_, i) => i !== index) })
+  }
+
+  const addTagEs = () => {
+    if (tagInputEs.trim()) {
+      const tags = data.tags_es || []
+      onChange({ ...data, tags_es: [...tags, tagInputEs.trim()] })
+      setTagInputEs('')
+    }
+  }
+
+  const removeTagEs = (index: number) => {
+    const tags = data.tags_es || []
+    onChange({ ...data, tags_es: tags.filter((_, i) => i !== index) })
   }
 
   return (
@@ -333,13 +381,23 @@ function ReadingRoomForm({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div className="md:col-span-2">
-          <label className="block text-sm text-gray-400 mb-1">Title *</label>
+          <label className="block text-sm text-gray-400 mb-1">Title (English) *</label>
           <input
             type="text"
-            value={data.title || ''}
-            onChange={(e) => handleChange('title', e.target.value)}
+            value={data.title_en || ''}
+            onChange={(e) => handleChange('title_en', e.target.value)}
             className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
             required
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm text-gray-400 mb-1">Title (Spanish)</label>
+          <input
+            type="text"
+            value={data.title_es || ''}
+            onChange={(e) => handleChange('title_es', e.target.value || null)}
+            className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
           />
         </div>
 
@@ -397,13 +455,23 @@ function ReadingRoomForm({
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm text-gray-400 mb-1">Description *</label>
+          <label className="block text-sm text-gray-400 mb-1">Description (English) *</label>
           <textarea
-            value={data.description || ''}
-            onChange={(e) => handleChange('description', e.target.value)}
+            value={data.description_en || ''}
+            onChange={(e) => handleChange('description_en', e.target.value)}
             className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
             rows={3}
             required
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm text-gray-400 mb-1">Description (Spanish)</label>
+          <textarea
+            value={data.description_es || ''}
+            onChange={(e) => handleChange('description_es', e.target.value || null)}
+            className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
+            rows={3}
           />
         </div>
 
@@ -419,32 +487,32 @@ function ReadingRoomForm({
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm text-gray-400 mb-1">Tags</label>
+          <label className="block text-sm text-gray-400 mb-1">Tags (English)</label>
           <div className="flex gap-2 mb-2">
             <input
               type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
+              value={tagInputEn}
+              onChange={(e) => setTagInputEn(e.target.value)}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault()
-                  addTag()
+                  addTagEn()
                 }
               }}
               className="flex-1 px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
-              placeholder="Add a tag..."
+              placeholder="Add an English tag..."
             />
             <button
               type="button"
-              onClick={addTag}
+              onClick={addTagEn}
               className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded transition-colors"
             >
               Add
             </button>
           </div>
-          {data.tags && data.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {data.tags.map((tag, i) => (
+          {data.tags_en && data.tags_en.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {data.tags_en.map((tag, i) => (
                 <span
                   key={i}
                   className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded flex items-center gap-2"
@@ -452,7 +520,52 @@ function ReadingRoomForm({
                   {tag}
                   <button
                     type="button"
-                    onClick={() => removeTag(i)}
+                    onClick={() => removeTagEn(i)}
+                    className="text-gray-500 hover:text-red-400"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm text-gray-400 mb-1">Tags (Spanish)</label>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={tagInputEs}
+              onChange={(e) => setTagInputEs(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  addTagEs()
+                }
+              }}
+              className="flex-1 px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
+              placeholder="Add a Spanish tag..."
+            />
+            <button
+              type="button"
+              onClick={addTagEs}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded transition-colors"
+            >
+              Add
+            </button>
+          </div>
+          {data.tags_es && data.tags_es.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {data.tags_es.map((tag, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded flex items-center gap-2"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTagEs(i)}
                     className="text-gray-500 hover:text-red-400"
                   >
                     ×
