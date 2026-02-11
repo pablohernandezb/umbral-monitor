@@ -212,59 +212,71 @@ export default function PrisonersAdminPage() {
           />
         )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Total</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Men</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Women</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Released</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prisoners.map((prisoner) => (
-                <tr key={prisoner.id} className="border-b border-gray-800 hover:bg-gray-900/30">
-                  {editingId === prisoner.id ? (
-                    <td colSpan={6} className="py-4">
-                      <PrisonerForm
-                        data={formData}
-                        onChange={setFormData}
-                        onSave={() => handleUpdate(prisoner.id)}
-                        onCancel={cancelEdit}
-                        title="Edit Record"
-                      />
-                    </td>
-                  ) : (
-                    <>
-                      <td className="py-3 px-4 text-white font-mono">{prisoner.date}</td>
-                      <td className="py-3 px-4 text-right text-teal-400 font-bold">{prisoner.total}</td>
-                      <td className="py-3 px-4 text-right text-gray-300">{prisoner.men}</td>
-                      <td className="py-3 px-4 text-right text-gray-300">{prisoner.women}</td>
-                      <td className="py-3 px-4 text-right text-gray-300">{prisoner.released}</td>
-                      <td className="py-3 px-4 text-right">
-                        <button
-                          onClick={() => startEdit(prisoner)}
-                          className="text-blue-400 hover:text-blue-300 mr-3"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(prisoner.id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </>
-                  )}
+        {prisoners.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="text-lg">No prisoner statistics records found</p>
+              <p className="text-sm text-gray-600 mt-2">Click "New Record" to create your first entry</p>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Total</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Men</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Women</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Released</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {prisoners.map((prisoner) => (
+                  <tr key={prisoner.id} className="border-b border-gray-800 hover:bg-gray-900/30">
+                    {editingId === prisoner.id ? (
+                      <td colSpan={6} className="py-4">
+                        <PrisonerForm
+                          data={formData}
+                          onChange={setFormData}
+                          onSave={() => handleUpdate(prisoner.id)}
+                          onCancel={cancelEdit}
+                          title="Edit Record"
+                        />
+                      </td>
+                    ) : (
+                      <>
+                        <td className="py-3 px-4 text-white font-mono">{prisoner.date}</td>
+                        <td className="py-3 px-4 text-right text-teal-400 font-bold">{prisoner.total}</td>
+                        <td className="py-3 px-4 text-right text-gray-300">{prisoner.men}</td>
+                        <td className="py-3 px-4 text-right text-gray-300">{prisoner.women}</td>
+                        <td className="py-3 px-4 text-right text-gray-300">{prisoner.released}</td>
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            onClick={() => startEdit(prisoner)}
+                            className="text-blue-400 hover:text-blue-300 mr-3"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(prisoner.id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Organizations Section */}
@@ -292,55 +304,67 @@ export default function PrisonersAdminPage() {
           />
         )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Organization</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Count</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orgs.map((org) => (
-                <tr key={org.id} className="border-b border-gray-800 hover:bg-gray-900/30">
-                  {editingOrgId === org.id ? (
-                    <td colSpan={4} className="py-4">
-                      <OrgForm
-                        data={orgFormData}
-                        onChange={setOrgFormData}
-                        onSave={() => handleUpdateOrg(org.id)}
-                        onCancel={cancelEditOrg}
-                        title="Edit Organization Record"
-                      />
-                    </td>
-                  ) : (
-                    <>
-                      <td className="py-3 px-4 text-white font-mono">{org.date}</td>
-                      <td className="py-3 px-4 text-gray-300">{org.organization}</td>
-                      <td className="py-3 px-4 text-right text-purple-400 font-bold">{org.count}</td>
-                      <td className="py-3 px-4 text-right">
-                        <button
-                          onClick={() => startEditOrg(org)}
-                          className="text-blue-400 hover:text-blue-300 mr-3"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteOrg(org.id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </>
-                  )}
+        {orgs.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <p className="text-lg">No organization records found</p>
+              <p className="text-sm text-gray-600 mt-2">Click "New Organization Record" to create your first entry</p>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Organization</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Count</th>
+                  <th className="text-right py-3 px-4 text-gray-400 font-medium">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {orgs.map((org) => (
+                  <tr key={org.id} className="border-b border-gray-800 hover:bg-gray-900/30">
+                    {editingOrgId === org.id ? (
+                      <td colSpan={4} className="py-4">
+                        <OrgForm
+                          data={orgFormData}
+                          onChange={setOrgFormData}
+                          onSave={() => handleUpdateOrg(org.id)}
+                          onCancel={cancelEditOrg}
+                          title="Edit Organization Record"
+                        />
+                      </td>
+                    ) : (
+                      <>
+                        <td className="py-3 px-4 text-white font-mono">{org.date}</td>
+                        <td className="py-3 px-4 text-gray-300">{org.organization}</td>
+                        <td className="py-3 px-4 text-right text-purple-400 font-bold">{org.count}</td>
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            onClick={() => startEditOrg(org)}
+                            className="text-blue-400 hover:text-blue-300 mr-3"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteOrg(org.id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}

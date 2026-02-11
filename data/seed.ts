@@ -104,18 +104,18 @@ async function seed() {
   const { error: prisonersError } = await supabase
     .from('political_prisoners')
     .insert(mockPoliticalPrisoners.map(p => ({
-      total_count: p.total_count,
-      releases_30d: p.releases_30d,
+      data_date: p.date,
+      total_count: p.total,
+      releases_30d: p.released,
       civilians: p.civilians,
       military: p.military,
       men: p.men,
       women: p.women,
       adults: p.adults,
       minors: p.minors,
-      unknown: p.unknown,
       foreign: p.foreign,
+      unknown: p.unknown,
       source: p.source,
-      data_date: p.data_date,
     })))
   
   if (prisonersError) {
@@ -131,7 +131,7 @@ async function seed() {
     .insert(mockPrisonersByOrg.map(o => ({
       organization: o.organization,
       count: o.count,
-      data_date: o.data_date,
+      data_date: o.date,
     })))
   
   if (orgError) {
