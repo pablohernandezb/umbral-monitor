@@ -99,10 +99,13 @@ export default function ReadingRoomPage() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(item =>
-        item.title.toLowerCase().includes(query) ||
+        item.title_en.toLowerCase().includes(query) ||
+        (item.title_es && item.title_es.toLowerCase().includes(query)) ||
         item.author.toLowerCase().includes(query) ||
-        item.description.toLowerCase().includes(query) ||
-        item.tags.some(tag => tag.toLowerCase().includes(query))
+        item.description_en.toLowerCase().includes(query) ||
+        (item.description_es && item.description_es.toLowerCase().includes(query)) ||
+        item.tags_en.some(tag => tag.toLowerCase().includes(query)) ||
+        (item.tags_es && item.tags_es.some(tag => tag.toLowerCase().includes(query)))
       )
     }
 
@@ -111,7 +114,7 @@ export default function ReadingRoomPage() {
       if (sortBy === 'year') {
         return sortOrder === 'desc' ? b.year - a.year : a.year - b.year
       } else {
-        const comparison = a.title.localeCompare(b.title)
+        const comparison = a.title_en.localeCompare(b.title_en)
         return sortOrder === 'desc' ? -comparison : comparison
       }
     })
