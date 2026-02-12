@@ -9,9 +9,26 @@ import type { FactCheckTweet } from '@/types'
 
 function TweetCard({ tweet, locale, t }: { tweet: FactCheckTweet; locale: string; t: (key: string) => string }) {
   const text = locale === 'es' ? tweet.text_es : (tweet.text_en || tweet.text_es)
+  const hasAlert = tweet.alert_tags.length > 0
 
   return (
-    <div className="w-[300px] md:w-[340px] flex-shrink-0 bg-umbral-charcoal/60 border border-umbral-ash rounded-lg p-4 flex flex-col gap-3 hover:border-umbral-steel transition-colors">
+    <div className={cn(
+      'w-[300px] md:w-[340px] flex-shrink-0 rounded-lg p-4 flex flex-col gap-3 transition-colors',
+      hasAlert
+        ? 'bg-signal-red/5 border-2 border-signal-red/40 animate-pulse-border shadow-[0_0_15px_rgba(220,38,38,0.15)]'
+        : 'bg-umbral-charcoal/60 border border-umbral-ash hover:border-umbral-steel'
+    )}>
+      {/* Alert badge */}
+      {hasAlert && (
+        <div className="flex gap-1.5">
+          {tweet.alert_tags.map(tag => (
+            <span key={tag} className="text-[10px] font-mono font-bold text-signal-red bg-signal-red/10 border border-signal-red/30 px-1.5 py-0.5 rounded uppercase tracking-wider">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Header: avatar + handle + time */}
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-umbral-ash/80 border border-umbral-steel overflow-hidden flex-shrink-0">
@@ -45,7 +62,7 @@ function TweetCard({ tweet, locale, t }: { tweet: FactCheckTweet; locale: string
       {/* Footer: live dot + VIEW link */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-signal-teal animate-pulse" />
+          <div className={cn('w-1.5 h-1.5 rounded-full animate-pulse', hasAlert ? 'bg-signal-red' : 'bg-signal-teal')} />
           <span className="text-[10px] text-umbral-muted uppercase tracking-wider">{t('factCheckingFeed.live')}</span>
         </div>
         <a

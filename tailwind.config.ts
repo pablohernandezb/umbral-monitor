@@ -58,6 +58,7 @@ const config: Config = {
         'slide-up': 'slideUp 0.5s ease-out forwards',
         'slide-in-right': 'slideInRight 0.3s ease-out forwards',
         'scroll-left': 'scrollLeft 60s linear infinite',
+        'pulse-border': 'pulseBorder 2s ease-in-out infinite',
       },
       keyframes: {
         glow: {
@@ -83,6 +84,10 @@ const config: Config = {
         scrollLeft: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
+        },
+        pulseBorder: {
+          '0%, 100%': { borderColor: 'rgba(220, 38, 38, 0.2)', boxShadow: '0 0 8px rgba(220, 38, 38, 0.05)' },
+          '50%': { borderColor: 'rgba(220, 38, 38, 0.6)', boxShadow: '0 0 15px rgba(220, 38, 38, 0.2)' },
         },
       },
       backgroundImage: {
