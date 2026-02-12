@@ -8,10 +8,27 @@ import type { FactCheckTweet } from '@/types'
 
 const X_API_BASE = 'https://api.x.com/2'
 
-const FACT_CHECK_ACCOUNTS = [
-  'cazamosfakenews',
-  'cotejoinfo',
-  'Factchequeado',
+// Cached account profiles to avoid wasting API calls on user lookups.
+// To find a user ID: https://api.x.com/2/users/by/username/USERNAME
+// (or the first run without a cached ID will look it up and log it)
+interface AccountConfig {
+  username: string
+  userId?: string           // Cache to skip lookup call
+  displayName?: string
+  profileImageUrl?: string  // Use _400x400 variant
+}
+
+const FACT_CHECK_ACCOUNTS: AccountConfig[] = [
+  {
+    username: 'cazamosfakenews',
+    // Fill in userId after first successful lookup to save API calls
+  },
+  {
+    username: 'cotejoinfo',
+  },
+  {
+    username: 'Factchequeado',
+  },
 ]
 
 // Alert keywords to detect in tweet text
@@ -108,22 +125,33 @@ function detectAlertTags(text: string): string[] {
 
 /**
  * Fetch tweets from a single account and return as FactCheckTweet[].
+ * Uses cached userId/profile when available to save API calls.
  */
-async function fetchAccountTweets(username: string): Promise<Omit<FactCheckTweet, 'id' | 'created_at'>[]> {
-  const user = await lookupUser(username)
-  const tweets = await getUserTweets(user.id, 5)
+async function fetchAccountTweets(account: AccountConfig): Promise<Omit<FactCheckTweet, 'id' | 'created_at'>[]> {
+  let userId = account.userId
+  let displayName = account.displayName || account.username
+  let profileImage = account.profileImageUrl || ''
 
-  // Use larger profile image (replace _normal with _400x400)
-  const profileImage = user.profile_image_url?.replace('_normal', '_400x400') || ''
+  // Only call lookup API if userId is not cached
+  if (!userId) {
+    const user = await lookupUser(account.username)
+    userId = user.id
+    displayName = user.name
+    profileImage = user.profile_image_url?.replace('_normal', '_400x400') || ''
+    // Log so user can cache this in the config
+    console.log(`[x-api] Resolved @${account.username} → userId: ${userId}, displayName: ${displayName}, profileImage: ${profileImage}`)
+  }
+
+  const tweets = await getUserTweets(userId, 5)
 
   return tweets.map(tweet => ({
     tweet_id: tweet.id,
-    username: user.username,
-    display_name: user.name,
+    username: account.username,
+    display_name: displayName,
     profile_image_url: profileImage,
     text_es: tweet.text,
-    text_en: null, // English translation not available from API
-    tweet_url: `https://x.com/${user.username}/status/${tweet.id}`,
+    text_en: null,
+    tweet_url: `https://x.com/${account.username}/status/${tweet.id}`,
     alert_tags: detectAlertTags(tweet.text),
     published_at: tweet.created_at,
     fetched_at: new Date().toISOString(),
@@ -159,7 +187,7 @@ export async function refreshFactCheckTweets(): Promise<{
   }
 
   for (let i = 0; i < FACT_CHECK_ACCOUNTS.length; i++) {
-    const username = FACT_CHECK_ACCOUNTS[i]
+    const account = FACT_CHECK_ACCOUNTS[i]
 
     // Delay between accounts to respect free-tier rate limits (skip first)
     if (i > 0) {
@@ -167,11 +195,11 @@ export async function refreshFactCheckTweets(): Promise<{
     }
 
     try {
-      const tweets = await fetchAccountTweets(username)
+      const tweets = await fetchAccountTweets(account)
       totalFetched += tweets.length
 
       if (tweets.length === 0) {
-        errors.push(`No tweets fetched for @${username}`)
+        errors.push(`No tweets fetched for @${account.username}`)
         continue
       }
 
@@ -187,13 +215,13 @@ export async function refreshFactCheckTweets(): Promise<{
         )
 
       if (error) {
-        errors.push(`Supabase upsert error for @${username}: ${error.message}`)
+        errors.push(`Supabase upsert error for @${account.username}: ${error.message}`)
       } else {
         totalUpserted += tweets.length
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      errors.push(`Failed to fetch @${username}: ${message}`)
+      errors.push(`Failed to fetch @${account.username}: ${message}`)
 
       // If rate limited, stop trying remaining accounts
       if (err instanceof XApiError && err.status === 429) {
@@ -212,6 +240,6 @@ export async function refreshFactCheckTweets(): Promise<{
 }
 
 /**
- * List of monitored accounts (exported for use in UI).
+ * List of monitored account usernames (exported for use in UI).
  */
-export const FACT_CHECK_ACCOUNT_LIST = FACT_CHECK_ACCOUNTS
+export const FACT_CHECK_ACCOUNT_LIST = FACT_CHECK_ACCOUNTS.map(a => a.username)
