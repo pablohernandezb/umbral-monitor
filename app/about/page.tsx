@@ -72,10 +72,7 @@ const mediaSources = [
   { name: 'Caracas Chronicles', url: 'https://www.caracaschronicles.com' },
   { name: 'La Patilla', url: 'https://www.lapatilla.com' },
   { name: 'El Nacional', url: 'https://www.elnacional.com' },
-  { name: 'El Universal', url: 'https://www.eluniversal.com' },
-  { name: 'Cazadores de Fake News', url: 'https://cazadoresdefakenews.info' },
-  { name: 'Cotejo.info', url: 'https://cotejo.info' },
-  { name: 'Factchequeado', url: 'https://factchequeado.com' }
+  { name: 'El Universal', url: 'https://www.eluniversal.com' }
 ]
 
 const humanRightsSources = [

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Globe, Coffee, HelpCircle, BookOpen } from 'lucide-react'
+import { Menu, X, Globe, Coffee, HelpCircle, BookOpen, Newspaper } from 'lucide-react'
 import { useI18n, useTranslation, type Locale } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -16,7 +16,7 @@ export function Header() {
   const navigation = [
     { name: locale === 'es' ? 'Monitor' : 'Monitor', href: '/#scenarios' },
     { name: locale === 'es' ? 'Episodios' : 'Episodes', href: '/#trajectory' },
-    { name: locale === 'es' ? 'Noticias' : 'News', href: '/#news' },
+    { name: locale === 'es' ? 'Señales' : 'Signals', href: '/#news' },
     { name: locale === 'es' ? 'Presos Políticos' : 'Political Prisoners', href: '/#prisoners' },
     { name: locale === 'es' ? 'Acerca' : 'About', href: '/about' },
   ]
@@ -84,6 +84,13 @@ export function Header() {
               title={locale === 'es' ? 'Sala de Lectura' : 'Reading Room'}
             >
               <BookOpen className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/news"
+              className="p-2 text-umbral-light hover:text-white hover:bg-umbral-ash rounded-md transition-colors"
+              title={locale === 'es' ? 'Sala de Noticias' : 'News Room'}
+            >
+              <Newspaper className="w-4 h-4" />
             </Link>
           </div>
 

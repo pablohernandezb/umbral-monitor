@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS news_feed (
   headline_es TEXT NOT NULL,
   summary_en TEXT,
   summary_es TEXT,
-  external_url TEXT NOT NULL,
+  external_url TEXT UNIQUE NOT NULL,
   category_en TEXT NOT NULL CHECK (category_en IN ('political', 'economic', 'social', 'international')),
   category_es TEXT NOT NULL CHECK (category_es IN ('política', 'economía', 'social', 'internacional')),
   is_breaking BOOLEAN DEFAULT FALSE,

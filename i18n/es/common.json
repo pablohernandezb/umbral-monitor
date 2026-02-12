@@ -159,6 +159,25 @@
     "selectYear": "Seleccione un año para ver los eventos",
     "noEvents": "No hay eventos registrados para este año"
   },
+  "newsRoom": {
+    "badge": "Monitoreo agregado",
+    "title": "Sala de Noticias",
+    "subtitle": "Todas las noticias agregadas de fuentes venezolanas verificadas, filtradas y buscables",
+    "articles": "artículos",
+    "sources": "fuentes",
+    "searchPlaceholder": "Buscar por titular, resumen o fuente...",
+    "filters": {
+      "all": "Todos"
+    },
+    "allSources": "Todas las fuentes",
+    "date": "Fecha",
+    "clearFilters": "Limpiar filtros",
+    "result": "resultado",
+    "results": "resultados",
+    "filtered": "filtrado",
+    "noResults": "No se encontraron artículos",
+    "noResultsHint": "Intenta ajustar los filtros o la búsqueda"
+  },
   "readingRoom": {
     "title": "Sala de Lectura",
     "subtitle": "Archivo analítico curado sobre Venezuela, democracia, autoritarismo y transiciones de régimen",

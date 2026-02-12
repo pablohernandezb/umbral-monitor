@@ -105,7 +105,7 @@ export default function LandingPage() {
           getScenarios(),
           getRegimeHistory(),
           getHistoricalEpisodes(),
-          getNewsFeed(5),
+          getNewsFeed(500),
           getLatestPrisonerStats(),
           getPrisonersByOrganization(),
         ])
@@ -113,7 +113,16 @@ export default function LandingPage() {
         if (scenariosRes.data) setScenarios(scenariosRes.data)
         if (historyRes.data) setRegimeHistory(historyRes.data)
         if (episodesRes.data) setHistoricalEpisodes(episodesRes.data)
-        if (newsRes.data) setNews(newsRes.data)
+        if (newsRes.data) {
+          // Keep only the latest article per source
+          const latestBySource = new Map<string, NewsItem>()
+          for (const item of newsRes.data) {
+            if (!latestBySource.has(item.source)) {
+              latestBySource.set(item.source, item)
+            }
+          }
+          setNews(Array.from(latestBySource.values()))
+        }
         if (prisonersRes.data) setPrisonerStats(prisonersRes.data)
         if (prisonersByOrgRes.data) setPrisonersByOrg(prisonersByOrgRes.data)
       } catch (error) {
@@ -640,7 +649,7 @@ export default function LandingPage() {
             className="flex justify-center mt-8"
           >
             <Link 
-              href="#" 
+              href="/news"
               className="btn btn-secondary px-6 py-2.5 text-sm group"
             >
               {t('common.viewAll')}

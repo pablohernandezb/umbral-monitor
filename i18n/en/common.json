@@ -159,6 +159,25 @@
     "selectYear": "Select a year to view events",
     "noEvents": "No events recorded for this year"
   },
+  "newsRoom": {
+    "badge": "Aggregated monitoring",
+    "title": "News Room",
+    "subtitle": "All aggregated news from verified Venezuelan sources, filtered and searchable",
+    "articles": "articles",
+    "sources": "sources",
+    "searchPlaceholder": "Search by headline, summary, or source...",
+    "filters": {
+      "all": "All"
+    },
+    "allSources": "All sources",
+    "date": "Date",
+    "clearFilters": "Clear filters",
+    "result": "result",
+    "results": "results",
+    "filtered": "filtered",
+    "noResults": "No articles found",
+    "noResultsHint": "Try adjusting your filters or search"
+  },
   "readingRoom": {
     "title": "Reading Room",
     "subtitle": "Curated analytical archive on Venezuela, democracy, authoritarianism, and regime transitions",
