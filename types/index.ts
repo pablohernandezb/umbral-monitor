@@ -125,6 +125,21 @@ export interface HistoricalEpisode {
   created_at: string
 }
 
+export interface FactCheckTweet {
+  id: string
+  tweet_id: string
+  username: string
+  display_name: string
+  profile_image_url: string
+  text_es: string
+  text_en: string | null
+  tweet_url: string
+  alert_tags: string[]
+  published_at: string
+  fetched_at: string
+  created_at: string
+}
+
 // API Response types
 export interface ApiResponse<T> {
   data: T | null

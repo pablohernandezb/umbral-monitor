@@ -10,6 +10,7 @@ import type {
   DEEDEvent,
   ReadingRoomItem,
   HistoricalEpisode,
+  FactCheckTweet,
   ApiResponse,
 } from '@/types'
 
@@ -24,6 +25,7 @@ import {
   mockDEEDEvents,
   mockReadingRoom,
   mockHistoricalEpisodes,
+  mockFactCheckTweets,
 } from '@/data/mock'
 
 // ============================================================
@@ -620,4 +622,36 @@ export async function deleteReadingRoomItem(id: string): Promise<ApiResponse<nul
     .eq('id', id)
 
   return { data: null, error: error?.message || null }
+}
+
+// ============================================================
+// FACT-CHECK TWEETS
+// ============================================================
+export async function getFactCheckTweets(
+  limit: number = 15
+): Promise<ApiResponse<FactCheckTweet[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: mockFactCheckTweets.slice(0, limit), error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('fact_check_tweets')
+    .select('*')
+    .order('published_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    // Fall back to mock data on error
+    return { data: mockFactCheckTweets.slice(0, limit), error: error.message }
+  }
+
+  // If Supabase table is empty, fall back to mock data
+  if (!data || data.length === 0) {
+    return { data: mockFactCheckTweets.slice(0, limit), error: null }
+  }
+
+  return {
+    data: data as FactCheckTweet[],
+    error: null,
+  }
 }

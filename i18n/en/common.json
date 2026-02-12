@@ -637,5 +637,16 @@
       "readingRoom": "Reading Room",
       "viewPublicSite": "View Public Site"
     }
+  },
+  "factCheckingFeed": {
+    "title": "FACT-CHECKING FEED",
+    "autoScroll": "AUTO-SCROLL",
+    "paused": "PAUSED",
+    "hoverPaused": "HOVER PAUSED",
+    "monitoring": "MONITORING {count} ACCOUNTS",
+    "reports": "REPORTS",
+    "alerts": "ALERTS",
+    "live": "LIVE",
+    "view": "VIEW"
   }
 }

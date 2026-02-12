@@ -1,14 +1,16 @@
 import Link from 'next/link'
-import { getAllPrisonerStats, getAllReadingRoomItems } from '@/lib/data'
+import { getAllPrisonerStats, getAllReadingRoomItems, getNewsFeed } from '@/lib/data'
 import { IS_MOCK_MODE } from '@/lib/supabase'
 
 export default async function AdminDashboardPage() {
   const { data: prisoners } = await getAllPrisonerStats()
   const { data: readingRoom } = await getAllReadingRoomItems()
+  const { data: news } = await getNewsFeed(1000)
 
   const latestPrisoner = prisoners?.[0]
   const totalPrisoners = latestPrisoner?.total || 0
   const totalReadingItems = readingRoom?.length || 0
+  const totalNewsItems = news?.length || 0
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -37,7 +39,7 @@ export default async function AdminDashboardPage() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-teal-950/30 rounded-lg flex items-center justify-center">
@@ -48,6 +50,20 @@ export default async function AdminDashboardPage() {
             <div>
               <p className="text-gray-400 text-sm">Total Prisoners</p>
               <p className="text-white text-2xl font-bold">{totalPrisoners.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-950/30 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-gray-400 text-sm">News Items</p>
+              <p className="text-white text-2xl font-bold">{totalNewsItems}</p>
             </div>
           </div>
         </div>
@@ -84,7 +100,7 @@ export default async function AdminDashboardPage() {
       {/* Quick Actions */}
       <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
         <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             href="/admin/prisoners"
             className="p-6 border border-gray-700 hover:border-teal-500/50 rounded-lg transition-colors group"
@@ -101,6 +117,27 @@ export default async function AdminDashboardPage() {
                 </h3>
                 <p className="text-gray-400 text-sm">
                   Create, update, and delete prisoner statistics and organization breakdowns
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/news"
+            className="p-6 border border-gray-700 hover:border-amber-500/50 rounded-lg transition-colors group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-amber-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-white font-semibold mb-1 group-hover:text-amber-400 transition-colors">
+                  Manage News Room
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  Add, edit, and remove news feed items across all categories
                 </p>
               </div>
             </div>

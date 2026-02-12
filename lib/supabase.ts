@@ -239,6 +239,40 @@ CREATE TRIGGER scenarios_updated_at
   EXECUTE FUNCTION update_updated_at();
 
 -- ============================================================
+-- FACT-CHECK TWEETS TABLE
+-- Cached tweets from fact-checking X accounts
+-- ============================================================
+CREATE TABLE IF NOT EXISTS fact_check_tweets (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  tweet_id TEXT UNIQUE NOT NULL,
+  username TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  profile_image_url TEXT NOT NULL,
+  text_es TEXT NOT NULL,
+  text_en TEXT,
+  tweet_url TEXT NOT NULL,
+  alert_tags TEXT[] DEFAULT '{}',
+  published_at TIMESTAMPTZ NOT NULL,
+  fetched_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_fact_check_tweets_published
+  ON fact_check_tweets(published_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_fact_check_tweets_username
+  ON fact_check_tweets(username);
+
+-- Enable RLS
+ALTER TABLE fact_check_tweets ENABLE ROW LEVEL SECURITY;
+
+-- Public read access
+CREATE POLICY "Public read fact_check_tweets"
+  ON fact_check_tweets FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+-- ============================================================
 -- AUTHENTICATED WRITE POLICIES
 -- Allow authenticated users to manage content
 -- ============================================================
@@ -288,6 +322,22 @@ CREATE POLICY "Authenticated update reading_room"
 
 CREATE POLICY "Authenticated delete reading_room"
   ON reading_room FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- Fact-check Tweets policies (service role writes via cron)
+CREATE POLICY "Authenticated insert fact_check_tweets"
+  ON fact_check_tweets FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated update fact_check_tweets"
+  ON fact_check_tweets FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete fact_check_tweets"
+  ON fact_check_tweets FOR DELETE
   TO authenticated
   USING (true);
 `

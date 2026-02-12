@@ -57,6 +57,7 @@ const config: Config = {
         'fade-in': 'fadeIn 0.5s ease-out forwards',
         'slide-up': 'slideUp 0.5s ease-out forwards',
         'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+        'scroll-left': 'scrollLeft 60s linear infinite',
       },
       keyframes: {
         glow: {
@@ -78,6 +79,10 @@ const config: Config = {
         slideInRight: {
           '0%': { opacity: '0', transform: 'translateX(20px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        scrollLeft: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       backgroundImage: {

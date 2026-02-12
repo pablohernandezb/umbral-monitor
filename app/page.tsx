@@ -37,6 +37,7 @@ import { NewsCard } from '@/components/ui/NewsCard'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { FAQAccordion } from '@/components/ui/FAQAccordion'
 import { TickerSimple } from '@/components/ui/Ticker'
+import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
 import { 
@@ -633,6 +634,16 @@ export default function LandingPage() {
               {t('common.viewAll')}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
+          </motion.div>
+
+          {/* Fact-Checking Feed */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <FactCheckingFeed />
           </motion.div>
         </div>
       </section>

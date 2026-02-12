@@ -637,5 +637,16 @@
       "readingRoom": "Sala de Lectura",
       "viewPublicSite": "Ver Sitio Público"
     }
+  },
+  "factCheckingFeed": {
+    "title": "MONITOR VERIFICACIÓN DE HECHOS",
+    "autoScroll": "AUTO-SCROLL",
+    "paused": "PAUSADO",
+    "hoverPaused": "EN PAUSA",
+    "monitoring": "MONITOREANDO {count} CUENTAS",
+    "reports": "REPORTES",
+    "alerts": "ALERTAS",
+    "live": "EN VIVO",
+    "view": "VER"
   }
 }
