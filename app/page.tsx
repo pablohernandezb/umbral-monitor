@@ -552,14 +552,26 @@ export default function LandingPage() {
                   )}
 
                   {/* Content */}
-                  <div className="flex-1 flex flex-col">
-                    <h4 className="text-sm font-semibold text-white mb-1">
+                    <div className="flex-1 flex flex-col">
+                    {episode.episode_type === 'autocracy' && (
+                      <p className="text-2xl text-signal-red mb-2 font-mono">
+                        {t(`historicalEpisodes.${episode.key}.period`)}
+                      </p>
+                    )}
+                    {episode.episode_type === 'democracy' && (
+                      <p className="text-2xl text-signal-blue mb-2 font-mono">
+                        {t(`historicalEpisodes.${episode.key}.period`)}
+                      </p>
+                    )}
+                    {episode.episode_type === 'transition' && (
+                      <p className="text-2xl text-signal-amber mb-2 font-mono">
+                        {t(`historicalEpisodes.${episode.key}.period`)}
+                      </p>
+                    )}
+                    <h4 className="text-lg font-semibold text-white mb-1">
                       {t(`historicalEpisodes.${episode.key}.name`)}
                     </h4>
-                    <p className="text-xs text-umbral-muted mb-2 font-mono">
-                      {t(`historicalEpisodes.${episode.key}.period`)}
-                    </p>
-                    <p className="text-xs text-umbral-muted leading-relaxed">
+                    <p className="text-sm text-umbral-muted leading-relaxed">
                       {t(`historicalEpisodes.${episode.key}.description`)}
                     </p>
                   </div>
