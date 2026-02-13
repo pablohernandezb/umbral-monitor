@@ -36,9 +36,11 @@ export const NEWS_SOURCES: SourceConfig[] = [
   { name: 'Efecto Cocuyo', url: 'https://efectococuyo.com', feedUrl: 'https://efectococuyo.com/feed/', lang: 'es' },
   { name: 'El Pitazo', url: 'https://elpitazo.net', feedUrl: 'https://elpitazo.net/feed/', lang: 'es' },
   { name: 'Runrunes', url: 'https://runrun.es', feedUrl: 'https://runrun.es/feed/', lang: 'es' },
-  { name: 'Tal Cual', url: 'https://talcualdigital.com', feedUrl: '', lang: 'es', scrapeHtml: true },
+  { name: 'Crónica Uno', url: 'https://cronica.uno', feedUrl: 'https://cronica.uno/feed/', lang: 'es', skipVenezuelaFilter: true },
+  { name: 'El Estímulo', url: 'https://elestimulo.com', feedUrl: 'https://elestimulo.com/feed/', lang: 'es', skipVenezuelaFilter: true },
+  { name: 'Caraota Digital', url: 'https://www.caraotadigital.net', feedUrl: 'https://www.caraotadigital.net/feed/', lang: 'es', skipVenezuelaFilter: true },
+  { name: 'Analítica', url: 'https://www.analitica.com', feedUrl: 'https://www.analitica.com/feed/', lang: 'es', skipVenezuelaFilter: true },
   { name: 'Caracas Chronicles', url: 'https://www.caracaschronicles.com', feedUrl: 'https://www.caracaschronicles.com/feed/', lang: 'en' },
-  { name: 'La Patilla', url: 'https://lapatilla.com', feedUrl: 'https://lapatilla.com/feed/', lang: 'es' },
 ]
 
 // ============================================================
@@ -73,7 +75,8 @@ export async function fetchRSSPage(feedUrl: string, page: number = 1): Promise<R
 export async function fetchAllRSSArticles(
   feedUrl: string,
   cutoffDate: Date,
-  maxPages: number = 50
+  maxPages: number = 50,
+  limit?: number
 ): Promise<RSSArticle[]> {
   const allArticles: RSSArticle[] = []
 
@@ -84,6 +87,11 @@ export async function fetchAllRSSArticles(
 
     let hasOlderThanCutoff = false
     for (const article of articles) {
+      // If limit is set and we've reached it, stop
+      if (limit && allArticles.length >= limit) {
+        return allArticles
+      }
+
       const articleDate = new Date(article.pubDate)
       if (articleDate >= cutoffDate) {
         allArticles.push(article)
@@ -95,11 +103,14 @@ export async function fetchAllRSSArticles(
     // If we found articles older than the cutoff, no need to paginate further
     if (hasOlderThanCutoff) break
 
+    // If limit is set and we've reached it, stop
+    if (limit && allArticles.length >= limit) break
+
     // Small delay between pages
     await new Promise(resolve => setTimeout(resolve, 1000))
   }
 
-  return allArticles
+  return limit ? allArticles.slice(0, limit) : allArticles
 }
 
 // ============================================================

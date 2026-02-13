@@ -72,7 +72,11 @@ const mediaSources = [
   { name: 'Caracas Chronicles', url: 'https://www.caracaschronicles.com' },
   { name: 'La Patilla', url: 'https://www.lapatilla.com' },
   { name: 'El Nacional', url: 'https://www.elnacional.com' },
-  { name: 'El Universal', url: 'https://www.eluniversal.com' }
+  { name: 'El Universal', url: 'https://www.eluniversal.com' },
+  { name: 'El Diario', url: 'https://eldiario.com' },
+  { name: 'El Estímulo', url: 'https://elestimulo.com' },
+  { name: 'Caraota Digital', url: 'https://caraotadigital.net' },
+  { name: 'Analítica', url: 'https://www.analitica.com' }
 ]
 
 const humanRightsSources = [

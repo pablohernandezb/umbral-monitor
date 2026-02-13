@@ -1,7 +1,7 @@
 /**
  * News Scraper — Backfill Script
  *
- * Fetches articles from 6 Venezuelan news RSS feeds,
+ * Fetches articles from 8 Venezuelan news RSS feeds,
  * auto-categorizes, translates via Claude Haiku, and upserts into news_feed.
  *
  * Prerequisites:
@@ -18,7 +18,6 @@ import { createClient } from '@supabase/supabase-js'
 import {
   NEWS_SOURCES,
   fetchAllRSSArticles,
-  scrapeTalCualArticles,
   detectCategory,
   isVenezuelaRelated,
   translateBatch,
@@ -30,8 +29,9 @@ import {
 // CONFIG
 // ============================================================
 
-const CUTOFF_DATE = new Date('2026-02-09T00:00:00Z')
+const CUTOFF_DATE = new Date('2026-02-12T00:00:00Z')
 const TRANSLATION_BATCH_SIZE = 10
+const ARTICLES_LIMIT = 10  // Fetch only the 10 most recent articles per source
 
 // ============================================================
 // SUPABASE CLIENT (service role for writes)
@@ -71,15 +71,10 @@ interface ProcessedArticle {
 }
 
 async function processSource(source: SourceConfig): Promise<ProcessedArticle[]> {
-  console.log(`\n📡 Fetching ${source.name} (${source.scrapeHtml ? source.url : source.feedUrl})...`)
+  console.log(`\n📡 Fetching ${source.name} (${source.feedUrl})...`)
 
-  let articles: RSSArticle[]
-  if (source.scrapeHtml) {
-    articles = await scrapeTalCualArticles(source.url, CUTOFF_DATE)
-  } else {
-    articles = await fetchAllRSSArticles(source.feedUrl, CUTOFF_DATE)
-  }
-  console.log(`   Found ${articles.length} articles since ${CUTOFF_DATE.toISOString().split('T')[0]}`)
+  const articles = await fetchAllRSSArticles(source.feedUrl, CUTOFF_DATE, 50, ARTICLES_LIMIT)
+  console.log(`   Found ${articles.length} recent articles (limit: ${ARTICLES_LIMIT})`)
 
   // Filter for Venezuela relevance
   let filtered: RSSArticle[]
