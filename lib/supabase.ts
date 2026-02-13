@@ -202,6 +202,8 @@ ALTER TABLE prisoners_by_organization ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events_deed ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reading_room ENABLE ROW LEVEL SECURITY;
 ALTER TABLE historical_episodes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expert_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public_submissions ENABLE ROW LEVEL SECURITY;
 
 -- Public read access policies
 CREATE POLICY "Public read scenarios" ON scenarios FOR SELECT USING (true);
@@ -212,6 +214,12 @@ CREATE POLICY "Public read prisoners_by_organization" ON prisoners_by_organizati
 CREATE POLICY "Public read events_deed" ON events_deed FOR SELECT USING (true);
 CREATE POLICY "Public read reading_room" ON reading_room FOR SELECT USING (true);
 CREATE POLICY "Public read historical_episodes" ON historical_episodes FOR SELECT USING (true);
+CREATE POLICY "Public read expert_submissions" ON expert_submissions FOR SELECT USING (true);
+CREATE POLICY "Public read public_submissions" ON public_submissions FOR SELECT USING (true);
+
+-- Public insert for submissions (anonymous users can submit)
+CREATE POLICY "Public insert expert_submissions" ON expert_submissions FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Public insert public_submissions" ON public_submissions FOR INSERT TO anon, authenticated WITH CHECK (true);
 
 -- ============================================================
 -- REALTIME SUBSCRIPTIONS
@@ -237,6 +245,43 @@ CREATE TRIGGER scenarios_updated_at
   BEFORE UPDATE ON scenarios
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
+
+-- ============================================================
+-- EXPERT SUBMISSIONS TABLE
+-- Expert analyst scenario probability assessments
+-- ============================================================
+CREATE TABLE IF NOT EXISTS expert_submissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  institution TEXT NOT NULL,
+  ideology_score INTEGER NOT NULL CHECK (ideology_score >= 0 AND ideology_score <= 10),
+  scenario_probabilities JSONB NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  reviewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_expert_submissions_status ON expert_submissions(status);
+CREATE INDEX idx_expert_submissions_email ON expert_submissions(email);
+
+-- ============================================================
+-- PUBLIC SUBMISSIONS TABLE
+-- Public decision-tree scenario assessments
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public_submissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT NOT NULL,
+  resolved_scenario INTEGER NOT NULL CHECK (resolved_scenario >= 1 AND resolved_scenario <= 5),
+  path BOOLEAN[] NOT NULL,
+  status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('published', 'deleted')),
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_public_submissions_scenario ON public_submissions(resolved_scenario);
+CREATE INDEX idx_public_submissions_email ON public_submissions(email);
 
 -- ============================================================
 -- FACT-CHECK TWEETS TABLE
@@ -322,6 +367,28 @@ CREATE POLICY "Authenticated update reading_room"
 
 CREATE POLICY "Authenticated delete reading_room"
   ON reading_room FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- Expert Submissions policies (admin management)
+CREATE POLICY "Authenticated update expert_submissions"
+  ON expert_submissions FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete expert_submissions"
+  ON expert_submissions FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- Public Submissions policies (admin management)
+CREATE POLICY "Authenticated update public_submissions"
+  ON public_submissions FOR UPDATE
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated delete public_submissions"
+  ON public_submissions FOR DELETE
   TO authenticated
   USING (true);
 

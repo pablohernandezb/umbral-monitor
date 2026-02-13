@@ -1,16 +1,20 @@
 import Link from 'next/link'
 import { getAllPrisonerStats, getAllReadingRoomItems, getNewsFeed } from '@/lib/data'
 import { IS_MOCK_MODE } from '@/lib/supabase'
+import { getParticipateStatsAction } from './participate/actions'
 
 export default async function AdminDashboardPage() {
   const { data: prisoners } = await getAllPrisonerStats()
   const { data: readingRoom } = await getAllReadingRoomItems()
   const { data: news } = await getNewsFeed(1000)
+  const { data: participateStats } = await getParticipateStatsAction()
 
   const latestPrisoner = prisoners?.[0]
   const totalPrisoners = latestPrisoner?.total || 0
   const totalReadingItems = readingRoom?.length || 0
   const totalNewsItems = news?.length || 0
+  const totalSubmissions = (participateStats?.totalExpert || 0) + (participateStats?.totalPublic || 0)
+  const pendingExperts = participateStats?.pendingExpert || 0
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -84,14 +88,17 @@ export default async function AdminDashboardPage() {
 
         <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-950/30 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <div className="w-12 h-12 bg-green-950/30 rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Data Records</p>
-              <p className="text-white text-2xl font-bold">{(prisoners?.length || 0)}</p>
+              <p className="text-gray-400 text-sm">Submissions</p>
+              <p className="text-white text-2xl font-bold">{totalSubmissions}</p>
+              {pendingExperts > 0 && (
+                <p className="text-amber-400 text-xs mt-1">{pendingExperts} pending review</p>
+              )}
             </div>
           </div>
         </div>
@@ -100,7 +107,7 @@ export default async function AdminDashboardPage() {
       {/* Quick Actions */}
       <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
         <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/prisoners"
             className="p-6 border border-gray-700 hover:border-teal-500/50 rounded-lg transition-colors group"
@@ -159,6 +166,27 @@ export default async function AdminDashboardPage() {
                 </h3>
                 <p className="text-gray-400 text-sm">
                   Add, edit, and remove books, articles, reports, and journalism resources
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/participate"
+            className="p-6 border border-gray-700 hover:border-green-500/50 rounded-lg transition-colors group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-green-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-white font-semibold mb-1 group-hover:text-green-400 transition-colors">
+                  Manage Submissions
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  Review expert submissions and moderate public poll responses
                 </p>
               </div>
             </div>

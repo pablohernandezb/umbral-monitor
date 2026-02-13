@@ -101,7 +101,7 @@ export default function LandingPage() {
           newsRes,
           prisonersRes,
           prisonersByOrgRes,
-        ] = await Promise.all([
+        ] = await Promise.allSettled([
           getScenarios(),
           getRegimeHistory(),
           getHistoricalEpisodes(),
@@ -110,21 +110,21 @@ export default function LandingPage() {
           getPrisonersByOrganization(),
         ])
 
-        if (scenariosRes.data) setScenarios(scenariosRes.data)
-        if (historyRes.data) setRegimeHistory(historyRes.data)
-        if (episodesRes.data) setHistoricalEpisodes(episodesRes.data)
-        if (newsRes.data) {
+        if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) setScenarios(scenariosRes.value.data)
+        if (historyRes.status === 'fulfilled' && historyRes.value.data) setRegimeHistory(historyRes.value.data)
+        if (episodesRes.status === 'fulfilled' && episodesRes.value.data) setHistoricalEpisodes(episodesRes.value.data)
+        if (newsRes.status === 'fulfilled' && newsRes.value.data) {
           // Keep only the latest article per source
           const latestBySource = new Map<string, NewsItem>()
-          for (const item of newsRes.data) {
+          for (const item of newsRes.value.data) {
             if (!latestBySource.has(item.source)) {
               latestBySource.set(item.source, item)
             }
           }
           setNews(Array.from(latestBySource.values()))
         }
-        if (prisonersRes.data) setPrisonerStats(prisonersRes.data)
-        if (prisonersByOrgRes.data) setPrisonersByOrg(prisonersByOrgRes.data)
+        if (prisonersRes.status === 'fulfilled' && prisonersRes.value.data) setPrisonerStats(prisonersRes.value.data)
+        if (prisonersByOrgRes.status === 'fulfilled' && prisonersByOrgRes.value.data) setPrisonersByOrg(prisonersByOrgRes.value.data)
       } catch (error) {
         console.error('Failed to load data:', error)
       } finally {
@@ -252,7 +252,7 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
             >
               <Link
-                href="#"
+                href="/participate"
                 className="btn btn-primary text-base px-8 py-3 group"
               >
                 {t('common.participate')}
@@ -871,7 +871,7 @@ export default function LandingPage() {
                 : 'Join Umbral and support monitoring by sharing your insights.'
               }
             </p>
-            <Link href="#" className="btn btn-primary px-8 py-3 text-base">
+            <Link href="/participate" className="btn btn-primary px-8 py-3 text-base">
               {locale === 'es'
                 ? 'Participa'
                 : 'Participate'

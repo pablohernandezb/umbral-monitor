@@ -43,32 +43,30 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 async function seed() {
   console.log('🌱 Starting database seed...\n')
 
-  // Clear existing data (optional - comment out if you want to keep existing data)
-  console.log('🧹 Clearing existing data...')
+  // Only clear tables that use mock data for seeding.
+  // Tables with production/scraped data (news_feed) are NEVER cleared.
+  const SAFE_TO_CLEAR = [
+    'events_deed',
+    'reading_room',
+    'political_prisoners',
+    'prisoners_by_organization',
+    'historical_episodes',
+    'expert_submissions',
+    'public_submissions',
+  ] as const
+
+  console.log('🧹 Clearing seed-managed tables (preserving news_feed, scenarios, regime_history)...')
   const clearErrors = []
 
-  const { error: newsDeleteError } = await supabase.from('news_feed').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (newsDeleteError) clearErrors.push(`news_feed: ${newsDeleteError.message}`)
-
-  const { error: eventsDeleteError } = await supabase.from('events_deed').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (eventsDeleteError) clearErrors.push(`events_deed: ${eventsDeleteError.message}`)
-
-  const { error: readingDeleteError } = await supabase.from('reading_room').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (readingDeleteError) clearErrors.push(`reading_room: ${readingDeleteError.message}`)
-
-  const { error: prisonersDeleteError } = await supabase.from('political_prisoners').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (prisonersDeleteError) clearErrors.push(`political_prisoners: ${prisonersDeleteError.message}`)
-
-  const { error: orgsDeleteError } = await supabase.from('prisoners_by_organization').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (orgsDeleteError) clearErrors.push(`prisoners_by_organization: ${orgsDeleteError.message}`)
-
-  const { error: episodesDeleteError } = await supabase.from('historical_episodes').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-  if (episodesDeleteError) clearErrors.push(`historical_episodes: ${episodesDeleteError.message}`)
+  for (const table of SAFE_TO_CLEAR) {
+    const { error } = await supabase.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    if (error) clearErrors.push(`${table}: ${error.message}`)
+  }
 
   if (clearErrors.length > 0) {
     console.log('  ⚠️ Some tables could not be cleared:', clearErrors.join(', '))
   } else {
-    console.log('  ✅ Existing data cleared\n')
+    console.log('  ✅ Seed-managed tables cleared\n')
   }
 
   // Seed scenarios
@@ -228,6 +226,65 @@ async function seed() {
     console.error('  ❌ Error:', episodesError.message)
   } else {
     console.log('  ✅ Historical episodes seeded successfully')
+  }
+
+  // Seed expert submissions
+  console.log('🎓 Seeding expert submissions...')
+  const { error: expertError } = await supabase
+    .from('expert_submissions')
+    .insert([
+      {
+        name: 'Dr. María González',
+        email: 'mgonzalez@ucv.edu.ve',
+        institution: 'Universidad Central de Venezuela',
+        ideology_score: 4,
+        scenario_probabilities: { 1: 2, 2: 3, 3: 4, 4: 3, 5: 2 },
+        status: 'pending',
+        submitted_at: '2026-02-10T14:30:00Z',
+      },
+      {
+        name: 'Prof. James Mitchell',
+        email: 'jmitchell@georgetown.edu',
+        institution: 'Georgetown University',
+        ideology_score: 6,
+        scenario_probabilities: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 3 },
+        status: 'pending',
+        submitted_at: '2026-02-11T09:15:00Z',
+      },
+      {
+        name: 'Dr. Ana Palacios',
+        email: 'apalacios@usb.ve',
+        institution: 'Universidad Simón Bolívar',
+        ideology_score: 3,
+        scenario_probabilities: { 1: 3, 2: 4, 3: 3, 4: 2, 5: 1 },
+        status: 'approved',
+        submitted_at: '2026-02-11T16:45:00Z',
+        reviewed_at: '2026-02-11T17:00:00Z',
+      },
+    ])
+
+  if (expertError) {
+    console.error('  ❌ Error:', expertError.message)
+  } else {
+    console.log('  ✅ Expert submissions seeded successfully')
+  }
+
+  // Seed public submissions
+  console.log('📊 Seeding public submissions...')
+  const { error: publicSubError } = await supabase
+    .from('public_submissions')
+    .insert([
+      { email: 'ciudadano1@gmail.com', resolved_scenario: 2, path: [true, false, false], status: 'published', submitted_at: '2026-02-10T10:20:00Z' },
+      { email: 'observer@outlook.com', resolved_scenario: 4, path: [true, true, false], status: 'published', submitted_at: '2026-02-11T11:30:00Z' },
+      { email: 'watcher@proton.me', resolved_scenario: 1, path: [false], status: 'published', submitted_at: '2026-02-12T08:00:00Z' },
+      { email: 'analista@gmail.com', resolved_scenario: 5, path: [true, true, true], status: 'published', submitted_at: '2026-02-12T12:00:00Z' },
+      { email: 'observador2@yahoo.com', resolved_scenario: 3, path: [true, false, true], status: 'published', submitted_at: '2026-02-12T13:45:00Z' },
+    ])
+
+  if (publicSubError) {
+    console.error('  ❌ Error:', publicSubError.message)
+  } else {
+    console.log('  ✅ Public submissions seeded successfully')
   }
 
   console.log('\n✨ Database seeding complete!')

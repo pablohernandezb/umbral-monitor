@@ -125,6 +125,29 @@ export interface HistoricalEpisode {
   created_at: string
 }
 
+export interface ExpertSubmission {
+  id: string
+  name: string
+  email: string
+  institution: string
+  ideology_score: number
+  scenario_probabilities: Record<number, number>
+  status: 'pending' | 'approved' | 'rejected'
+  submitted_at: string
+  reviewed_at: string | null
+  created_at: string
+}
+
+export interface PublicSubmission {
+  id: string
+  email: string
+  resolved_scenario: number
+  path: boolean[]
+  status: 'published' | 'deleted'
+  submitted_at: string
+  created_at: string
+}
+
 export interface FactCheckTweet {
   id: string
   tweet_id: string
