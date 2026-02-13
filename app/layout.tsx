@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { I18nProvider } from '@/i18n'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -61,6 +62,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID
+
   return (
     <html lang="es" className="dark">
       <head>
@@ -70,6 +73,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-umbral-black text-umbral-light antialiased">
+        {gaId && <GoogleAnalytics gaId={gaId} />}
         <Suspense fallback={null}>
           <I18nProvider defaultLocale="es">
             {/* Background grid pattern */}
