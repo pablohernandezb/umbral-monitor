@@ -670,14 +670,9 @@
   },
   "cookieBanner": {
     "title": "Cookies y Privacidad",
-    "description": "Este sitio utiliza Google Analytics para entender cómo los visitantes interactúan con nuestro contenido. Esto nos ayuda a mejorar la plataforma y documentar mejor la experiencia del usuario.",
+    "description": "Este sitio utiliza Google Analytics para entender cómo los visitantes interactúan con nuestro contenido. Esto nos ayuda a mejorar la plataforma y documentar mejor la situación en Venezuela.",
     "details": "Solo usamos cookies analíticas. No vendemos ni compartimos tu información personal. Puedes cambiar tus preferencias en cualquier momento.",
     "accept": "Aceptar",
     "reject": "Rechazar"
-  },
-  "cookiePreferences": {
-    "enabled": "🍪 Cookies: Activadas",
-    "disabled": "🍪 Cookies: Desactivadas",
-    "manage": "Gestionar preferencias de cookies"
   }
 }

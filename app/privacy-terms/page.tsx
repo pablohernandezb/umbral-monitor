@@ -162,12 +162,88 @@ export default function PrivacyTermsPage() {
                   <h3 className="text-xl font-semibold text-white mb-3">
                     {locale === 'es' ? 'Cookies y Tecnologías Similares' : 'Cookies and Similar Technologies'}
                   </h3>
-                  <p className="text-umbral-light leading-relaxed">
+                  <p className="text-umbral-light leading-relaxed mb-4">
                     {locale === 'es'
-                      ? 'Utilizamos cookies esenciales para el funcionamiento básico del sitio, como preferencias de idioma. No utilizamos cookies de seguimiento o publicidad de terceros.'
-                      : 'We use essential cookies for basic site functionality, such as language preferences. We do not use third-party tracking or advertising cookies.'
+                      ? 'Respetamos tu privacidad y tu derecho a controlar cómo se recopilan tus datos. Usamos los siguientes tipos de cookies:'
+                      : 'We respect your privacy and your right to control how your data is collected. We use the following types of cookies:'
                     }
                   </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-white font-medium mb-2">
+                        {locale === 'es' ? 'Cookies Esenciales (Siempre Activas)' : 'Essential Cookies (Always Active)'}
+                      </h4>
+                      <p className="text-sm text-umbral-light leading-relaxed">
+                        {locale === 'es'
+                          ? 'Cookies necesarias para el funcionamiento básico del sitio, como preferencias de idioma y tu elección de consentimiento de cookies. Estas no pueden desactivarse.'
+                          : 'Cookies necessary for basic site functionality, such as language preferences and your cookie consent choice. These cannot be disabled.'
+                        }
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="text-white font-medium mb-2">
+                        {locale === 'es' ? 'Cookies Analíticas (Opcionales - Requieren Consentimiento)' : 'Analytics Cookies (Optional - Require Consent)'}
+                      </h4>
+                      <p className="text-sm text-umbral-light leading-relaxed mb-2">
+                        {locale === 'es'
+                          ? 'Utilizamos Google Analytics para entender cómo los visitantes interactúan con nuestra plataforma. Esto nos ayuda a:'
+                          : 'We use Google Analytics to understand how visitors interact with our platform. This helps us:'
+                        }
+                      </p>
+                      <ul className="space-y-1 text-sm text-umbral-light ml-4">
+                        <li className="flex items-start gap-2">
+                          <span className="text-signal-amber">•</span>
+                          <span>
+                            {locale === 'es'
+                              ? 'Mejorar la experiencia del usuario'
+                              : 'Improve user experience'
+                            }
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-signal-amber">•</span>
+                          <span>
+                            {locale === 'es'
+                              ? 'Identificar contenido más relevante'
+                              : 'Identify most relevant content'
+                            }
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-signal-amber">•</span>
+                          <span>
+                            {locale === 'es'
+                              ? 'Comprender patrones de uso agregados'
+                              : 'Understand aggregated usage patterns'
+                            }
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-umbral-black/30 p-4 rounded-lg border border-signal-amber/20">
+                      <p className="text-sm text-umbral-light leading-relaxed">
+                        <strong className="text-white">
+                          {locale === 'es' ? '🔒 Tu Control: ' : '🔒 Your Control: '}
+                        </strong>
+                        {locale === 'es'
+                          ? 'Google Analytics solo se carga si das tu consentimiento explícito. Puedes aceptar o rechazar cookies analíticas cuando visitas el sitio por primera vez. Puedes cambiar tu decisión en cualquier momento haciendo clic en "Cookies" en el pie de página.'
+                          : 'Google Analytics only loads if you give explicit consent. You can accept or reject analytics cookies when you first visit the site. You can change your decision at any time by clicking "Cookies" in the footer.'
+                        }
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-umbral-light leading-relaxed">
+                        {locale === 'es'
+                          ? 'No vendemos ni compartimos tu información personal con terceros. No utilizamos cookies de publicidad o seguimiento con fines comerciales.'
+                          : 'We do not sell or share your personal information with third parties. We do not use advertising or tracking cookies for commercial purposes.'
+                        }
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>

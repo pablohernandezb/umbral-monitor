@@ -670,14 +670,9 @@
   },
   "cookieBanner": {
     "title": "Cookies & Privacy",
-    "description": "This site uses Google Analytics to understand how visitors interact with our content. This helps us improve the platform and better document the user experience.",
+    "description": "This site uses Google Analytics to understand how visitors interact with our content. This helps us improve the platform and better document the situation in Venezuela.",
     "details": "We only use analytical cookies. We do not sell or share your personal information. You can change your preferences at any time.",
     "accept": "Accept",
     "reject": "Reject"
-  },
-  "cookiePreferences": {
-    "enabled": "🍪 Cookies: Enabled",
-    "disabled": "🍪 Cookies: Disabled",
-    "manage": "Manage cookie preferences"
   }
 }

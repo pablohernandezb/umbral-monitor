@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Github, X } from 'lucide-react'
 import { useTranslation } from '@/i18n'
+import CookiePreferences from '@/components/CookiePreferences'
 
 const CustomGradientIcon = ({ className = "w-5 h-5" }) => (
   <img 
@@ -70,6 +71,9 @@ export function Footer() {
                 <Link href="/privacy-terms" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {locale === 'es' ? 'Privacidad y Términos' : 'Privacy and Terms'}
                 </Link>
+              </li>
+              <li>
+                <CookiePreferences />
               </li>
               <li>
                 <a href="https://buymeacoffee.com/pablohernandezb" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">

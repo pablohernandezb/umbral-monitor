@@ -1,13 +1,17 @@
 'use client'
 
 import Script from 'next/script'
+import { useCookieConsent } from '@/lib/cookie-consent'
 
 interface GoogleAnalyticsProps {
   gaId: string
 }
 
 export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps) {
-  if (!gaId) return null
+  const { hasConsent } = useCookieConsent()
+
+  // Only load GA if user has explicitly consented
+  if (!gaId || hasConsent !== true) return null
 
   return (
     <>
