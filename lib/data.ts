@@ -41,7 +41,6 @@ export async function getScenarios(): Promise<ApiResponse<Scenario[]>> {
   const { data, error } = await supabase
     .from('scenarios')
     .select('*')
-    .order('probability', { ascending: false })
 
   return {
     data: data as Scenario[] | null,

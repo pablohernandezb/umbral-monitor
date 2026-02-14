@@ -124,7 +124,13 @@ export default function LandingPage() {
           getSubmissionAverages(),
         ])
 
-        if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) setScenarios(scenariosRes.value.data)
+        if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) {
+          // Sort by scenario number (1-5, left to right)
+          const sorted = [...scenariosRes.value.data].sort(
+            (a, b) => (scenarioKeyToNumber[a.key] || 0) - (scenarioKeyToNumber[b.key] || 0)
+          )
+          setScenarios(sorted)
+        }
         if (historyRes.status === 'fulfilled' && historyRes.value.data) setRegimeHistory(historyRes.value.data)
         if (episodesRes.status === 'fulfilled' && episodesRes.value.data) setHistoricalEpisodes(episodesRes.value.data)
         if (newsRes.status === 'fulfilled' && newsRes.value.data) {
