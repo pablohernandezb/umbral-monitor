@@ -268,19 +268,17 @@ CREATE INDEX idx_expert_submissions_email ON expert_submissions(email);
 
 -- ============================================================
 -- PUBLIC SUBMISSIONS TABLE
--- Public decision-tree scenario assessments
+-- Public scenario probability assessments (likert ratings)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public_submissions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email TEXT NOT NULL,
-  resolved_scenario INTEGER NOT NULL CHECK (resolved_scenario >= 1 AND resolved_scenario <= 5),
-  path BOOLEAN[] NOT NULL,
+  scenario_probabilities JSONB NOT NULL DEFAULT '{}',
   status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('published', 'deleted')),
   submitted_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_public_submissions_scenario ON public_submissions(resolved_scenario);
 CREATE INDEX idx_public_submissions_email ON public_submissions(email);
 
 -- ============================================================

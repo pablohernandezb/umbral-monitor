@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useCookieConsent } from '@/lib/cookie-consent'
 import { useTranslation } from '@/i18n'
 
@@ -10,8 +11,13 @@ import { useTranslation } from '@/i18n'
 export default function CookiePreferences() {
   const { hasConsent, resetConsent } = useCookieConsent()
   const { t } = useTranslation()
+  const [mounted, setMounted] = useState(false)
 
-  if (hasConsent === null) return null
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted || hasConsent === null) return null
 
   return (
     <button

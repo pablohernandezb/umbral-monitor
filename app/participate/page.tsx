@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, ChevronRight, ArrowLeft,
-  Check, X,
+  Check,
   Fingerprint, UserPlus, Eye, Send,
   Landmark, RotateCcw, Vote, Undo, HandFist,
   Wifi,
@@ -21,17 +21,7 @@ import { submitExpertAction, submitPublicAction, lookupSubmissionAction } from '
 type Screen =
   | 'entry' | 'returning' | 'classify'
   | 'expert-identity' | 'expert-assessment' | 'expert-confirm' | 'expert-success'
-  | 'public-q1' | 'public-q2' | 'public-q3' | 'public-q4'
-  | 'public-result' | 'public-submit' | 'public-success'
-
-interface PublicSubmission {
-  id: string
-  email: string
-  resolvedScenario: number
-  path: boolean[]
-  status: 'published'
-  submittedAt: string
-}
+  | 'public-assessment' | 'public-confirm' | 'public-success'
 
 // ============================================================
 // SCENARIO DATA
@@ -133,12 +123,11 @@ const LIKERT_LABELS = [
   { value: 5, en: 'VERY LIKELY', es: 'MUY PROBABLE' },
 ]
 
-const QUESTIONS: Array<{ screen: Screen; text: { en: string; es: string } }> = [
-  { screen: 'public-q1', text: { en: 'Are liberalization processes taking place?', es: '¿Están ocurriendo procesos de liberalización?' } },
-  { screen: 'public-q2', text: { en: 'Are there free and fair elections?', es: '¿Existen elecciones libres y justas?' } },
-  { screen: 'public-q3', text: { en: 'Is democracy the only game in town?', es: '¿Es la democracia el único juego en la ciudad?' } },
-  { screen: 'public-q4', text: { en: 'Has economic stabilization been successful?', es: '¿Ha sido exitosa la estabilización económica?' } },
-]
+function getLikelihoodStyle(value: number) {
+  if (value <= 2) return { text: 'text-signal-red', bg: 'bg-signal-red/10', border: 'border-signal-red/30', shadow: 'shadow-[0_0_10px_rgba(220,38,38,0.1)]' }
+  if (value <= 4) return { text: 'text-signal-amber', bg: 'bg-signal-amber/10', border: 'border-signal-amber/30', shadow: 'shadow-[0_0_10px_rgba(245,158,11,0.1)]' }
+  return { text: 'text-signal-teal', bg: 'bg-signal-teal/10', border: 'border-signal-teal/30', shadow: 'shadow-[0_0_10px_rgba(20,184,166,0.1)]' }
+}
 
 // ============================================================
 // UTILITIES
@@ -250,21 +239,6 @@ function BackButton({ onClick, locale }: { onClick: () => void; locale: string }
   )
 }
 
-function StepIndicator({ current, total, locale }: { current: number; total: number; locale: string }) {
-  return (
-    <div className="flex items-center gap-3 mb-8">
-      <span className="text-xs font-mono text-umbral-muted uppercase tracking-wider">
-        {locale === 'es' ? 'CONSULTA' : 'QUERY'} {current} / {total}
-      </span>
-      <div className="flex-1 h-px bg-umbral-ash">
-        <div
-          className="h-full bg-signal-teal transition-all duration-500"
-          style={{ width: `${(current / total) * 100}%` }}
-        />
-      </div>
-    </div>
-  )
-}
 
 // ============================================================
 // MAIN PAGE COMPONENT
@@ -285,21 +259,15 @@ export default function ParticipatePage() {
   const [expertRatings, setExpertRatings] = useState<Record<number, number>>({})
 
   // Public flow state
-  const [publicAnswers, setPublicAnswers] = useState<boolean[]>([])
-  const [resolvedScenario, setResolvedScenario] = useState<number | null>(null)
+  const [publicRatings, setPublicRatings] = useState<Record<number, number>>({})
   const [publicEmail, setPublicEmail] = useState('')
-  const [questionStep, setQuestionStep] = useState(1)
 
   // Returning participant
   const [returningEmail, setReturningEmail] = useState('')
-  const [retrievedRecord, setRetrievedRecord] = useState<PublicSubmission | null>(null)
 
   // Submission result
   const [lastSubmissionId, setLastSubmissionId] = useState('')
-
-  // Typewriter state for scenario reveal
-  const [revealedChars, setRevealedChars] = useState(0)
-  const [showFullResult, setShowFullResult] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   // ---- Navigation helpers ----
 
@@ -318,57 +286,6 @@ export default function ParticipatePage() {
     }
   }, [screenHistory])
 
-  // ---- Typewriter effect for scenario reveal ----
-
-  useEffect(() => {
-    if (screen !== 'public-result' || resolvedScenario === null) return
-    setRevealedChars(0)
-    setShowFullResult(false)
-    const scenario = SCENARIOS[resolvedScenario - 1]
-    const fullText = scenario.name[locale as 'en' | 'es']
-    let i = 0
-    const interval = setInterval(() => {
-      i++
-      setRevealedChars(i)
-      if (i >= fullText.length) {
-        clearInterval(interval)
-        setTimeout(() => setShowFullResult(true), 400)
-      }
-    }, 60)
-    return () => clearInterval(interval)
-  }, [screen, resolvedScenario, locale])
-
-  // ---- Decision tree handler ----
-
-  const handlePublicAnswer = useCallback((currentScreen: Screen, answer: boolean) => {
-    setPublicAnswers(prev => [...prev, answer])
-
-    switch (currentScreen) {
-      case 'public-q1':
-        if (!answer) {
-          setResolvedScenario(1)
-          setQuestionStep(s => s + 1)
-          navigateTo('public-result')
-        } else {
-          setQuestionStep(s => s + 1)
-          navigateTo('public-q2')
-        }
-        break
-      case 'public-q2':
-        setQuestionStep(s => s + 1)
-        navigateTo(answer ? 'public-q3' : 'public-q4')
-        break
-      case 'public-q3':
-        setResolvedScenario(answer ? 5 : 4)
-        navigateTo('public-result')
-        break
-      case 'public-q4':
-        setResolvedScenario(answer ? 3 : 2)
-        navigateTo('public-result')
-        break
-    }
-  }, [navigateTo])
-
   // ---- Expert submit ----
 
   const handleExpertSubmit = useCallback(async () => {
@@ -380,8 +297,10 @@ export default function ParticipatePage() {
       scenario_probabilities: { ...expertRatings },
     })
     if (error) {
-      console.error('Failed to submit expert assessment:', error)
+      setSubmitError(error)
+      return
     }
+    setSubmitError('')
     setLastSubmissionId(data?.id || generateId('EXP'))
     navigateTo('expert-success')
   }, [expertName, expertEmail, expertInstitution, expertIdeology, expertRatings, navigateTo])
@@ -389,53 +308,62 @@ export default function ParticipatePage() {
   // ---- Public submit ----
 
   const handlePublicSubmit = useCallback(async () => {
-    if (resolvedScenario === null) return
     const { data, error } = await submitPublicAction({
       email: publicEmail,
-      resolved_scenario: resolvedScenario,
-      path: publicAnswers,
+      scenario_probabilities: { ...publicRatings },
     })
     if (error) {
-      console.error('Failed to submit public response:', error)
+      setSubmitError(error)
+      return
     }
+    setSubmitError('')
     setLastSubmissionId(data?.id || generateId('PUB'))
     navigateTo('public-success')
-  }, [publicEmail, resolvedScenario, publicAnswers, navigateTo])
+  }, [publicEmail, publicRatings, navigateTo])
 
   // ---- Returning participant retrieve ----
 
+  const [retrieveAttempted, setRetrieveAttempted] = useState(false)
+
   const handleRetrieve = useCallback(async () => {
+    setRetrieveAttempted(false)
     const { data } = await lookupSubmissionAction(returningEmail)
-    if (data) {
-      // Map DB fields to the local type format
-      setRetrievedRecord({
-        id: data.id,
-        email: data.email,
-        resolvedScenario: data.resolved_scenario,
-        path: data.path,
-        status: 'published',
-        submittedAt: data.submitted_at,
-      })
+    if (data?.type === 'expert') {
+      const expert = data.data
+      setExpertName(expert.name)
+      setExpertEmail(expert.email)
+      setExpertInstitution(expert.institution)
+      setExpertIdeology(expert.ideology_score)
+      setExpertRatings(expert.scenario_probabilities ?? {})
+      navigateTo('expert-assessment')
+    } else if (data?.type === 'public') {
+      const pub = data.data
+      setPublicRatings(pub.scenario_probabilities ?? {})
+      setPublicEmail(pub.email || returningEmail)
+      navigateTo('public-assessment')
     } else {
-      setRetrievedRecord(null)
+      setRetrieveAttempted(true)
     }
-  }, [returningEmail])
+  }, [returningEmail, navigateTo])
 
   // ---- Reset for new participation ----
 
   const resetAll = useCallback(() => {
     setExpertName(''); setExpertEmail(''); setExpertInstitution('')
     setExpertIdeology(5); setExpertRatings({})
-    setPublicAnswers([]); setResolvedScenario(null); setPublicEmail('')
-    setQuestionStep(1); setReturningEmail(''); setRetrievedRecord(null)
-    setLastSubmissionId(''); setScreenHistory([])
+    setPublicRatings({}); setPublicEmail('')
+    setReturningEmail(''); setRetrieveAttempted(false)
+    setSubmitError(''); setLastSubmissionId(''); setScreenHistory([])
     setScreen('entry')
   }, [])
 
   // ---- Validation helpers ----
 
-  const expertIdentityValid = expertName.trim() && expertEmail.trim() && expertInstitution.trim()
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+  const expertIdentityValid = expertName.trim() && emailRegex.test(expertEmail) && expertInstitution.trim()
   const expertAssessmentValid = Object.keys(expertRatings).length === 5
+  const publicAssessmentValid = Object.keys(publicRatings).length === 5
+  const publicEmailValid = emailRegex.test(publicEmail)
 
   // ============================================================
   // RENDER SCREENS
@@ -498,57 +426,44 @@ export default function ParticipatePage() {
 
             <div className="space-y-4">
               <TacticalInput
-                label={locale === 'es' ? 'ID DE PARTICIPANTE / EMAIL' : 'PARTICIPANT ID / EMAIL'}
+                label={locale === 'es' ? 'EMAIL DE PARTICIPANTE' : 'PARTICIPANT EMAIL'}
                 value={returningEmail}
-                onChange={setReturningEmail}
+                onChange={(v) => { setReturningEmail(v); setRetrieveAttempted(false) }}
                 placeholder="email@example.com"
+                type="email"
               />
               <TacticalButton onClick={handleRetrieve} disabled={!returningEmail.trim()}>
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4" />
-                  {locale === 'es' ? 'RECUPERAR REGISTRO' : 'RETRIEVE RECORD'}
+                  {locale === 'es' ? 'RECUPERAR Y ACTUALIZAR' : 'RETRIEVE & UPDATE'}
                 </div>
               </TacticalButton>
             </div>
 
-            {retrievedRecord && (
+            <p className="mt-6 text-xs font-mono text-umbral-steel">
+              {locale === 'es'
+                ? '// Se cargará su evaluación más reciente para que pueda actualizarla'
+                : '// Your most recent assessment will be loaded so you can update it'}
+            </p>
+
+            {retrieveAttempted && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-8 border border-signal-teal/30 bg-signal-teal/5 p-6 space-y-4"
+                className="mt-6 border border-signal-red/30 bg-signal-red/5 p-4"
               >
-                <p className="text-xs font-mono text-signal-teal uppercase tracking-wider">
-                  // {locale === 'es' ? 'REGISTRO ENCONTRADO' : 'RECORD FOUND'}
+                <p className="text-sm font-mono text-signal-red/70">
+                  // {locale === 'es' ? 'NO SE ENCONTRÓ REGISTRO PARA ESTE EMAIL' : 'NO RECORD FOUND FOR THIS EMAIL'}
                 </p>
-                <div className="space-y-2 text-sm font-mono">
-                  <p className="text-umbral-muted">ID: <span className="text-white">{retrievedRecord.id}</span></p>
-                  <p className="text-umbral-muted">
-                    {locale === 'es' ? 'Escenario' : 'Scenario'}: <span className="text-white font-bold">
-                      S{retrievedRecord.resolvedScenario} — {SCENARIOS[retrievedRecord.resolvedScenario - 1].name[locale as 'en' | 'es']}
-                    </span>
-                  </p>
-                  <p className="text-umbral-muted">
-                    {locale === 'es' ? 'Enviado' : 'Submitted'}: <span className="text-white">{new Date(retrievedRecord.submittedAt).toLocaleDateString()}</span>
-                  </p>
-                </div>
-                <p className="text-[10px] font-mono text-umbral-steel">
-                  // BACKEND: {locale === 'es' ? 'Punto de integración para actualizar y reenviar' : 'Integration point for update and resubmit'}
+                <p className="text-xs font-mono text-umbral-muted mt-2">
+                  {locale === 'es'
+                    ? 'Puede registrarse como nuevo participante.'
+                    : 'You can register as a new participant.'}
                 </p>
-                <TacticalButton size="small" onClick={() => {
-                  setPublicAnswers([])
-                  setResolvedScenario(null)
-                  setQuestionStep(1)
-                  navigateTo('public-q1')
-                }}>
-                  {locale === 'es' ? 'ACTUALIZAR Y REENVIAR' : 'UPDATE & RESUBMIT'}
+                <TacticalButton size="small" className="mt-3" onClick={() => navigateTo('classify')}>
+                  {locale === 'es' ? 'NUEVO PARTICIPANTE' : 'NEW PARTICIPANT'}
                 </TacticalButton>
               </motion.div>
-            )}
-
-            {returningEmail.trim() && retrievedRecord === null && (
-              <p className="mt-6 text-sm font-mono text-signal-red/70">
-                // {locale === 'es' ? 'NO SE ENCONTRÓ REGISTRO' : 'NO RECORD FOUND'}
-              </p>
             )}
           </ScreenShell>
         )
@@ -591,10 +506,8 @@ export default function ParticipatePage() {
 
               <button
                 onClick={() => {
-                  setPublicAnswers([])
-                  setResolvedScenario(null)
-                  setQuestionStep(1)
-                  navigateTo('public-q1')
+                  setPublicRatings({})
+                  navigateTo('public-assessment')
                 }}
                 className="group border border-umbral-ash bg-umbral-black/50 p-6 text-left hover:border-signal-amber hover:shadow-[0_0_25px_rgba(245,158,11,0.15)] transition-all space-y-4"
               >
@@ -697,30 +610,34 @@ export default function ParticipatePage() {
               {SCENARIOS.map((scenario) => {
                 const Icon = scenario.icon
                 const selected = expertRatings[scenario.number]
+                const likelihoodColor = selected ? getLikelihoodStyle(selected) : null
                 return (
-                  <div key={scenario.number} className={cn('border p-4 space-y-3', selected ? scenario.borderColor : 'border-umbral-ash')}>
+                  <div key={scenario.number} className={cn('border p-4 space-y-3', likelihoodColor ? likelihoodColor.border : 'border-umbral-ash')}>
                     <div className="flex items-center gap-3">
-                      <Icon className={cn('w-5 h-5', scenario.color)} />
-                      <span className={cn('font-mono font-bold text-sm uppercase', scenario.color)}>
+                      <Icon className="w-5 h-5 text-signal-blue" />
+                      <span className="font-mono font-bold text-sm uppercase text-signal-blue">
                         S{scenario.number} — {scenario.name[locale as 'en' | 'es']}
                       </span>
                     </div>
                     <p className="text-xs font-mono text-umbral-muted">{scenario.shortDesc[locale as 'en' | 'es']}</p>
                     <div className="flex gap-1 flex-wrap">
-                      {LIKERT_LABELS.map((likert) => (
-                        <button
-                          key={likert.value}
-                          onClick={() => setExpertRatings(prev => ({ ...prev, [scenario.number]: likert.value }))}
-                          className={cn(
-                            'flex-1 min-w-[80px] px-2 py-2 text-[10px] font-mono uppercase tracking-wider border transition-all',
-                            selected === likert.value
-                              ? `${scenario.bgColor} ${scenario.color} ${scenario.borderColor} shadow-[0_0_10px_rgba(20,184,166,0.1)]`
-                              : 'border-umbral-ash text-umbral-muted bg-umbral-black/50 hover:border-umbral-steel',
-                          )}
-                        >
-                          {likert.value} — {likert[locale as 'en' | 'es']}
-                        </button>
-                      ))}
+                      {LIKERT_LABELS.map((likert) => {
+                        const btnStyle = getLikelihoodStyle(likert.value)
+                        return (
+                          <button
+                            key={likert.value}
+                            onClick={() => setExpertRatings(prev => ({ ...prev, [scenario.number]: likert.value }))}
+                            className={cn(
+                              'flex-1 min-w-[80px] px-2 py-2 text-[10px] font-mono uppercase tracking-wider border transition-all',
+                              selected === likert.value
+                                ? `${btnStyle.bg} ${btnStyle.text} ${btnStyle.border} ${btnStyle.shadow}`
+                                : 'border-umbral-ash text-umbral-muted bg-umbral-black/50 hover:border-umbral-steel',
+                            )}
+                          >
+                            {likert.value} — {likert[locale as 'en' | 'es']}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
                 )
@@ -774,10 +691,11 @@ export default function ParticipatePage() {
                 {SCENARIOS.map((s) => {
                   const rating = expertRatings[s.number]
                   const label = LIKERT_LABELS.find(l => l.value === rating)
+                  const ratingStyle = rating ? getLikelihoodStyle(rating) : null
                   return (
                     <div key={s.number} className="flex items-center justify-between py-1.5 text-sm font-mono">
-                      <span className={cn(s.color)}>S{s.number} — {s.name[locale as 'en' | 'es']}</span>
-                      <span className="text-white">{label?.[locale as 'en' | 'es']}</span>
+                      <span className="text-signal-blue">S{s.number} — {s.name[locale as 'en' | 'es']}</span>
+                      <span className={ratingStyle ? ratingStyle.text : 'text-white'}>{label?.[locale as 'en' | 'es']}</span>
                     </div>
                   )
                 })}
@@ -789,6 +707,10 @@ export default function ParticipatePage() {
                 ? 'SU EVALUACIÓN SERÁ REVISADA ANTES DE PUBLICACIÓN'
                 : 'YOUR ASSESSMENT WILL BE REVIEWED BEFORE PUBLICATION'}
             </p>
+
+            {submitError && (
+              <p className="mt-4 text-xs font-mono text-signal-red">// {submitError}</p>
+            )}
 
             <div className="mt-6 flex justify-end">
               <TacticalButton variant="primary" onClick={handleExpertSubmit}>
@@ -827,140 +749,116 @@ export default function ParticipatePage() {
           </ScreenShell>
         )
 
-      // ---- PUBLIC Q1–Q4: DECISION TREE ----
-      case 'public-q1':
-      case 'public-q2':
-      case 'public-q3':
-      case 'public-q4': {
-        const qIndex = ['public-q1', 'public-q2', 'public-q3', 'public-q4'].indexOf(screen)
-        const question = QUESTIONS[qIndex]
+      // ---- PUBLIC ASSESSMENT: LIKERT RATINGS ----
+      case 'public-assessment':
         return (
-          <ScreenShell>
+          <ScreenShell className="py-24" wide>
             <BackButton onClick={goBack} locale={locale} />
-            <StepIndicator current={questionStep} total={3} locale={locale} />
-
-            <h2 className="text-2xl sm:text-3xl font-bold font-mono text-white leading-tight mb-12">
-              // {question.text[locale as 'en' | 'es']}
-              <BlinkCursor />
+            <h2 className="text-xl font-bold font-mono text-white mb-2">
+              {locale === 'es'
+                ? '// ASIGNAR PESO DE PROBABILIDAD A CADA TRAYECTORIA'
+                : '// ASSIGN PROBABILITY WEIGHT TO EACH TRAJECTORY'}
             </h2>
+            <p className="text-xs font-mono text-umbral-muted mb-8">
+              {locale === 'es'
+                ? '// Seleccione una valoración por escenario'
+                : '// Select one rating per scenario'}
+            </p>
 
-            <div className="flex gap-4">
-              <TacticalButton
-                size="large"
-                className="flex-1"
-                variant="success"
-                onClick={() => handlePublicAnswer(screen, true)}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Check className="w-5 h-5" />
-                  {locale === 'es' ? 'SÍ' : 'YES'}
-                </div>
-              </TacticalButton>
-              <TacticalButton
-                size="large"
-                className="flex-1"
-                variant="danger"
-                onClick={() => handlePublicAnswer(screen, false)}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <X className="w-5 h-5" />
-                  NO
-                </div>
-              </TacticalButton>
-            </div>
-          </ScreenShell>
-        )
-      }
-
-      // ---- PUBLIC RESULT: SCENARIO REVEAL ----
-      case 'public-result': {
-        if (resolvedScenario === null) return null
-        const scenario = SCENARIOS[resolvedScenario - 1]
-        const Icon = scenario.icon
-        const fullName = scenario.name[locale as 'en' | 'es']
-        const displayedName = fullName.slice(0, revealedChars)
-
-        return (
-          <ScreenShell>
-            <div className="text-center space-y-8">
-              <p className="text-xs font-mono text-umbral-muted uppercase tracking-[0.3em]">
-                // {locale === 'es' ? 'ESCENARIO RESUELTO' : 'RESOLVED SCENARIO'}
-              </p>
-
-              <div className="space-y-4">
-                <div className={cn('w-20 h-20 mx-auto border flex items-center justify-center', scenario.borderColor, scenario.bgColor)}>
-                  <Icon className={cn('w-10 h-10', scenario.color)} />
-                </div>
-                <p className={cn('text-4xl font-bold font-mono', scenario.color)}>S{scenario.number}</p>
-                <h2 className="text-2xl sm:text-3xl font-bold font-mono text-white min-h-[2.5rem]">
-                  {displayedName}
-                  {revealedChars < fullName.length && <BlinkCursor />}
-                </h2>
-              </div>
-
-              <AnimatePresence>
-                {showFullResult && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-8"
-                  >
-                    <p className="text-sm font-mono text-umbral-muted max-w-lg mx-auto leading-relaxed">
-                      {scenario.longDesc[locale as 'en' | 'es']}
-                    </p>
-
-                    <div className="border-t border-umbral-ash pt-6">
-                      <p className="text-sm font-mono text-umbral-light mb-6">
-                        // {locale === 'es'
-                          ? '¿DESEA ENVIAR SU RESPUESTA AL MONITOR PÚBLICO?'
-                          : 'DO YOU WISH TO SUBMIT YOUR RESPONSE TO THE PUBLIC MONITOR?'}
-                      </p>
-                      <div className="flex gap-4 justify-center">
-                        <TacticalButton variant="primary" onClick={() => navigateTo('public-submit')}>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4" />
-                            {locale === 'es' ? 'SÍ, ENVIAR' : 'YES, SUBMIT'}
-                          </div>
-                        </TacticalButton>
-                        <TacticalButton onClick={resetAll}>
-                          {locale === 'es' ? 'NO, SALIR' : 'NO, EXIT'}
-                        </TacticalButton>
-                      </div>
+            <div className="space-y-6">
+              {SCENARIOS.map((scenario) => {
+                const Icon = scenario.icon
+                const selected = publicRatings[scenario.number]
+                const likelihoodColor = selected ? getLikelihoodStyle(selected) : null
+                return (
+                  <div key={scenario.number} className={cn('border p-4 space-y-3', likelihoodColor ? likelihoodColor.border : 'border-umbral-ash')}>
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-5 h-5 text-signal-blue" />
+                      <span className="font-mono font-bold text-sm uppercase text-signal-blue">
+                        S{scenario.number} — {scenario.name[locale as 'en' | 'es']}
+                      </span>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <p className="text-xs font-mono text-umbral-muted">{scenario.shortDesc[locale as 'en' | 'es']}</p>
+                    <div className="flex gap-1 flex-wrap">
+                      {LIKERT_LABELS.map((likert) => {
+                        const btnStyle = getLikelihoodStyle(likert.value)
+                        return (
+                          <button
+                            key={likert.value}
+                            onClick={() => setPublicRatings(prev => ({ ...prev, [scenario.number]: likert.value }))}
+                            className={cn(
+                              'flex-1 min-w-[80px] px-2 py-2 text-[10px] font-mono uppercase tracking-wider border transition-all',
+                              selected === likert.value
+                                ? `${btnStyle.bg} ${btnStyle.text} ${btnStyle.border} ${btnStyle.shadow}`
+                                : 'border-umbral-ash text-umbral-muted bg-umbral-black/50 hover:border-umbral-steel',
+                            )}
+                          >
+                            {likert.value} — {likert[locale as 'en' | 'es']}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <TacticalButton onClick={() => navigateTo('public-confirm')} disabled={!publicAssessmentValid}>
+                <div className="flex items-center gap-2">
+                  {locale === 'es' ? 'REVISAR' : 'REVIEW'}
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </TacticalButton>
             </div>
           </ScreenShell>
         )
-      }
 
-      // ---- PUBLIC SUBMIT ----
-      case 'public-submit':
+      // ---- PUBLIC CONFIRM: REVIEW + EMAIL + SUBMIT ----
+      case 'public-confirm':
         return (
           <ScreenShell>
             <BackButton onClick={goBack} locale={locale} />
             <h2 className="text-xl font-bold font-mono text-white mb-8">
-              {locale === 'es'
-                ? '// PROPORCIONE EMAIL PARA REGISTRAR SU RESPUESTA'
-                : '// PROVIDE EMAIL TO LOG YOUR RESPONSE'}
-              <BlinkCursor />
+              {locale === 'es' ? '// CONFIRMAR EVALUACIÓN' : '// CONFIRM ASSESSMENT'}
             </h2>
 
-            <div className="space-y-4">
+            <div className="border border-umbral-ash p-6 space-y-4 bg-umbral-black/50">
+              <p className="text-xs font-mono text-umbral-muted uppercase tracking-wider mb-3">
+                {locale === 'es' ? 'VALORACIONES DE ESCENARIOS' : 'SCENARIO RATINGS'}
+              </p>
+              {SCENARIOS.map((s) => {
+                const rating = publicRatings[s.number]
+                const label = LIKERT_LABELS.find(l => l.value === rating)
+                const ratingStyle = rating ? getLikelihoodStyle(rating) : null
+                return (
+                  <div key={s.number} className="flex items-center justify-between py-1.5 text-sm font-mono">
+                    <span className="text-signal-blue">S{s.number} — {s.name[locale as 'en' | 'es']}</span>
+                    <span className={ratingStyle ? ratingStyle.text : 'text-white'}>{label?.[locale as 'en' | 'es']}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="mt-6 space-y-4">
               <TacticalInput
-                label="EMAIL"
+                label={locale === 'es' ? 'EMAIL PARA REGISTRAR SU RESPUESTA' : 'EMAIL TO LOG YOUR RESPONSE'}
                 value={publicEmail}
-                onChange={setPublicEmail}
+                onChange={(v) => { setPublicEmail(v); setSubmitError('') }}
                 type="email"
                 placeholder="email@example.com"
               />
-              <TacticalButton variant="primary" onClick={handlePublicSubmit} disabled={!publicEmail.trim()}>
-                <div className="flex items-center gap-2">
-                  <Send className="w-4 h-4" />
-                  {locale === 'es' ? 'CONFIRMAR Y TRANSMITIR' : 'CONFIRM & TRANSMIT'}
-                </div>
-              </TacticalButton>
+              {submitError && (
+                <p className="text-xs font-mono text-signal-red">// {submitError}</p>
+              )}
+              <div className="flex justify-end">
+                <TacticalButton variant="primary" onClick={handlePublicSubmit} disabled={!publicEmailValid}>
+                  <div className="flex items-center gap-2">
+                    <Send className="w-4 h-4" />
+                    {locale === 'es' ? 'ENVIAR EVALUACIÓN' : 'SUBMIT ASSESSMENT'}
+                  </div>
+                </TacticalButton>
+              </div>
             </div>
           </ScreenShell>
         )

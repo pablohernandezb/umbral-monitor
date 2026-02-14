@@ -1,8 +1,8 @@
 'use client'
 
-import { TrendingDown, Shield, TrendingUp, MoveDown, Landmark, Undo, LockKeyhole, RotateCcw, Vote, HandFist } from 'lucide-react'
+import { Shield, Landmark, Undo, RotateCcw, Vote, HandFist, GraduationCap, UsersRound } from 'lucide-react'
 import { useTranslation } from '@/i18n'
-import { cn, getStatusBgColor, getScenarioBgColor } from '@/lib/utils'
+import { cn, getScenarioBgColor } from '@/lib/utils'
 import type { Scenario } from '@/types'
 
 interface ScenarioCardProps {
@@ -10,13 +10,8 @@ interface ScenarioCardProps {
   className?: string
   onClick?: () => void
   isActive?: boolean
-}
-
-const statusIcons = {
-  critical: MoveDown,
-  warning: TrendingDown,
-  stable: TrendingUp,
-  neutral: Shield,
+  expertRating?: number  // 1-5 mean from expert submissions
+  publicRating?: number  // 1-5 mean from public submissions
 }
 
 const scenarioIcons = {
@@ -35,14 +30,29 @@ const scenarioNumbers: Record<string, string> = {
   regressedAutocracy: '/images/scenario_number_1.png',
 }
 
-export function ScenarioCard({ scenario, className, onClick, isActive }: ScenarioCardProps) {
-  const { t } = useTranslation()
+function getRatingColor(rating: number): string {
+  if (rating >= 4) return 'bg-signal-teal'
+  if (rating >= 2) return 'bg-signal-amber'
+  return 'bg-signal-red'
+}
 
-  const Icon = statusIcons[scenario.status] || Shield
+function getRatingLabel(rating: number, locale: string): string {
+  if (rating === 0) return locale === 'es' ? 'Sin datos' : 'No data'
+  const rounded = Math.round(rating * 10) / 10
+  if (rating >= 4) return locale === 'es' ? `${rounded} — Alta` : `${rounded} — High`
+  if (rating >= 3) return locale === 'es' ? `${rounded} — Media` : `${rounded} — Medium`
+  if (rating >= 2) return locale === 'es' ? `${rounded} — Baja` : `${rounded} — Low`
+  return locale === 'es' ? `${rounded} — Muy baja` : `${rounded} — Very low`
+}
+
+export function ScenarioCard({ scenario, className, onClick, isActive, expertRating, publicRating }: ScenarioCardProps) {
+  const { t, locale } = useTranslation()
   const ScenarioIcon = scenarioIcons[scenario.key] || Shield
   const name = t(`scenarios.${scenario.key}.name`)
   const description = t(`scenarios.${scenario.key}.description`)
-  const probabilityLabel = t(`landing.scenarios.${scenario.probability_label}`)
+
+  const eRating = expertRating ?? 0
+  const pRating = publicRating ?? 0
 
   return (
     <div
@@ -100,46 +110,49 @@ export function ScenarioCard({ scenario, className, onClick, isActive }: Scenari
         </p>
       </div>
 
-{/* Probability indicator */}
-<div className="mt-4 pt-4 border-t border-umbral-ash">
-  <div className="flex items-start gap-3">
-    {/* Small Icon on the left */}
-    <div
-      className={cn(
-        'w-12 h-12 rounded-md flex items-center justify-center shrink-0 border transition-colors',
-        getStatusBgColor(scenario.status)
-      )}
-    >
-      <Icon
-        className={cn(
-          'w-6 h-6 transition-transform group-hover:scale-110',
-          scenario.status === 'critical' && 'text-signal-red',
-          scenario.status === 'warning' && 'text-signal-amber',
-          scenario.status === 'stable' && 'text-signal-teal',
-          scenario.status === 'neutral' && 'text-umbral-muted'
-        )}
-      />
-    </div>
-
-          {/* Probability Label and Progress Bar container */}
+      {/* Probability indicators */}
+      <div className="mt-4 pt-4 border-t border-umbral-ash space-y-3">
+        {/* Expert indicator */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 border border-signal-blue/30 bg-signal-blue/10">
+            <GraduationCap className="w-4 h-4 text-signal-blue" />
+          </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-umbral-muted">
-                {t('landing.scenarios.probability')}:<br />{probabilityLabel}
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] text-umbral-muted uppercase tracking-wide">
+                {locale === 'es' ? 'Expertos' : 'Experts'}
+              </span>
+              <span className="text-[10px] font-mono text-umbral-light">
+                {getRatingLabel(eRating, locale)}
               </span>
             </div>
-            
-            {/* Progress bar */}
             <div className="h-1.5 bg-umbral-ash rounded-full overflow-hidden">
               <div
-                className={cn(
-                  'h-full rounded-full transition-all duration-500',
-                  scenario.status === 'critical' && 'bg-signal-red',
-                  scenario.status === 'warning' && 'bg-signal-amber',
-                  scenario.status === 'stable' && 'bg-signal-teal',
-                  scenario.status === 'neutral' && 'bg-umbral-muted'
-                )}
-                style={{ width: `${scenario.probability}%` }}
+                className={cn('h-full rounded-full transition-all duration-500', eRating > 0 ? getRatingColor(eRating) : 'bg-umbral-ash')}
+                style={{ width: `${(eRating / 5) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Public indicator */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 border border-signal-blue/30 bg-signal-blue/10">
+            <UsersRound className="w-4 h-4 text-signal-blue" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] text-umbral-muted uppercase tracking-wide">
+                {locale === 'es' ? 'Público' : 'Public'}
+              </span>
+              <span className="text-[10px] font-mono text-umbral-light">
+                {getRatingLabel(pRating, locale)}
+              </span>
+            </div>
+            <div className="h-1.5 bg-umbral-ash rounded-full overflow-hidden">
+              <div
+                className={cn('h-full rounded-full transition-all duration-500', pRating > 0 ? getRatingColor(pRating) : 'bg-umbral-ash')}
+                style={{ width: `${(pRating / 5) * 100}%` }}
               />
             </div>
           </div>

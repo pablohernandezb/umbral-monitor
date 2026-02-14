@@ -48,11 +48,11 @@ const MOCK_EXPERT_SUBMISSIONS: ExpertSubmission[] = [
 ]
 
 const MOCK_PUBLIC_SUBMISSIONS: PublicSubmission[] = [
-  { id: 'PUB-20260210-001', email: 'ciudadano1@gmail.com', resolved_scenario: 2, path: [true, false, false], status: 'published', submitted_at: '2026-02-10T10:20:00Z', created_at: '2026-02-10T10:20:00Z' },
-  { id: 'PUB-20260211-002', email: 'observer@outlook.com', resolved_scenario: 4, path: [true, true, false], status: 'published', submitted_at: '2026-02-11T11:30:00Z', created_at: '2026-02-11T11:30:00Z' },
-  { id: 'PUB-20260212-003', email: 'watcher@proton.me', resolved_scenario: 1, path: [false], status: 'published', submitted_at: '2026-02-12T08:00:00Z', created_at: '2026-02-12T08:00:00Z' },
-  { id: 'PUB-20260212-004', email: 'analista@gmail.com', resolved_scenario: 5, path: [true, true, true], status: 'published', submitted_at: '2026-02-12T12:00:00Z', created_at: '2026-02-12T12:00:00Z' },
-  { id: 'PUB-20260212-005', email: 'observador2@yahoo.com', resolved_scenario: 3, path: [true, false, true], status: 'published', submitted_at: '2026-02-12T13:45:00Z', created_at: '2026-02-12T13:45:00Z' },
+  { id: 'PUB-20260210-001', email: 'ciudadano1@gmail.com', scenario_probabilities: { 1: 3, 2: 4, 3: 2, 4: 1, 5: 1 }, status: 'published', submitted_at: '2026-02-10T10:20:00Z', created_at: '2026-02-10T10:20:00Z' },
+  { id: 'PUB-20260211-002', email: 'observer@outlook.com', scenario_probabilities: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 3 }, status: 'published', submitted_at: '2026-02-11T11:30:00Z', created_at: '2026-02-11T11:30:00Z' },
+  { id: 'PUB-20260212-003', email: 'watcher@proton.me', scenario_probabilities: { 1: 5, 2: 4, 3: 2, 4: 1, 5: 1 }, status: 'published', submitted_at: '2026-02-12T08:00:00Z', created_at: '2026-02-12T08:00:00Z' },
+  { id: 'PUB-20260212-004', email: 'analista@gmail.com', scenario_probabilities: { 1: 1, 2: 1, 3: 2, 4: 3, 5: 5 }, status: 'published', submitted_at: '2026-02-12T12:00:00Z', created_at: '2026-02-12T12:00:00Z' },
+  { id: 'PUB-20260212-005', email: 'observador2@yahoo.com', scenario_probabilities: { 1: 2, 2: 2, 3: 4, 4: 3, 5: 2 }, status: 'published', submitted_at: '2026-02-12T13:45:00Z', created_at: '2026-02-12T13:45:00Z' },
 ]
 
 // ============================================================

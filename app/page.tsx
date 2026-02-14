@@ -40,14 +40,16 @@ import { TickerSimple } from '@/components/ui/Ticker'
 import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
-import { 
-  getScenarios, 
-  getRegimeHistory, 
-  getNewsFeed, 
+import {
+  getScenarios,
+  getRegimeHistory,
+  getNewsFeed,
   getLatestPrisonerStats,
   getPrisonersByOrganization,
   getHistoricalEpisodes,
+  getSubmissionAverages,
 } from '@/lib/data'
+import type { SubmissionAverages } from '@/lib/data'
 import { voteForScenario } from '@/app/actions/news-votes'
 import { daysSince, cn } from '@/lib/utils'
 import type { 
@@ -58,6 +60,15 @@ import type {
   PrisonerByOrganization,
   HistoricalEpisode
 } from '@/types'
+
+// Map scenario key to the number used in scenario_probabilities JSONB
+const scenarioKeyToNumber: Record<string, number> = {
+  regressedAutocracy: 1,
+  revertedLiberalization: 2,
+  stabilizedElectoralAutocracy: 3,
+  preemptedDemocraticTransition: 4,
+  democraticTransition: 5,
+}
 
 // Animation variants
 const fadeInUp = {
@@ -83,6 +94,7 @@ export default function LandingPage() {
   const [news, setNews] = useState<NewsItem[]>([])
   const [prisonerStats, setPrisonerStats] = useState<PoliticalPrisoner | null>(null)
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
+  const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
 
@@ -101,6 +113,7 @@ export default function LandingPage() {
           newsRes,
           prisonersRes,
           prisonersByOrgRes,
+          submissionAvgsRes,
         ] = await Promise.allSettled([
           getScenarios(),
           getRegimeHistory(),
@@ -108,6 +121,7 @@ export default function LandingPage() {
           getNewsFeed(500),
           getLatestPrisonerStats(),
           getPrisonersByOrganization(),
+          getSubmissionAverages(),
         ])
 
         if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) setScenarios(scenariosRes.value.data)
@@ -125,6 +139,7 @@ export default function LandingPage() {
         }
         if (prisonersRes.status === 'fulfilled' && prisonersRes.value.data) setPrisonerStats(prisonersRes.value.data)
         if (prisonersByOrgRes.status === 'fulfilled' && prisonersByOrgRes.value.data) setPrisonersByOrg(prisonersByOrgRes.value.data)
+        if (submissionAvgsRes.status === 'fulfilled' && submissionAvgsRes.value.data) setSubmissionAvgs(submissionAvgsRes.value.data)
       } catch (error) {
         console.error('Failed to load data:', error)
       } finally {
@@ -380,29 +395,37 @@ export default function LandingPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    {scenarios.map((scenario, index) => (
-                      <motion.div key={scenario.id} variants={fadeInUp} className="h-full">
-                        <ScenarioCard
-                          scenario={scenario}
-                          className="bg-umbral-black/60 backdrop-blur-sm h-full"
-                          onClick={() => setActiveScenarioId(activeScenarioId === scenario.id ? null : scenario.id)}
-                          isActive={activeScenarioId === scenario.id}
-                        />
-                      </motion.div>
-                    ))}
+                    {scenarios.map((scenario, index) => {
+                      const sNum = scenarioKeyToNumber[scenario.key] || 0
+                      return (
+                        <motion.div key={scenario.id} variants={fadeInUp} className="h-full">
+                          <ScenarioCard
+                            scenario={scenario}
+                            className="bg-umbral-black/60 backdrop-blur-sm h-full"
+                            onClick={() => setActiveScenarioId(activeScenarioId === scenario.id ? null : scenario.id)}
+                            isActive={activeScenarioId === scenario.id}
+                            expertRating={submissionAvgs?.expert[sNum]}
+                            publicRating={submissionAvgs?.public[sNum]}
+                          />
+                        </motion.div>
+                      )
+                    })}
                   </div>
                 )}
 
                 {/* Footer stats */}
-                <div className="flex items-center gap-6 mt-6 pt-4 border-t border-umbral-ash">
+                <div className="flex items-center gap-2 mt-6 pt-4 border-t border-umbral-ash">
                   <div className="flex items-center gap-2">
                     <span className="status-dot status-dot-stable" />
-                    <span className="text-xs text-umbral-muted">
+                    <span className="text-base text-umbral-muted">
                       {t('landing.scenarios.analyzing')}
                     </span>
                   </div>
-                  <div className="text-xs text-umbral-muted font-mono">
-                   45 {t('landing.scenarios.analysisIncluded')}
+                  <div className="text-base text-umbral-muted font-mono">
+                    {locale === 'es'
+                      ? <>basado en <span className="text-white">{submissionAvgs?.expertCount ?? 0}</span> análisis de expertos y <span className="text-white">{submissionAvgs?.publicCount ?? 0}</span> evaluaciones ciudadanas</>
+                      : <>based on <span className="text-white">{submissionAvgs?.expertCount ?? 0}</span> expert analysis and <span className="text-white">{submissionAvgs?.publicCount ?? 0}</span> citizens evaluations</>
+                    }
                   </div>
                 </div>
               </div>

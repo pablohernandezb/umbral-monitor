@@ -15,11 +15,11 @@ type ActiveTab = 'expert' | 'public'
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected'
 
 const SCENARIOS = [
-  { number: 1, name: 'Regressed Autocracy', color: 'bg-red-500', textColor: 'text-red-400', bgLight: 'bg-red-950/30', borderColor: 'border-red-500/30' },
-  { number: 2, name: 'Reverted Liberalization', color: 'bg-red-500', textColor: 'text-red-400', bgLight: 'bg-red-950/30', borderColor: 'border-red-500/30' },
-  { number: 3, name: 'Stabilized Electoral Autocracy', color: 'bg-amber-500', textColor: 'text-amber-400', bgLight: 'bg-amber-950/30', borderColor: 'border-amber-500/30' },
-  { number: 4, name: 'Preempted Democratic Transition', color: 'bg-amber-500', textColor: 'text-amber-400', bgLight: 'bg-amber-950/30', borderColor: 'border-amber-500/30' },
-  { number: 5, name: 'Democratic Transition', color: 'bg-blue-500', textColor: 'text-blue-400', bgLight: 'bg-blue-950/30', borderColor: 'border-blue-500/30' },
+  { number: 1, name: 'Regressed Autocracy' },
+  { number: 2, name: 'Reverted Liberalization' },
+  { number: 3, name: 'Stabilized Electoral Autocracy' },
+  { number: 4, name: 'Preempted Democratic Transition' },
+  { number: 5, name: 'Democratic Transition' },
 ]
 
 const LIKERT_LABELS: Record<number, string> = {
@@ -28,6 +28,12 @@ const LIKERT_LABELS: Record<number, string> = {
   3: 'Possible',
   4: 'Likely',
   5: 'Very Likely',
+}
+
+function getLikelihoodStyle(value: number) {
+  if (value <= 2) return { textColor: 'text-red-400', bgLight: 'bg-red-950/30', borderColor: 'border-red-500/30', barColor: 'bg-red-500' }
+  if (value <= 4) return { textColor: 'text-amber-400', bgLight: 'bg-amber-950/30', borderColor: 'border-amber-500/30', barColor: 'bg-amber-500' }
+  return { textColor: 'text-teal-400', bgLight: 'bg-teal-950/30', borderColor: 'border-teal-500/30', barColor: 'bg-teal-500' }
 }
 
 const statusStyles: Record<string, string> = {
@@ -139,9 +145,11 @@ export default function ParticipateAdminPage() {
     ? Math.round((approvedCount / (approvedCount + rejectedCount)) * 100)
     : 0
 
-  // Public scenario distribution
-  const scenarioCounts = [1, 2, 3, 4, 5].map(n => publicSubmissions.filter(s => s.resolved_scenario === n).length)
-  const maxCount = Math.max(...scenarioCounts, 1)
+  // Public average ratings across all submissions
+  const publicAvgRatings = SCENARIOS.map((s) => {
+    const values = publicSubmissions.map(sub => sub.scenario_probabilities?.[s.number]).filter((v): v is number => typeof v === 'number' && v > 0)
+    return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0
+  })
 
   if (loading) {
     return (
@@ -332,13 +340,14 @@ export default function ParticipateAdminPage() {
                   <p className="text-gray-400 text-xs mb-2">Scenario Probability Ratings</p>
                   <div className="flex flex-wrap gap-2">
                     {SCENARIOS.map((s) => {
-                      const rating = sub.scenario_probabilities[s.number]
+                      const rating = sub.scenario_probabilities?.[s.number]
+                      const style = rating ? getLikelihoodStyle(rating) : { textColor: 'text-gray-400', bgLight: 'bg-gray-950/30', borderColor: 'border-gray-500/30' }
                       return (
                         <span
                           key={s.number}
-                          className={`px-2.5 py-1 text-xs rounded ${s.bgLight} ${s.textColor} border ${s.borderColor}`}
+                          className={`px-2.5 py-1 text-xs rounded ${style.bgLight} border ${style.borderColor}`}
                         >
-                          S{s.number}: {LIKERT_LABELS[rating] || '—'}
+                          <span className="text-blue-400">S{s.number}</span>: <span className={style.textColor}>{LIKERT_LABELS[rating] || '—'}</span>
                         </span>
                       )
                     })}
@@ -387,25 +396,28 @@ export default function ParticipateAdminPage() {
       {/* ============================================================ */}
       {activeTab === 'public' && (
         <div>
-          {/* Scenario Distribution */}
+          {/* Average Scenario Ratings */}
           <div className="bg-[#111113] border border-gray-800 rounded-lg p-6 mb-6">
-            <h3 className="text-white font-semibold mb-4">Scenario Distribution</h3>
+            <h3 className="text-white font-semibold mb-4">Average Scenario Ratings</h3>
             <div className="space-y-3">
               {SCENARIOS.map((s, i) => {
-                const count = scenarioCounts[i]
-                const pct = maxCount > 0 ? (count / maxCount) * 100 : 0
+                const avg = publicAvgRatings[i]
+                const pct = avg > 0 ? (avg / 5) * 100 : 0
+                const style = avg > 0 ? getLikelihoodStyle(Math.round(avg)) : { textColor: 'text-gray-400', bgLight: '', borderColor: '', barColor: 'bg-gray-600' }
                 return (
                   <div key={s.number}>
                     <div className="flex items-center justify-between text-sm mb-1">
-                      <span className={`${s.textColor} font-medium`}>
+                      <span className="text-blue-400 font-medium">
                         S{s.number} — {s.name}
                       </span>
-                      <span className="text-white font-bold font-mono">{count}</span>
+                      <span className={`font-bold font-mono ${style.textColor}`}>
+                        {avg > 0 ? avg.toFixed(1) : '—'}
+                      </span>
                     </div>
                     <div className="h-4 bg-gray-800/50 rounded overflow-hidden">
                       <div
-                        className={`h-full ${s.color} rounded transition-all duration-500`}
-                        style={{ width: `${pct}%`, minWidth: count > 0 ? '4px' : '0' }}
+                        className={`h-full ${style.barColor} rounded transition-all duration-500`}
+                        style={{ width: `${pct}%`, minWidth: avg > 0 ? '4px' : '0' }}
                       />
                     </div>
                   </div>
@@ -418,51 +430,58 @@ export default function ParticipateAdminPage() {
           </div>
 
           {/* Public Submissions List */}
-          <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
-            <h3 className="text-white font-semibold mb-4">All Submissions</h3>
-            <div className="space-y-2">
-              {publicSubmissions.map((sub) => {
-                const scenario = SCENARIOS[sub.resolved_scenario - 1]
-                return (
-                  <div
-                    key={sub.id}
-                    className="flex items-center justify-between py-3 px-4 border border-gray-800/50 rounded-lg hover:bg-gray-900/30 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className={`px-2 py-0.5 text-xs rounded font-bold ${scenario.bgLight} ${scenario.textColor} border ${scenario.borderColor}`}>
-                        S{sub.resolved_scenario}
-                      </span>
-                      <div>
-                        <p className="text-gray-300 text-sm">{sub.email}</p>
-                        <p className="text-gray-600 text-xs">{sub.id}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-gray-500 text-sm font-mono">
-                        {new Date(sub.submitted_at).toLocaleDateString('en-US', {
-                          month: 'short', day: 'numeric',
-                        })}
-                      </span>
-                      <button
-                        onClick={() => handleDeletePublic(sub.id)}
-                        className="p-1.5 text-red-400/50 hover:text-red-400 transition-colors rounded hover:bg-red-950/30"
-                        title="Delete submission"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
+          <div className="grid grid-cols-1 gap-4">
+            {publicSubmissions.map((sub) => (
+              <div key={sub.id} className="bg-[#111113] border border-gray-800 rounded-lg p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <p className="text-gray-300 text-sm">{sub.email}</p>
+                    <p className="text-gray-600 text-xs">{sub.id}</p>
                   </div>
-                )
-              })}
-
-              {publicSubmissions.length === 0 && (
-                <div className="py-12 text-center">
-                  <p className="text-gray-400">No public submissions yet</p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-gray-500 text-sm font-mono">
+                      {new Date(sub.submitted_at).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                      })}
+                    </span>
+                    <button
+                      onClick={() => handleDeletePublic(sub.id)}
+                      className="p-1.5 text-red-400/50 hover:text-red-400 transition-colors rounded hover:bg-red-950/30"
+                      title="Delete submission"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {/* Scenario Ratings */}
+                <div>
+                  <p className="text-gray-400 text-xs mb-2">Scenario Probability Ratings</p>
+                  <div className="flex flex-wrap gap-2">
+                    {SCENARIOS.map((s) => {
+                      const rating = sub.scenario_probabilities?.[s.number]
+                      const style = rating ? getLikelihoodStyle(rating) : { textColor: 'text-gray-400', bgLight: 'bg-gray-950/30', borderColor: 'border-gray-500/30' }
+                      return (
+                        <span
+                          key={s.number}
+                          className={`px-2.5 py-1 text-xs rounded ${style.bgLight} border ${style.borderColor}`}
+                        >
+                          <span className="text-blue-400">S{s.number}</span>: <span className={style.textColor}>{LIKERT_LABELS[rating] || '—'}</span>
+                        </span>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {publicSubmissions.length === 0 && (
+              <div className="bg-[#111113] border border-gray-800 rounded-lg p-12 text-center">
+                <p className="text-gray-400">No public submissions yet</p>
+              </div>
+            )}
           </div>
         </div>
       )}

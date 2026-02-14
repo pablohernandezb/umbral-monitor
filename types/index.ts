@@ -141,8 +141,7 @@ export interface ExpertSubmission {
 export interface PublicSubmission {
   id: string
   email: string
-  resolved_scenario: number
-  path: boolean[]
+  scenario_probabilities: Record<number, number>
   status: 'published' | 'deleted'
   submitted_at: string
   created_at: string

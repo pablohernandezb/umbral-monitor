@@ -11,6 +11,8 @@ import type {
   ReadingRoomItem,
   HistoricalEpisode,
   FactCheckTweet,
+  ExpertSubmission,
+  PublicSubmission,
   ApiResponse,
 } from '@/types'
 
@@ -653,5 +655,91 @@ export async function getFactCheckTweets(
   return {
     data: data as FactCheckTweet[],
     error: null,
+  }
+}
+
+// ============================================================
+// SUBMISSION AVERAGES (for scenario cards on landing page)
+// ============================================================
+
+export interface SubmissionAverages {
+  expert: Record<number, number>  // scenario number (1-5) -> mean rating (1-5)
+  public: Record<number, number>
+  expertCount: number  // unique participants
+  publicCount: number
+}
+
+export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAverages>> {
+  const empty: SubmissionAverages = {
+    expert: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    public: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    expertCount: 0,
+    publicCount: 0,
+  }
+
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: empty, error: null }
+  }
+
+  // Fetch approved expert submissions and all public submissions in parallel
+  const [expertRes, publicRes] = await Promise.all([
+    supabase
+      .from('expert_submissions')
+      .select('email, scenario_probabilities, submitted_at')
+      .eq('status', 'approved')
+      .order('submitted_at', { ascending: false }),
+    supabase
+      .from('public_submissions')
+      .select('email, scenario_probabilities, submitted_at')
+      .order('submitted_at', { ascending: false }),
+  ])
+
+  // Deduplicate by email (keep latest per email — already sorted DESC)
+  function dedupeByEmail<T extends { email: string; scenario_probabilities: Record<number, number> | null }>(
+    rows: T[]
+  ): T[] {
+    const seen = new Set<string>()
+    const result: T[] = []
+    for (const row of rows) {
+      const email = row.email.toLowerCase()
+      if (!seen.has(email)) {
+        seen.add(email)
+        result.push(row)
+      }
+    }
+    return result
+  }
+
+  // Compute mean per scenario (1-5)
+  function computeMeans(rows: Array<{ scenario_probabilities: Record<number, number> | null }>): Record<number, number> {
+    const means: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    if (rows.length === 0) return means
+
+    for (let s = 1; s <= 5; s++) {
+      const values = rows
+        .map(r => r.scenario_probabilities?.[s])
+        .filter((v): v is number => typeof v === 'number' && v > 0)
+      means[s] = values.length > 0
+        ? values.reduce((a, b) => a + b, 0) / values.length
+        : 0
+    }
+    return means
+  }
+
+  const expertRows = dedupeByEmail(
+    (expertRes.data || []) as Array<{ email: string; scenario_probabilities: Record<number, number> | null; submitted_at: string }>
+  )
+  const publicRows = dedupeByEmail(
+    (publicRes.data || []) as Array<{ email: string; scenario_probabilities: Record<number, number> | null; submitted_at: string }>
+  )
+
+  return {
+    data: {
+      expert: computeMeans(expertRows),
+      public: computeMeans(publicRows),
+      expertCount: expertRows.length,
+      publicCount: publicRows.length,
+    },
+    error: expertRes.error?.message || publicRes.error?.message || null,
   }
 }
