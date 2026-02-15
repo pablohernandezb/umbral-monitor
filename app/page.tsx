@@ -323,6 +323,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
           {/* Section header - moved inside the terminal */}
+          {!loading && (
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -460,6 +461,7 @@ export default function LandingPage() {
               ) : null
             })()}
           </motion.div>
+          )}
 
           {/* Days since capture ticker */}
           <motion.div 

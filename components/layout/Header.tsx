@@ -178,6 +178,14 @@ export function Header() {
                 <BookOpen className="w-4 h-4" />
                 {locale === 'es' ? 'Sala de Lectura' : 'Reading Room'}
               </Link>
+              <Link
+                href="/news"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-umbral-light hover:text-white hover:bg-umbral-ash"
+              >
+                <Newspaper className="w-4 h-4" />
+                {locale === 'es' ? 'Sala de Noticias' : 'News Room'}
+              </Link>
             </div>
           </div>
         )}
