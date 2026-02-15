@@ -32,7 +32,7 @@ const scenarioNumbers: Record<string, string> = {
 
 function getRatingColor(rating: number): string {
   if (rating >= 4) return 'bg-signal-teal'
-  if (rating >= 2) return 'bg-signal-amber'
+  if (rating >= 3) return 'bg-signal-amber'
   return 'bg-signal-red'
 }
 
@@ -129,7 +129,7 @@ export function ScenarioCard({ scenario, className, onClick, isActive, expertRat
             <div className="h-1.5 bg-umbral-ash rounded-full overflow-hidden">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', eRating > 0 ? getRatingColor(eRating) : 'bg-umbral-ash')}
-                style={{ width: `${(eRating / 5) * 100}%` }}
+                style={{ width: `${((eRating-1) / 4) * 100}%` }}
               />
             </div>
           </div>

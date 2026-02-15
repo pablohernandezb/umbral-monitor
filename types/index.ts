@@ -60,8 +60,8 @@ export interface NewsItem {
 export interface PoliticalPrisoner {
   id: string
   date: string
-  total: number
-  released: number
+  total_count: number
+  releases_30d: number
   civilians: number
   military: number
   men: number

@@ -72,7 +72,7 @@ export function TickerSimple({ days: daysProp }: { days: number }) {
   return (
     <div className="bg-umbral-charcoal/80 backdrop-blur-sm border border-umbral-ash rounded-full px-6 py-3 inline-flex items-center gap-3">
       <Clock className="w-6 h-6 md:w-6 md:h-6 text-signal-amber animate-pulse" />
-      <p className="text-sm md:text-xl text-umbral-light">
+      <p className="text-sm md:text-lg text-umbral-light">
         {days !== null ? (
           <>
             {text}{' '}

@@ -730,16 +730,16 @@ export default function LandingPage() {
               <motion.div variants={fadeInUp}>
                 <MetricCard
                   label={t('landing.prisoners.total')}
-                  value={prisonerStats?.total || 711}
-                  trend={{ value: 23, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
+                  value={prisonerStats?.total_count || 711}
+                  trend={{ value: 67, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
                   size="large"
                 />
               </motion.div>
               
               <motion.div variants={fadeInUp}>
                 <MetricCard
-                  label={t('landing.prisoners.releases30d')}
-                  value={prisonerStats?.released || 45}
+                  label={t('landing.prisoners.releasesJ8')}
+                  value={prisonerStats?.releases_30d || 45}
                   size="large"
                 />
               </motion.div>
