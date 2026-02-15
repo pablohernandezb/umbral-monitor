@@ -10,7 +10,7 @@ export default async function AdminDashboardPage() {
   const { data: participateStats } = await getParticipateStatsAction()
 
   const latestPrisoner = prisoners?.[0]
-  const totalPrisoners = latestPrisoner?.total || 0
+  const totalPrisoners = latestPrisoner?.total_count || 0
   const totalReadingItems = readingRoom?.length || 0
   const totalNewsItems = news?.length || 0
   const totalSubmissions = (participateStats?.totalExpert || 0) + (participateStats?.totalPublic || 0)
@@ -205,7 +205,7 @@ export default async function AdminDashboardPage() {
             </p>
             <p className="mb-2">
               <span className="text-gray-400">Total:</span>{' '}
-              <span className="text-teal-400 font-bold">{latestPrisoner.total.toLocaleString()}</span>
+              <span className="text-teal-400 font-bold">{latestPrisoner.total_count.toLocaleString()}</span>
             </p>
             <p className="text-gray-400 text-sm mt-4">
               Last updated: {new Date(latestPrisoner.updated_at).toLocaleString()}
