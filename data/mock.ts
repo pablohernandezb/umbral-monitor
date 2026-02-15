@@ -439,8 +439,8 @@ export const mockPoliticalPrisoners: PoliticalPrisoner[] = [
   {
     id: '1',
     date: '2024-01-28',
-    total: 687,
-    released: 368,
+    total_count: 687,
+    releases_30d: 368,
     civilians: 505,
     military: 182,
     men: 600,
