@@ -41,14 +41,19 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4">Recursos</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/#scenarios" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
-                  {t('footer.monitor')}
-                </a>
+                <Link href="/participate" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('footer.participate')}
+                </Link>
               </li>
               <li>
-                <a href="/how-did-we-get-here" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                <Link href="/#scenarios" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('footer.monitor')}
+                </Link>
+              </li>
+              <li>
+                <Link href="/how-did-we-get-here" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {t('footer.howDidWeGetHere')}
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href="/about" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">

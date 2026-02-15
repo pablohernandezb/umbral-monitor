@@ -323,8 +323,8 @@ export default function LandingPage() {
             </p>
           </motion.div>
           {/* Section header - moved inside the terminal */}
-          {!loading && (
           <motion.div
+            key={loading ? 'loading' : 'loaded'}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
@@ -461,7 +461,6 @@ export default function LandingPage() {
               ) : null
             })()}
           </motion.div>
-          )}
 
           {/* Days since capture ticker */}
           <motion.div 
@@ -560,6 +559,7 @@ export default function LandingPage() {
 
           {/* Historical episodes */}
           <motion.div
+            key={loading ? 'loading' : 'loaded'}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
@@ -644,6 +644,7 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
+            key={loading ? 'loading' : 'loaded'}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
@@ -722,6 +723,7 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
+            key={loading ? 'loading' : 'loaded'}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
