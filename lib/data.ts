@@ -363,23 +363,10 @@ export async function getAllPrisonerStats(): Promise<ApiResponse<PoliticalPrison
     .select('*')
     .order('data_date', { ascending: false })
 
-  // Map database column names to TypeScript field names
+  // Map data_date to date for consistency
   const mappedData = data?.map(item => ({
-    id: item.id,
+    ...item,
     date: item.data_date,
-    total: item.total_count,
-    released: item.releases_30d,
-    civilians: item.civilians,
-    military: item.military,
-    men: item.men,
-    women: item.women,
-    adults: item.adults,
-    minors: item.minors,
-    foreign: item.foreign,
-    unknown: item.unknown,
-    source: item.source,
-    created_at: item.created_at,
-    updated_at: item.updated_at,
   })) || null
 
   return { data: mappedData as PoliticalPrisoner[] | null, error: error?.message || null }

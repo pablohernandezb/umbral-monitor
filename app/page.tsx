@@ -427,7 +427,7 @@ export default function LandingPage() {
                       {t('landing.scenarios.analyzing')}
                     </span>
                   </div>
-                  <div className="text-base text-umbral-muted font-mono">
+                  <div className="text-base text-umbral-muted">
                     {locale === 'es'
                       ? <>basado en <span className="text-white">{submissionAvgs?.expertCount ?? 0}</span> análisis de expertos y <span className="text-white">{submissionAvgs?.publicCount ?? 0}</span> evaluaciones ciudadanas</>
                       : <>based on <span className="text-white">{submissionAvgs?.expertCount ?? 0}</span> expert analysis and <span className="text-white">{submissionAvgs?.publicCount ?? 0}</span> citizens evaluations</>
