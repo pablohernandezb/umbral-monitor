@@ -21,7 +21,7 @@ export async function getAllPrisonerStatsAction() {
   const mappedData = data?.map(item => ({
     id: item.id,
     date: item.data_date,
-    total: item.total_count,
+    total_count: item.total_count,
     released: item.releases_30d,
     civilians: item.civilians,
     military: item.military,
@@ -53,8 +53,8 @@ export async function createPrisonerStatsAction(
 
   // Map TypeScript field names to database column names
   const dbData = {
-    total_count: prisonerData.total,
-    releases_30d: prisonerData.released,
+    total_count: prisonerData.total_count,
+    releases_30d: prisonerData.releases_30d,
     data_date: prisonerData.date,
     civilians: prisonerData.civilians,
     military: prisonerData.military,
@@ -114,8 +114,8 @@ export async function updatePrisonerStatsAction(
 
   // Map TypeScript field names to database column names
   const dbData: Record<string, any> = {}
-  if (prisonerData.total !== undefined) dbData.total_count = prisonerData.total
-  if (prisonerData.released !== undefined) dbData.releases_30d = prisonerData.released
+  if (prisonerData.total_count !== undefined) dbData.total_count = prisonerData.total_count
+  if (prisonerData.releases_30d !== undefined) dbData.releases_30d = prisonerData.releases_30d
   if (prisonerData.date !== undefined) dbData.data_date = prisonerData.date
   if (prisonerData.civilians !== undefined) dbData.civilians = prisonerData.civilians
   if (prisonerData.military !== undefined) dbData.military = prisonerData.military

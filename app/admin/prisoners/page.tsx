@@ -251,10 +251,10 @@ export default function PrisonersAdminPage() {
                     ) : (
                       <>
                         <td className="py-3 px-4 text-white font-mono">{prisoner.date}</td>
-                        <td className="py-3 px-4 text-right text-teal-400 font-bold">{prisoner.total}</td>
+                        <td className="py-3 px-4 text-right text-teal-400 font-bold">{prisoner.total_count}</td>
                         <td className="py-3 px-4 text-right text-gray-300">{prisoner.men}</td>
                         <td className="py-3 px-4 text-right text-gray-300">{prisoner.women}</td>
-                        <td className="py-3 px-4 text-right text-gray-300">{prisoner.released}</td>
+                        <td className="py-3 px-4 text-right text-gray-300">{prisoner.releases_30d}</td>
                         <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => startEdit(prisoner)}
@@ -408,8 +408,8 @@ function PrisonerForm({
           <label className="block text-sm text-gray-400 mb-1">Total *</label>
           <input
             type="number"
-            value={data.total || ''}
-            onChange={(e) => handleChange('total', parseInt(e.target.value))}
+            value={data.total_count || ''}
+            onChange={(e) => handleChange('total_count', parseInt(e.target.value))}
             className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
             required
             min="0"
@@ -479,8 +479,8 @@ function PrisonerForm({
           <label className="block text-sm text-gray-400 mb-1">Released</label>
           <input
             type="number"
-            value={data.released || ''}
-            onChange={(e) => handleChange('released', parseInt(e.target.value))}
+            value={data.releases_30d || ''}
+            onChange={(e) => handleChange('releases_30d', parseInt(e.target.value))}
             className="w-full px-3 py-2 bg-[#0a0a0b] border border-gray-700 rounded text-white text-sm"
             min="0"
           />
