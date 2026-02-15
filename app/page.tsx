@@ -175,6 +175,17 @@ export default function LandingPage() {
     }
   }, [activeScenarioId])
 
+  useEffect(() => {
+    if (!loading && window.location.hash) {
+      const id = window.location.hash.slice(1) // removes the '#'
+      const element = document.getElementById(id)
+      if (element) {
+        const offset = element.getBoundingClientRect().top + window.pageYOffset - 100
+        window.scrollTo({ top: offset, behavior: 'smooth' })
+      }
+    }
+  }, [loading]) // fires when loading flips from true to false
+
   // FAQ items from translations
   const faqItems = [
     { question: t('landing.faq.items.0.question'), answer: t('landing.faq.items.0.answer') },
