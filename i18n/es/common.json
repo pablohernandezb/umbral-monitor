@@ -705,6 +705,8 @@
     },
     "dataDelayed": "DATOS RETRASADOS",
     "source": "Fuente: Proyecto GDELT",
-    "noData": "Datos de señales no disponibles actualmente"
+    "noData": "Datos de señales no disponibles actualmente",
+    "mockData": "DATOS SIMULADOS",
+    "live":"EN VIVO"
   }
 }

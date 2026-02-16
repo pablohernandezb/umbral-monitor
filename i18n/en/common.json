@@ -705,6 +705,8 @@
     },
     "dataDelayed": "DATA DELAYED",
     "source": "Source: GDELT Project",
-    "noData": "Signal data currently unavailable"
+    "noData": "Signal data currently unavailable",
+    "mockData": "MOCK DATA",
+    "live": "LIVE"
   }
 }

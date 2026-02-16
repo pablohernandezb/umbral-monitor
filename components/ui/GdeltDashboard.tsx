@@ -111,7 +111,7 @@ export function GdeltDashboard() {
         <div className="flex items-center gap-2">
           {error === 'mock' ? (
             <span className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber">
-              MOCK DATA
+              {t('gdelt.mockData')}
             </span>
           ) : error ? (
             <span className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber">
@@ -120,7 +120,7 @@ export function GdeltDashboard() {
           ) : (
             <span className="flex items-center gap-1.5 text-[10px] font-mono text-signal-teal">
               <span className="w-1.5 h-1.5 rounded-full bg-signal-teal animate-pulse" />
-              LIVE
+              {t('gdelt.live')}
             </span>
           )}
         </div>

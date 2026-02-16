@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { supabase, IS_MOCK_MODE } from '@/lib/supabase'
 import type { GdeltDataPoint, GdeltApiResponse } from '@/types/gdelt'
 
+// Allow up to 30s for sequential GDELT fetches with rate limit delays
+export const maxDuration = 30
+
 // GDELT DOC API v2 (the v1 Stability Timeline API is down)
 const GDELT_DOC_BASE = 'https://api.gdeltproject.org/api/v2/doc/doc'
 const TIMESPAN = '120d'
