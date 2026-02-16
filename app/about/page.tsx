@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
+import { useEffect } from 'react'
 
 // Animation variants
 const fadeInUp = {
@@ -100,6 +101,20 @@ const factcheckingSources = [
 
 export default function AboutPage() {
   const { t, locale } = useTranslation()
+
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.slice(1)
+      const element = document.getElementById(id)
+      if (element) {
+        setTimeout(() => {
+          const offset = element.getBoundingClientRect().top + window.pageYOffset - 100
+          window.scrollTo({ top: offset, behavior: 'smooth' })
+        }, 100)
+      }
+    }
+  }, [])
+  
 
   return (
     <div className="relative">

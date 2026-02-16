@@ -680,5 +680,31 @@
     "enabled": "🍪 Cookies: Enabled",
     "disabled": "🍪 Cookies: Disabled",
     "manage": "Manage cookie preferences"
+  },
+  "gdelt": {
+    "title": "GDELT SIGNAL DASHBOARD",
+    "subtitle": "Real-time media signals from the GDELT Project monitoring Venezuela coverage",
+    "signals": {
+      "instability": "Conflict Index",
+      "tone": "Media Tone",
+      "artvolnorm": "Attention Surge"
+    },
+    "stats": {
+      "instabilityDelta": "Instability \u0394",
+      "instabilityDeltaLabel": "vs Dec 2025 baseline",
+      "currentTone": "Media Tone",
+      "currentToneLabel": "Current",
+      "composedSignal": "Composite Signal",
+      "composedCRISIS": "CRISIS",
+      "composedELEVATED": "ELEVATED",
+      "composedSTABLE": "STABLE",
+      "composedLabel": "Includes Instability, Tone, and Attention Surge"
+    },
+    "timeline": {
+      "title": "EVENT TIMELINE"
+    },
+    "dataDelayed": "DATA DELAYED",
+    "source": "Source: GDELT Project",
+    "noData": "Signal data currently unavailable"
   }
 }

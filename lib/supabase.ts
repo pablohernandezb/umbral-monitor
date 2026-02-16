@@ -191,6 +191,20 @@ CREATE TABLE IF NOT EXISTS historical_episodes (
 );
 
 -- ============================================================
+-- GDELT_DATA TABLE
+-- Persistent archive of GDELT media signal data
+-- ============================================================
+CREATE TABLE IF NOT EXISTS gdelt_data (
+  date TEXT PRIMARY KEY,                    -- YYYY-MM-DD
+  instability DOUBLE PRECISION,             -- Conflict volume index
+  tone DOUBLE PRECISION,                    -- Media tone
+  artvolnorm DOUBLE PRECISION,              -- Article volume
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gdelt_data_date ON gdelt_data(date);
+
+-- ============================================================
 -- ROW LEVEL SECURITY (RLS)
 -- Enable public read-only access
 -- ============================================================
@@ -202,6 +216,7 @@ ALTER TABLE prisoners_by_organization ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events_deed ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reading_room ENABLE ROW LEVEL SECURITY;
 ALTER TABLE historical_episodes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gdelt_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expert_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_submissions ENABLE ROW LEVEL SECURITY;
 
@@ -214,6 +229,7 @@ CREATE POLICY "Public read prisoners_by_organization" ON prisoners_by_organizati
 CREATE POLICY "Public read events_deed" ON events_deed FOR SELECT USING (true);
 CREATE POLICY "Public read reading_room" ON reading_room FOR SELECT USING (true);
 CREATE POLICY "Public read historical_episodes" ON historical_episodes FOR SELECT USING (true);
+CREATE POLICY "Public read gdelt_data" ON gdelt_data FOR SELECT USING (true);
 CREATE POLICY "Public read expert_submissions" ON expert_submissions FOR SELECT USING (true);
 CREATE POLICY "Public read public_submissions" ON public_submissions FOR SELECT USING (true);
 
@@ -388,6 +404,17 @@ CREATE POLICY "Authenticated update public_submissions"
 CREATE POLICY "Authenticated delete public_submissions"
   ON public_submissions FOR DELETE
   TO authenticated
+  USING (true);
+
+-- GDELT Data policies (server-side API route writes)
+CREATE POLICY "Anon insert gdelt_data"
+  ON gdelt_data FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Anon update gdelt_data"
+  ON gdelt_data FOR UPDATE
+  TO anon, authenticated
   USING (true);
 
 -- Fact-check Tweets policies (service role writes via cron)
