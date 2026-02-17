@@ -16,8 +16,6 @@ const TONE_URL = `${GDELT_DOC_BASE}?query=venezuela&mode=timelinetone&timespan=$
 // Overall article volume (attention)
 const ARTVOLNORM_URL = `${GDELT_DOC_BASE}?query=venezuela&mode=timelinevol&timespan=${TIMESPAN}&format=csv`
 
-const REFRESH_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h between GDELT fetches
-
 // In-memory cache for mock mode only
 let mockCache: GdeltApiResponse | null = null
 let mockCacheTimestamp = 0
@@ -91,7 +89,7 @@ interface GdeltDbRow {
 }
 
 // ── Supabase mode: persistent DB archive ──────────────────────
-async function handleSupabaseMode(): Promise<NextResponse> {
+async function handleSupabaseMode(forceRefresh = false): Promise<NextResponse> {
   const db = supabase!
 
   // 1. Read existing data from DB
@@ -102,17 +100,12 @@ async function handleSupabaseMode(): Promise<NextResponse> {
 
   const existing = (dbRows || []) as GdeltDbRow[]
 
-  // 2. Check if we need to refresh from GDELT
-  const latestUpdate = existing.length > 0
-    ? Math.max(...existing.map(r => new Date(r.updated_at).getTime()))
-    : 0
-  const needsRefresh = Date.now() - latestUpdate > REFRESH_INTERVAL_MS || existing.length === 0
-
-  if (!needsRefresh && !dbError) {
-    // Return DB data as-is
+  // 2. Return DB data unless forced by cron or DB is empty
+  if (!forceRefresh && existing.length > 0 && !dbError) {
     const data: GdeltDataPoint[] = existing.map(({ date, instability, tone, artvolnorm }) => ({
       date, instability, tone, artvolnorm,
     }))
+    const latestUpdate = Math.max(...existing.map(r => new Date(r.updated_at).getTime()))
     return NextResponse.json({
       data,
       fetchedAt: new Date(latestUpdate).toISOString(),
@@ -131,9 +124,10 @@ async function handleSupabaseMode(): Promise<NextResponse> {
     const data: GdeltDataPoint[] = existing.map(({ date, instability, tone, artvolnorm }) => ({
       date, instability, tone, artvolnorm,
     }))
+    const lastUpdate = Math.max(...existing.map(r => new Date(r.updated_at).getTime()))
     return NextResponse.json({
       data,
-      fetchedAt: new Date(latestUpdate).toISOString(),
+      fetchedAt: new Date(lastUpdate).toISOString(),
       error: 'GDELT endpoints unavailable, serving archived data',
     } satisfies GdeltApiResponse, {
       headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=3600' },
@@ -185,7 +179,7 @@ async function handleSupabaseMode(): Promise<NextResponse> {
 // ── Mock mode: in-memory cache + mock data fallback ───────────
 async function handleMockMode(): Promise<NextResponse> {
   // Return cached if fresh
-  if (mockCache && Date.now() - mockCacheTimestamp < REFRESH_INTERVAL_MS) {
+  if (mockCache && Date.now() - mockCacheTimestamp < 24 * 60 * 60 * 1000) {
     return NextResponse.json(mockCache, {
       headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=3600' },
     })
@@ -231,12 +225,16 @@ async function handleMockMode(): Promise<NextResponse> {
 }
 
 // ── Main handler ──────────────────────────────────────────────
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // Cron job or manual trigger can force a refresh with ?force=true
+    const { searchParams } = new URL(request.url)
+    const forceRefresh = searchParams.get('force') === 'true'
+
     if (IS_MOCK_MODE || !supabase) {
       return await handleMockMode()
     }
-    return await handleSupabaseMode()
+    return await handleSupabaseMode(forceRefresh)
   } catch (err) {
     return NextResponse.json(
       { data: [], fetchedAt: new Date().toISOString(), error: String(err) },
