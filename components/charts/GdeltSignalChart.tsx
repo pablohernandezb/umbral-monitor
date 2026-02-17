@@ -75,7 +75,7 @@ export function GdeltSignalChart({ data, height = 350 }: GdeltSignalChartProps) 
         ))}
         {annotation && (
           <div className="mt-2 pt-2 border-t border-umbral-ash">
-            <span className="text-xs font-mono font-bold" style={{ color: TIER_COLORS[annotation.tier] }}>
+            <span className="text-xs font-mono font-bold" style={{ color: TIER_COLORS[annotation.tier_en] }}>
               {locale === 'es' ? annotation.label_es : annotation.label_en}
             </span>
           </div>
@@ -172,7 +172,7 @@ export function GdeltSignalChart({ data, height = 350 }: GdeltSignalChartProps) 
                 key={a.date}
                 x={a.date}
                 yAxisId="left"
-                stroke={TIER_COLORS[a.tier]}
+                stroke={TIER_COLORS[a.tier_en]}
                 strokeDasharray="3 3"
                 strokeOpacity={0.6}
               />

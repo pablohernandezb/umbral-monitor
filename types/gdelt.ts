@@ -21,7 +21,8 @@ export type GdeltAnnotationTier = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
 
 export interface GdeltAnnotation {
   date: string
-  tier: GdeltAnnotationTier
+  tier_en: GdeltAnnotationTier
+  tier_es: string
   label_en: string
   label_es: string
 }

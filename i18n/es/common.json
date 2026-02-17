@@ -703,6 +703,9 @@
     "timeline": {
       "title": "LÍNEA DE TIEMPO DE EVENTOS"
     },
+    "footer": {
+      "lastUpdated": "Última actualización: "
+    },
     "dataDelayed": "DATOS RETRASADOS",
     "source": "Fuente: Proyecto GDELT",
     "noData": "Datos de señales no disponibles actualmente",

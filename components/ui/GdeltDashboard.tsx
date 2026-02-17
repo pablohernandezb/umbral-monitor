@@ -216,33 +216,33 @@ export function GdeltDashboard() {
 
             {/* Event timeline */}
             <div>
-              <h4 className="text-xs font-semibold text-umbral-muted font-mono uppercase tracking-wider mb-3">
+              <h4 className="text-xs md:text-sm font-semibold text-umbral-muted font-mono uppercase tracking-wider mb-3">
                 {t('gdelt.timeline.title')}
               </h4>
-              <div className="space-y-1">
+              <div className="space-y-1 md:space-y-1.5">
                 {GDELT_ANNOTATIONS.map((annotation, i) => (
                   <div
                     key={annotation.date}
-                    className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-umbral-ash/20 transition-colors group"
+                    className="flex items-center gap-3 px-3 py-2 md:py-2.5 rounded-md hover:bg-umbral-ash/20 transition-colors group"
                   >
                     <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-offset-1 ring-offset-umbral-black"
+                      className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full shrink-0 ring-2 ring-offset-1 ring-offset-umbral-black"
                       style={{
-                        backgroundColor: TIER_COLORS[annotation.tier],
-                        boxShadow: `0 0 6px ${TIER_COLORS[annotation.tier]}40`,
+                        backgroundColor: TIER_COLORS[annotation.tier_en],
+                        boxShadow: `0 0 6px ${TIER_COLORS[annotation.tier_en]}40`,
                       }}
                     />
-                    <span className="text-xs font-mono text-umbral-muted w-24 shrink-0">
+                    <span className="text-xs md:text-sm font-mono text-umbral-muted w-24 md:w-28 shrink-0">
                       {formatDate(annotation.date)}
                     </span>
-                    <span className="text-xs text-umbral-light group-hover:text-white transition-colors">
+                    <span className="text-xs md:text-sm text-umbral-light group-hover:text-white transition-colors">
                       {locale === 'es' ? annotation.label_es : annotation.label_en}
                     </span>
                     <span
-                      className="text-[9px] font-mono ml-auto shrink-0 opacity-60"
-                      style={{ color: TIER_COLORS[annotation.tier] }}
+                      className="text-[9px] md:text-xs font-mono ml-auto shrink-0 opacity-60"
+                      style={{ color: TIER_COLORS[annotation.tier_en] }}
                     >
-                      {annotation.tier}
+                      {locale === 'es' ? annotation.tier_es : annotation.tier_en}
                     </span>
                   </div>
                 ))}
@@ -257,6 +257,7 @@ export function GdeltDashboard() {
               </span>
               {fetchedAt && (
                 <span className="font-mono">
+                  {t('gdelt.footer.lastUpdated')}
                   {new Date(fetchedAt).toLocaleString(locale === 'es' ? 'es-VE' : 'en-US', {
                     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                   })}

@@ -703,6 +703,9 @@
     "timeline": {
       "title": "EVENT TIMELINE"
     },
+    "footer": {
+      "lastUpdated": "Last updated: "
+    },
     "dataDelayed": "DATA DELAYED",
     "source": "Source: GDELT Project",
     "noData": "Signal data currently unavailable",

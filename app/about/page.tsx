@@ -61,6 +61,14 @@ const academicSources = [
       en: 'Database of events during democratic change episodes.'
     }
   },
+    {
+    name: 'The GDELT Project',
+    url: 'https://www.gdeltproject.org/',
+    description: {
+      es: 'Base de datos de eventos globales extraídos de medios de comunicación.',
+      en: 'Database of global events extracted from media sources.'
+    }
+  },
 ]
 
 const mediaSources = [
@@ -90,7 +98,9 @@ const humanRightsSources = [
   { name: 'Realidad Helicoide', url: 'https://vocesdelamemoriainc.org/' },
   { name: 'Human Rights Watch', url: 'https://www.hrw.org/americas/venezuela' },
   { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
-  { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' }
+  { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' },
+  { name: 'Amnistía Internacional', url: 'https://www.amnesty.org/es/location/americas/south-america/venezuela/' },
+  { name: 'WOLA (Washington Office on Latin America)', url: 'https://www.wola.org/region/venezuela/' }
 ]
 
 const factcheckingSources = [
