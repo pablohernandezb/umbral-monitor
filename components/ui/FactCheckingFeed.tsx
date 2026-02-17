@@ -112,7 +112,7 @@ export function FactCheckingFeed() {
           second: '2-digit',
           hour12: false,
           timeZone: 'America/Caracas',
-        }) + 'VET'
+        }) + ' (VET)'
       )
     }
     updateTime()
