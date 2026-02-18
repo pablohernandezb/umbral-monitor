@@ -22,7 +22,7 @@ export default function CookiePreferences() {
   return (
     <button
       onClick={resetConsent}
-      className="text-sm text-gray-400 hover:text-teal-400 transition-colors"
+      className="text-sm text-umbral-muted hover:text-teal-400 transition-colors"
       title={t('cookiePreferences.manage')}
     >
       {hasConsent ? t('cookiePreferences.enabled') : t('cookiePreferences.disabled')}

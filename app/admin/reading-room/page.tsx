@@ -21,6 +21,8 @@ export default function ReadingRoomAdminPage() {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState<string>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 9
 
   // Form state
   const [formData, setFormData] = useState<Partial<ReadingRoomItem>>({
@@ -53,6 +55,7 @@ export default function ReadingRoomAdminPage() {
     }
 
     setFilteredItems(filtered)
+    setCurrentPage(1)
   }, [items, searchQuery, filterType])
 
   const loadData = async () => {
@@ -195,7 +198,7 @@ export default function ReadingRoomAdminPage() {
         </div>
 
         <div className="text-sm text-gray-400">
-          Showing {filteredItems.length} of {items.length} items
+          Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredItems.length)}–{Math.min(currentPage * PAGE_SIZE, filteredItems.length)} of {filteredItems.length} items
         </div>
       </div>
 
@@ -215,7 +218,7 @@ export default function ReadingRoomAdminPage() {
 
       {/* Items Grid */}
       <div className="grid grid-cols-1 gap-6">
-        {filteredItems.map((item) => (
+        {filteredItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((item) => (
           <div key={item.id} className="bg-[#111113] border border-gray-800 rounded-lg p-6">
             {editingId === item.id ? (
               <ReadingRoomForm
@@ -322,6 +325,46 @@ export default function ReadingRoomAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {filteredItems.length > PAGE_SIZE && (() => {
+        const totalPages = Math.ceil(filteredItems.length / PAGE_SIZE)
+        return (
+          <div className="flex items-center justify-between mt-6">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-sm bg-[#111113] border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-gray-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              ← Previous
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-9 h-9 text-sm rounded-lg transition-colors ${
+                    page === currentPage
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-[#111113] border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 text-sm bg-[#111113] border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-gray-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next →
+            </button>
+          </div>
+        )
+      })()}
 
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </div>

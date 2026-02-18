@@ -59,6 +59,13 @@ export default function NewsRoomPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [sourceFilter, setSourceFilter] = useState<string>('all')
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 10
+
+  // Scroll to top whenever page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
 
   // Load data
   useEffect(() => {
@@ -120,6 +127,18 @@ export default function NewsRoomPage() {
 
     return result
   }, [items, categoryFilter, sourceFilter, searchQuery, sortOrder])
+
+  // Reset to page 1 whenever filters change
+  const prevFilterKey = `${categoryFilter}|${sourceFilter}|${searchQuery}|${sortOrder}`
+  const [lastFilterKey, setLastFilterKey] = useState(prevFilterKey)
+  if (prevFilterKey !== lastFilterKey) {
+    setCurrentPage(1)
+    setLastFilterKey(prevFilterKey)
+  }
+
+  // Paginated slice
+  const totalPages = Math.ceil(filteredItems.length / PAGE_SIZE)
+  const paginatedItems = filteredItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const clearFilters = useCallback(() => {
     setSearchQuery('')
@@ -286,7 +305,10 @@ export default function NewsRoomPage() {
             className="mb-6"
           >
             <p className="text-sm text-umbral-muted">
-              {filteredItems.length} {filteredItems.length === 1 ? t('newsRoom.result') : t('newsRoom.results')}
+              {filteredItems.length > 0
+                ? `${Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredItems.length)}–${Math.min(currentPage * PAGE_SIZE, filteredItems.length)} / ${filteredItems.length} ${filteredItems.length === 1 ? t('newsRoom.result') : t('newsRoom.results')}`
+                : `0 ${t('newsRoom.results')}`
+              }
               {hasActiveFilters && (
                 <span> ({t('newsRoom.filtered')})</span>
               )}
@@ -342,7 +364,7 @@ export default function NewsRoomPage() {
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               <AnimatePresence mode="popLayout">
-                {filteredItems.map((item) => (
+                {paginatedItems.map((item) => (
                   <motion.div
                     key={item.id}
                     variants={fadeInUp}
@@ -356,6 +378,48 @@ export default function NewsRoomPage() {
                   </motion.div>
                 ))}
               </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && !loading && filteredItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-center gap-2 mt-10"
+            >
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm rounded-lg border border-umbral-ash bg-umbral-charcoal text-umbral-light hover:text-white hover:border-umbral-steel disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← {locale === 'es' ? 'Anterior' : 'Previous'}
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={cn(
+                      'w-9 h-9 text-sm rounded-lg transition-colors',
+                      page === currentPage
+                        ? 'bg-signal-teal text-umbral-black font-semibold'
+                        : 'border border-umbral-ash bg-umbral-charcoal text-umbral-muted hover:text-white hover:border-umbral-steel'
+                    )}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm rounded-lg border border-umbral-ash bg-umbral-charcoal text-umbral-light hover:text-white hover:border-umbral-steel disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                {locale === 'es' ? 'Siguiente' : 'Next'} →
+              </button>
             </motion.div>
           )}
         </div>

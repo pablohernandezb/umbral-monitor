@@ -62,6 +62,13 @@ export default function ReadingRoomPage() {
   const [languageFilter, setLanguageFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'year' | 'title'>('year')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const PAGE_SIZE = 9
+
+  // Scroll to top whenever page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
 
   // Load data
   useEffect(() => {
@@ -122,10 +129,17 @@ export default function ReadingRoomPage() {
     return result
   }, [items, typeFilter, languageFilter, searchQuery, sortBy, sortOrder])
 
-  // Get unique years for display
-  const years = useMemo(() => {
-    return [...new Set(items.map(item => item.year))].sort((a, b) => b - a)
-  }, [items])
+  // Reset to page 1 whenever filters change
+  const prevFilterKey = `${typeFilter}|${languageFilter}|${searchQuery}|${sortBy}|${sortOrder}`
+  const [lastFilterKey, setLastFilterKey] = useState(prevFilterKey)
+  if (prevFilterKey !== lastFilterKey) {
+    setCurrentPage(1)
+    setLastFilterKey(prevFilterKey)
+  }
+
+  // Paginated slice
+  const totalPages = Math.ceil(filteredItems.length / PAGE_SIZE)
+  const paginatedItems = filteredItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   // Count by type
   const countByType = useMemo(() => {
@@ -295,14 +309,15 @@ export default function ReadingRoomPage() {
             className="mb-6"
           >
             <p className="text-sm text-umbral-muted">
-              {locale === 'es' 
-                ? `${filteredItems.length} ${filteredItems.length === 1 ? 'resultado' : 'resultados'}`
-                : `${filteredItems.length} ${filteredItems.length === 1 ? 'result' : 'results'}`
-              }
+              {filteredItems.length > 0 ? (
+                locale === 'es'
+                  ? `Mostrando ${Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredItems.length)}–${Math.min(currentPage * PAGE_SIZE, filteredItems.length)} de ${filteredItems.length} ${filteredItems.length === 1 ? 'resultado' : 'resultados'}`
+                  : `Showing ${Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredItems.length)}–${Math.min(currentPage * PAGE_SIZE, filteredItems.length)} of ${filteredItems.length} ${filteredItems.length === 1 ? 'result' : 'results'}`
+              ) : (
+                locale === 'es' ? '0 resultados' : '0 results'
+              )}
               {hasActiveFilters && (
-                <span>
-                  {' '}({locale === 'es' ? 'filtrado' : 'filtered'})
-                </span>
+                <span> ({locale === 'es' ? 'filtrado' : 'filtered'})</span>
               )}
             </p>
           </motion.div>
@@ -359,7 +374,7 @@ export default function ReadingRoomPage() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               <AnimatePresence mode="popLayout">
-                {filteredItems.map((item) => (
+                {paginatedItems.map((item) => (
                   <motion.div
                     key={item.id}
                     variants={fadeInUp}
@@ -373,6 +388,48 @@ export default function ReadingRoomPage() {
                   </motion.div>
                 ))}
               </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && !loading && filteredItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-center gap-2 mt-10"
+            >
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm rounded-lg border border-umbral-ash bg-umbral-charcoal text-umbral-light hover:text-white hover:border-umbral-steel disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← {locale === 'es' ? 'Anterior' : 'Previous'}
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={cn(
+                      'w-9 h-9 text-sm rounded-lg transition-colors',
+                      page === currentPage
+                        ? 'bg-signal-teal text-umbral-black font-semibold'
+                        : 'border border-umbral-ash bg-umbral-charcoal text-umbral-muted hover:text-white hover:border-umbral-steel'
+                    )}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm rounded-lg border border-umbral-ash bg-umbral-charcoal text-umbral-light hover:text-white hover:border-umbral-steel disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                {locale === 'es' ? 'Siguiente' : 'Next'} →
+              </button>
             </motion.div>
           )}
         </div>
