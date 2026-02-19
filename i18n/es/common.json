@@ -681,6 +681,22 @@
     "disabled": "🍪 Cookies: Desactivadas",
     "manage": "Gestionar preferencias de cookies"
   },
+  "predictionMarkets": {
+    "title": "Mercados de Predicción",
+    "subtitle": "Pronósticos colectivos en tiempo real sobre el futuro político de Venezuela"
+  },
+  "polymarket": {
+    "title": "¿QUÉ DICEN LOS MERCADOS?",
+    "subtitle": "Pronósticos colectivos en tiempo real sobre el futuro político de Venezuela",
+    "source": "Fuente: Polymarket",
+    "disclaimer": "No es asesoría financiera",
+    "markets": {
+      "trumpMeetsDelcy": "¿Se reunirá Trump con Delcy Rodríguez antes del 31 de marzo?",
+      "mcmEnters": "¿Ingresará María Corina Machado a Venezuela antes del 31 de marzo?",
+      "delcyLeader": "¿Será Delcy Rodríguez la líder de Venezuela a finales de 2026?",
+      "embassyReopens": "¿Reabrirá la embajada de EE.UU. en Venezuela antes del 31 de marzo?"
+    }
+  },
   "gdelt": {
     "title": "PANEL DE SEÑALES GDELT",
     "subtitle": "Señales mediáticas en tiempo real del Proyecto GDELT monitoreando la cobertura sobre Venezuela",

@@ -681,6 +681,22 @@
     "disabled": "🍪 Cookies: Disabled",
     "manage": "Manage cookie preferences"
   },
+  "predictionMarkets": {
+    "title": "Prediction Markets",
+    "subtitle": "Real-time collective forecasts on Venezuela's political future"
+  },
+  "polymarket": {
+    "title": "What are the markets saying?",
+    "subtitle": "Real-time crowd forecasts on Venezuela's political future",
+    "source": "Source: Polymarket",
+    "disclaimer": "Not financial advice",
+    "markets": {
+      "trumpMeetsDelcy": "Will Trump meet with Delcy Rodríguez by March 31?",
+      "mcmEnters": "Will María Corina Machado enter Venezuela by March 31?",
+      "delcyLeader": "Will Delcy Rodríguez be Venezuela's leader at end of 2026?",
+      "embassyReopens": "Will the US embassy in Venezuela reopen by March 31?"
+    }
+  },
   "gdelt": {
     "title": "GDELT SIGNAL DASHBOARD",
     "subtitle": "Real-time media signals from the GDELT Project monitoring Venezuela coverage",
