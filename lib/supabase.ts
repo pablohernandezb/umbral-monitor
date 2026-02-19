@@ -205,6 +205,25 @@ CREATE TABLE IF NOT EXISTS gdelt_data (
 CREATE INDEX IF NOT EXISTS idx_gdelt_data_date ON gdelt_data(date);
 
 -- ============================================================
+-- NEWS_VOTE_LOG TABLE
+-- One row per (news article × IP hash × scenario).
+-- Prevents the same IP from voting for the same scenario twice.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS news_vote_log (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  news_id UUID NOT NULL REFERENCES news_feed(id) ON DELETE CASCADE,
+  ip_hash TEXT NOT NULL,                    -- SHA-256(ip + salt), first 32 chars
+  scenario_number INT NOT NULL CHECK (scenario_number BETWEEN 1 AND 5),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Unique constraint: one vote per (article, IP, scenario)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_news_vote_log_unique
+  ON news_vote_log(news_id, ip_hash, scenario_number);
+
+CREATE INDEX IF NOT EXISTS idx_news_vote_log_news_id ON news_vote_log(news_id);
+
+-- ============================================================
 -- ROW LEVEL SECURITY (RLS)
 -- Enable public read-only access
 -- ============================================================
@@ -217,6 +236,7 @@ ALTER TABLE events_deed ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reading_room ENABLE ROW LEVEL SECURITY;
 ALTER TABLE historical_episodes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE gdelt_data ENABLE ROW LEVEL SECURITY;
+ALTER TABLE news_vote_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expert_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_submissions ENABLE ROW LEVEL SECURITY;
 
@@ -230,6 +250,12 @@ CREATE POLICY "Public read events_deed" ON events_deed FOR SELECT USING (true);
 CREATE POLICY "Public read reading_room" ON reading_room FOR SELECT USING (true);
 CREATE POLICY "Public read historical_episodes" ON historical_episodes FOR SELECT USING (true);
 CREATE POLICY "Public read gdelt_data" ON gdelt_data FOR SELECT USING (true);
+
+-- news_vote_log: no public read (privacy); anon can insert (server action uses service role)
+CREATE POLICY "Anon insert news_vote_log"
+  ON news_vote_log FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
 CREATE POLICY "Public read expert_submissions" ON expert_submissions FOR SELECT USING (true);
 CREATE POLICY "Public read public_submissions" ON public_submissions FOR SELECT USING (true);
 

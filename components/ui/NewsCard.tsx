@@ -1,6 +1,7 @@
 'use client'
 
-import { ExternalLink, Clock, Zap, Landmark, Undo, Vote, RotateCcw, HandFist, type LucideIcon} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ExternalLink, Clock, Zap, Landmark, Undo, Vote, RotateCcw, HandFist, Check, type LucideIcon} from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import type { NewsItem } from '@/types'
@@ -31,7 +32,16 @@ const scenarioConfig: { key: string; icon: LucideIcon; number: number }[] = [
 
 export function NewsCard({ item, compact = false, className, onVote }: NewsCardProps) {
   const { t, locale } = useTranslation()
-  
+  const [votedScenarios, setVotedScenarios] = useState<Set<number>>(new Set())
+
+  // Load previously cast votes for this article from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`umbral_votes:${item.id}`)
+      if (stored) setVotedScenarios(new Set(JSON.parse(stored) as number[]))
+    } catch {}
+  }, [item.id])
+
   // Get localized content
   const headline = locale === 'es' ? item.headline_es : item.headline_en
   const summary = locale === 'es' ? item.summary_es : item.summary_en
@@ -52,6 +62,14 @@ export function NewsCard({ item, compact = false, className, onVote }: NewsCardP
   const handleVote = (e: React.MouseEvent, scenarioNumber: number) => {
     e.preventDefault()
     e.stopPropagation()
+    if (votedScenarios.has(scenarioNumber)) return
+    // Persist vote locally before calling the server
+    const updated = new Set(votedScenarios)
+    updated.add(scenarioNumber)
+    setVotedScenarios(updated)
+    try {
+      localStorage.setItem(`umbral_votes:${item.id}`, JSON.stringify([...updated]))
+    } catch {}
     onVote?.(item.id, scenarioNumber)
   }
 
@@ -146,16 +164,27 @@ export function NewsCard({ item, compact = false, className, onVote }: NewsCardP
         {scenarioConfig.map((scenario) => {
           const Icon = scenario.icon
           const voteCount = getVoteCount(scenario.number)
+          const voted = votedScenarios.has(scenario.number)
           return (
             <button
               key={scenario.key}
               onClick={(e) => handleVote(e, scenario.number)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-signal-blue/20 hover:bg-signal-blue/30 border border-signal-blue/30 hover:border-signal-blue/50 transition-all text-xs text-signal-blue"
-              title={t(`scenarios.${scenario.key}.name`)}
+              disabled={voted}
+              title={voted
+                ? (locale === 'es' ? 'Ya votaste por este escenario' : 'You already voted for this scenario')
+                : t(`scenarios.${scenario.key}.name`)
+              }
+              className={cn(
+                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border transition-all text-xs',
+                voted
+                  ? 'bg-umbral-ash/20 border-umbral-ash/40 text-umbral-muted cursor-not-allowed'
+                  : 'bg-signal-blue/20 hover:bg-signal-blue/30 border-signal-blue/30 hover:border-signal-blue/50 text-signal-blue cursor-pointer'
+              )}
             >
-              <Icon className="w-4 h-4" />
-              {/* <span>{locale === 'es' ? 'Escenario' : 'Scenario'} {scenario.number}</span> */}
-              <span className="text-base font-bold text-white ml-1">{voteCount}</span>
+              {voted ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+              <span className={cn('text-base font-bold ml-1', voted ? 'text-umbral-muted' : 'text-white')}>
+                {voteCount}
+              </span>
             </button>
           )
         })}
