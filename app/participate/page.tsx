@@ -33,8 +33,8 @@ const SCENARIOS = [
     key: 'regressedAutocracy',
     name: { en: 'Regressed Autocracy', es: 'Autocracia Regresiva' },
     shortDesc: {
-      en: 'No liberalization processes taking place.',
-      es: 'No hay procesos de liberalización en curso.',
+      en: 'No liberalization processes taking place. The regime becomes more authoritarian.',
+      es: 'No hay procesos de liberalización en curso. El régimen se vuelve más autoritario.',
     },
     longDesc: {
       en: 'The regime has deepened its authoritarian grip. No meaningful political opening exists, civil liberties remain severely restricted, and opposition forces are systematically neutralized.',
@@ -67,8 +67,8 @@ const SCENARIOS = [
     key: 'stabilizedElectoralAutocracy',
     name: { en: 'Stabilized Electoral Autocracy', es: 'Autocracia Electoral Estabilizada' },
     shortDesc: {
-      en: 'Liberalization began, no free elections, but economic stabilization succeeded.',
-      es: 'La liberalización comenzó, sin elecciones libres, pero la estabilización económica tuvo éxito.',
+      en: 'Liberalization began, no free elections, but economic stabilization succeeded. In this scenario, Delcy Rodríguez remains in power.',
+      es: 'La liberalización comenzó, sin elecciones libres, pero la estabilización económica tuvo éxito. En este escenario, Delcy Rodríguez permanece en el poder.',
     },
     longDesc: {
       en: 'A new authoritarian equilibrium has been reached. The regime maintains control through managed elections while delivering enough economic stability to sustain its legitimacy.',
@@ -84,8 +84,8 @@ const SCENARIOS = [
     key: 'preemptedDemocraticTransition',
     name: { en: 'Preempted Democratic Transition', es: 'Transición Democrática Prevenida' },
     shortDesc: {
-      en: 'Free and fair elections exist, but democracy is NOT yet the only game in town.',
-      es: 'Existen elecciones libres y justas, pero la democracia AÚN NO es el único juego en la ciudad.',
+      en: 'Free and fair elections exist, but democracy is fragile and a coup is possible in the near future.',
+      es: 'Existen elecciones libres y justas, pero la democracia es frágil y un golpe de estado es posible en el futuro cercano.',
     },
     longDesc: {
       en: 'Electoral democracy has been achieved but remains fragile. Elections are competitive, but democratic consolidation is incomplete and anti-democratic forces retain the capacity to reverse gains.',
@@ -101,8 +101,8 @@ const SCENARIOS = [
     key: 'democraticTransition',
     name: { en: 'Democratic Transition', es: 'Transición Democrática' },
     shortDesc: {
-      en: 'Free and fair elections exist, and democracy IS the only game in town.',
-      es: 'Existen elecciones libres y justas, y la democracia ES el único juego en la ciudad.',
+      en: 'Free and fair elections exist, and democracy is the only game in town. María Corina Machado would be elected president in this scenario.',
+      es: 'Existen elecciones libres y justas, y la democracia es el único juego en la ciudad. María Corina Machado, resultaría electa presidenta en este escenario.',
     },
     longDesc: {
       en: 'Full democratic transition achieved. Free and fair elections are the accepted mechanism for power transfer, democratic institutions are functional, and all major actors accept democratic rules.',
@@ -602,8 +602,8 @@ export default function ParticipatePage() {
             </h2>
             <p className="text-sm font-mono text-white/65 mb-8">
               {locale === 'es'
-                ? '// Seleccione una valoración por escenario'
-                : '// Select one rating per scenario'}
+                ? '// Estos escenarios se basan en el marco metdológico de Maerz et al. (2023) sobre episodios de transformación de regímenes.'
+                : '// These scenarios are based on the methodological framework of Maerz et al. (2023) on episodes of regime transformation.'}
             </p>
 
             <div className="space-y-6">
@@ -756,13 +756,13 @@ export default function ParticipatePage() {
             <BackButton onClick={goBack} locale={locale} />
             <h2 className="text-xl font-bold font-mono text-white mb-2">
               {locale === 'es'
-                ? '// ASIGNAR PESO DE PROBABILIDAD A CADA TRAYECTORIA'
-                : '// ASSIGN PROBABILITY WEIGHT TO EACH TRAJECTORY'}
+                ? '// ¿QUÉ VIENE PARA VENEZUELA?'
+                : '// WHAT COMES NEXT FOR VENEZUELA?'}
             </h2>
             <p className="text-sm font-mono text-white/65 mb-8">
               {locale === 'es'
-                ? '// Seleccione una valoración por escenario'
-                : '// Select one rating per scenario'}
+                ? '// Selecciona qué tan probable te parece cada escenario'
+                : '// Select how likely you think each scenario is'}
             </p>
 
             <div className="space-y-6">
