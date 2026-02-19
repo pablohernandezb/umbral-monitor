@@ -13,22 +13,14 @@ const X_API_BASE = 'https://api.x.com/2'
 // (or the first run without a cached ID will look it up and log it)
 interface AccountConfig {
   username: string
-  userId?: string           // Cache to skip lookup call
-  displayName?: string
-  profileImageUrl?: string  // Use _400x400 variant
+  displayName?: string      // Optional override; resolved from API on first fetch
+  profileImageUrl?: string  // Optional override; resolved from API on first fetch
 }
 
 const FACT_CHECK_ACCOUNTS: AccountConfig[] = [
-  {
-    username: 'cazamosfakenews',
-    // Fill in userId after first successful lookup to save API calls
-  },
-  {
-    username: 'cotejoinfo',
-  },
-  {
-    username: 'Factchequeado',
-  },
+  { username: 'cazamosfakenews' },
+  { username: 'cotejoinfo' },
+  { username: 'Factchequeado' },
 ]
 
 // Alert keywords to detect in tweet text
@@ -46,11 +38,6 @@ interface XApiTweet {
   text: string
   created_at: string
   author_id: string
-}
-
-interface XApiUserResponse {
-  data?: XApiUser
-  errors?: Array<{ message: string }>
 }
 
 interface XApiTweetsResponse {
@@ -92,27 +79,21 @@ async function xApiFetch<T>(endpoint: string): Promise<T> {
 }
 
 /**
- * Look up a user by username to get their ID and profile image.
+ * Search recent tweets by username using the search/recent endpoint.
+ * This avoids a separate user ID lookup and works on the Basic plan.
+ * Author profile data is fetched via expansions in the same request.
  */
-async function lookupUser(username: string): Promise<XApiUser> {
-  const data = await xApiFetch<XApiUserResponse>(
-    `/users/by/username/${username}?user.fields=profile_image_url`
-  )
-  if (!data.data) {
-    const errMsg = data.errors?.map(e => e.message).join('; ') || 'User not found'
-    throw new XApiError(404, `Lookup @${username}: ${errMsg}`)
-  }
-  return data.data
-}
-
-/**
- * Fetch recent tweets from a user by ID.
- */
-async function getUserTweets(userId: string, maxResults: number = 5): Promise<XApiTweet[]> {
+async function searchUserTweets(
+  username: string,
+  maxResults: number = 10
+): Promise<{ tweets: XApiTweet[]; author: XApiUser | null }> {
+  const query = encodeURIComponent(`from:${username} -is:retweet`)
   const data = await xApiFetch<XApiTweetsResponse>(
-    `/users/${userId}/tweets?max_results=${maxResults}&tweet.fields=created_at`
+    `/tweets/search/recent?query=${query}&max_results=${maxResults}&tweet.fields=created_at&expansions=author_id&user.fields=profile_image_url,name`
   )
-  return data.data || []
+  const tweets = data.data || []
+  const author = data.includes?.users?.[0] ?? null
+  return { tweets, author }
 }
 
 /**
@@ -124,29 +105,20 @@ function detectAlertTags(text: string): string[] {
 }
 
 /**
- * Fetch tweets from a single account and return as FactCheckTweet[].
- * Uses cached userId/profile when available to save API calls.
+ * Fetch tweets from a single account using the search/recent endpoint.
+ * No user ID lookup required — author profile comes back in the same request.
  */
 async function fetchAccountTweets(account: AccountConfig): Promise<Omit<FactCheckTweet, 'id' | 'created_at'>[]> {
-  let userId = account.userId
-  let displayName = account.displayName || account.username
-  let profileImage = account.profileImageUrl || ''
+  const { tweets, author } = await searchUserTweets(account.username, 10)
 
-  // Only call lookup API if userId is not cached
-  if (!userId) {
-    const user = await lookupUser(account.username)
-    userId = user.id
-    displayName = user.name
-    profileImage = user.profile_image_url?.replace('_normal', '_400x400') || ''
-    // Log so user can cache this in the config
-    console.log(`[x-api] Resolved @${account.username} → userId: ${userId}, displayName: ${displayName}, profileImage: ${profileImage}`)
-  }
-
-  const tweets = await getUserTweets(userId, 5)
+  const displayName = author?.name || account.displayName || account.username
+  const profileImage = author?.profile_image_url?.replace('_normal', '_400x400')
+    || account.profileImageUrl
+    || ''
 
   return tweets.map(tweet => ({
     tweet_id: tweet.id,
-    username: account.username,
+    username: account.username.toLowerCase(),
     display_name: displayName,
     profile_image_url: profileImage,
     text_es: tweet.text,
