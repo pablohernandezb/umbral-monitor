@@ -1,16 +1,24 @@
 'use client'
 
 import Script from 'next/script'
+import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { useCookieConsent } from '@/lib/cookie-consent'
 
-interface GoogleAnalyticsProps {
-  gaId: string
-}
-
-export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps) {
+export default function GoogleAnalytics({ gaId }: { gaId: string }) {
   const { hasConsent } = useCookieConsent()
+  const pathname = usePathname()
+  const isFirst = useRef(true)
 
-  // Only load GA if user has explicitly consented
+  useEffect(() => {
+    if (!gaId || hasConsent !== true) return
+    // Skip first render — the inline script handles the initial pageview
+    if (isFirst.current) { isFirst.current = false; return }
+    if (pathname.startsWith('/admin')) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).gtag?.('config', gaId, { page_path: pathname })
+  }, [pathname, gaId, hasConsent])
+
   if (!gaId || hasConsent !== true) return null
 
   return (
@@ -27,9 +35,9 @@ export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${gaId}', {
-              page_path: window.location.pathname,
-            });
+            if (!window.location.pathname.startsWith('/admin')) {
+              gtag('config', '${gaId}', { page_path: window.location.pathname });
+            }
           `,
         }}
       />

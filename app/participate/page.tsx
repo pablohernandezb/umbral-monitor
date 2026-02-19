@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, ChevronRight, ArrowLeft,
@@ -205,7 +205,7 @@ function TacticalInput({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-mono uppercase tracking-wider text-umbral-muted">
+      <label className="block text-sm font-mono uppercase tracking-wider text-white/65">
         {label}
       </label>
       <input
@@ -231,7 +231,7 @@ function BackButton({ onClick, locale }: { onClick: () => void; locale: string }
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 text-xs font-mono text-umbral-muted hover:text-signal-teal transition-colors mb-8 uppercase tracking-wider"
+      className="flex items-center gap-2 text-sm font-mono text-white/65 hover:text-signal-teal transition-colors mb-8 uppercase tracking-wider"
     >
       <ArrowLeft className="w-3 h-3" />
       {locale === 'es' ? 'Volver' : 'Back'}
@@ -377,8 +377,8 @@ export default function ParticipatePage() {
           <ScreenShell>
             <div className="text-center space-y-10">
               <div>
-                <Wifi size={150} className="text-signal-teal/60 animate-pulse mx-auto mb-6" />
-                <p className="text-base font-mono text-signal-teal/60 uppercase tracking-[0.3em] mb-4">
+                <Wifi size={150} className="text-signal-teal/80 animate-pulse mx-auto mb-6" />
+                <p className="text-base font-mono text-signal-teal/80 uppercase tracking-[0.3em] mb-4">
                   {locale === 'es' ? '// SISTEMA UMBRAL' : '// UMBRAL SYSTEM'}
                 </p>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold font-mono text-white leading-tight">
@@ -405,7 +405,7 @@ export default function ParticipatePage() {
                 </TacticalButton>
               </div>
 
-              <p className="text-xs font-mono text-umbral-steel">
+              <p className="text-sm font-mono text-white/50">
                 {locale === 'es'
                   ? '// Tu evaluación contribuye al monitoreo público de escenarios'
                   : '// Your assessment contributes to public scenario monitoring'}
@@ -440,7 +440,7 @@ export default function ParticipatePage() {
               </TacticalButton>
             </div>
 
-            <p className="mt-6 text-xs font-mono text-umbral-steel">
+            <p className="mt-6 text-sm font-mono text-white/50">
               {locale === 'es'
                 ? '// Se cargará su evaluación más reciente para que pueda actualizarla'
                 : '// Your most recent assessment will be loaded so you can update it'}
@@ -452,10 +452,10 @@ export default function ParticipatePage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6 border border-signal-red/30 bg-signal-red/5 p-4"
               >
-                <p className="text-sm font-mono text-signal-red/70">
+                <p className="text-sm font-mono text-signal-red">
                   // {locale === 'es' ? 'NO SE ENCONTRÓ REGISTRO PARA ESTE EMAIL' : 'NO RECORD FOUND FOR THIS EMAIL'}
                 </p>
-                <p className="text-xs font-mono text-umbral-muted mt-2">
+                <p className="text-sm font-mono text-white/65 mt-2">
                   {locale === 'es'
                     ? 'Puede registrarse como nuevo participante.'
                     : 'You can register as a new participant.'}
@@ -477,7 +477,7 @@ export default function ParticipatePage() {
               {locale === 'es' ? '// CLASIFICAR OPERADOR' : '// CLASSIFY OPERATOR'}
               <BlinkCursor />
             </h2>
-            <p className="text-sm font-mono text-umbral-muted mb-10">
+            <p className="text-sm font-mono text-white/65 mb-10">
               {locale === 'es'
                 ? '// Seleccione su perfil de participación'
                 : '// Select your participation profile'}
@@ -495,13 +495,13 @@ export default function ParticipatePage() {
                   <h3 className="text-base font-mono font-bold text-white uppercase tracking-wider group-hover:text-signal-teal transition-colors">
                     {locale === 'es' ? 'ANALISTA EXPERTO' : 'EXPERT ANALYST'}
                   </h3>
-                  <p className="text-xs font-mono text-umbral-muted mt-1">
+                  <p className="text-sm font-mono text-white/65 mt-1">
                     {locale === 'es'
                       ? 'Académico, investigador, analista'
                       : 'Academic, researcher, scholar'}
                   </p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-umbral-steel group-hover:text-signal-teal transition-colors" />
+                <ChevronRight className="w-4 h-4 text-white/50 group-hover:text-signal-teal transition-colors" />
               </button>
 
               <button
@@ -518,11 +518,11 @@ export default function ParticipatePage() {
                   <h3 className="text-base font-mono font-bold text-white uppercase tracking-wider group-hover:text-signal-amber transition-colors">
                     {locale === 'es' ? 'PÚBLICO GENERAL' : 'GENERAL PUBLIC'}
                   </h3>
-                  <p className="text-xs font-mono text-umbral-muted mt-1">
+                  <p className="text-sm font-mono text-white/65 mt-1">
                     {locale === 'es' ? 'Ciudadano observador' : 'Citizen observer'}
                   </p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-umbral-steel group-hover:text-signal-amber transition-colors" />
+                <ChevronRight className="w-4 h-4 text-white/50 group-hover:text-signal-amber transition-colors" />
               </button>
             </div>
           </ScreenShell>
@@ -548,10 +548,10 @@ export default function ParticipatePage() {
 
               {/* Ideology slider */}
               <div className="space-y-3 pt-2">
-                <label className="block text-xs font-mono uppercase tracking-wider text-umbral-muted">
+                <label className="block text-sm font-mono uppercase tracking-wider text-white/65">
                   {locale === 'es' ? 'AUTO-UBICACIÓN IDEOLÓGICA' : 'IDEOLOGICAL SELF-PLACEMENT'}
                 </label>
-                <div className="flex items-center justify-between text-xs font-mono text-umbral-steel px-1">
+                <div className="flex items-center justify-between text-sm font-mono text-white/50 px-1">
                   <span>◀ {locale === 'es' ? 'IZQUIERDA' : 'LEFT'}</span>
                   <span>{locale === 'es' ? 'DERECHA' : 'RIGHT'} ▶</span>
                 </div>
@@ -564,7 +564,7 @@ export default function ParticipatePage() {
                         'flex-1 h-10 border text-xs font-mono transition-all',
                         i === expertIdeology
                           ? 'border-signal-teal bg-signal-teal/20 text-signal-teal shadow-[0_0_10px_rgba(20,184,166,0.3)]'
-                          : 'border-umbral-ash bg-umbral-black/50 text-umbral-muted hover:border-umbral-steel',
+                          : 'border-umbral-ash bg-umbral-black/50 text-white/65 hover:border-umbral-steel',
                       )}
                     >
                       {i}
@@ -600,7 +600,7 @@ export default function ParticipatePage() {
                 ? '// ASIGNAR PESO DE PROBABILIDAD A CADA TRAYECTORIA'
                 : '// ASSIGN PROBABILITY WEIGHT TO EACH TRAJECTORY'}
             </h2>
-            <p className="text-xs font-mono text-umbral-muted mb-8">
+            <p className="text-sm font-mono text-white/65 mb-8">
               {locale === 'es'
                 ? '// Seleccione una valoración por escenario'
                 : '// Select one rating per scenario'}
@@ -619,8 +619,8 @@ export default function ParticipatePage() {
                         S{scenario.number} — {scenario.name[locale as 'en' | 'es']}
                       </span>
                     </div>
-                    <p className="text-xs font-mono text-umbral-muted">{scenario.shortDesc[locale as 'en' | 'es']}</p>
-                    <div className="flex gap-1 flex-wrap">
+                    <p className="text-sm font-mono text-white/65">{scenario.shortDesc[locale as 'en' | 'es']}</p>
+                    <div className="flex flex-col-reverse gap-1.5 sm:flex-row sm:flex-wrap sm:gap-1">
                       {LIKERT_LABELS.map((likert) => {
                         const btnStyle = getLikelihoodStyle(likert.value)
                         return (
@@ -628,10 +628,10 @@ export default function ParticipatePage() {
                             key={likert.value}
                             onClick={() => setExpertRatings(prev => ({ ...prev, [scenario.number]: likert.value }))}
                             className={cn(
-                              'flex-1 min-w-[80px] px-2 py-2 text-[10px] font-mono uppercase tracking-wider border transition-all',
+                              'flex-1 min-w-[80px] px-3 py-3 sm:px-2 sm:py-2 text-xs font-mono uppercase tracking-wider border transition-all',
                               selected === likert.value
                                 ? `${btnStyle.bg} ${btnStyle.text} ${btnStyle.border} ${btnStyle.shadow}`
-                                : 'border-umbral-ash text-umbral-muted bg-umbral-black/50 hover:border-umbral-steel',
+                                : 'border-umbral-ash text-white/65 bg-umbral-black/50 hover:border-umbral-steel',
                             )}
                           >
                             {likert.value} — {likert[locale as 'en' | 'es']}
@@ -667,25 +667,25 @@ export default function ParticipatePage() {
             <div className="border border-umbral-ash p-6 space-y-4 bg-umbral-black/50">
               <div className="grid grid-cols-2 gap-4 text-sm font-mono">
                 <div>
-                  <p className="text-umbral-muted text-xs">{locale === 'es' ? 'NOMBRE' : 'NAME'}</p>
+                  <p className="text-white/65 text-sm">{locale === 'es' ? 'NOMBRE' : 'NAME'}</p>
                   <p className="text-white">{expertName}</p>
                 </div>
                 <div>
-                  <p className="text-umbral-muted text-xs">EMAIL</p>
+                  <p className="text-white/65 text-sm">EMAIL</p>
                   <p className="text-white">{expertEmail}</p>
                 </div>
                 <div>
-                  <p className="text-umbral-muted text-xs">{locale === 'es' ? 'INSTITUCIÓN' : 'INSTITUTION'}</p>
+                  <p className="text-white/65 text-sm">{locale === 'es' ? 'INSTITUCIÓN' : 'INSTITUTION'}</p>
                   <p className="text-white">{expertInstitution}</p>
                 </div>
                 <div>
-                  <p className="text-umbral-muted text-xs">{locale === 'es' ? 'IDEOLOGÍA' : 'IDEOLOGY'}</p>
+                  <p className="text-white/65 text-sm">{locale === 'es' ? 'IDEOLOGÍA' : 'IDEOLOGY'}</p>
                   <p className="text-signal-teal font-bold">{expertIdeology} / 10</p>
                 </div>
               </div>
 
               <div className="border-t border-umbral-ash pt-4">
-                <p className="text-xs font-mono text-umbral-muted uppercase tracking-wider mb-3">
+                <p className="text-sm font-mono text-white/65 uppercase tracking-wider mb-3">
                   {locale === 'es' ? 'VALORACIONES DE ESCENARIOS' : 'SCENARIO RATINGS'}
                 </p>
                 {SCENARIOS.map((s) => {
@@ -702,7 +702,7 @@ export default function ParticipatePage() {
               </div>
             </div>
 
-            <p className="mt-6 text-xs font-mono text-signal-amber/70 border border-signal-amber/20 bg-signal-amber/5 px-4 py-3">
+            <p className="mt-6 text-xs font-mono text-signal-amber border border-signal-amber/20 bg-signal-amber/5 px-4 py-3">
               // {locale === 'es'
                 ? 'SU EVALUACIÓN SERÁ REVISADA ANTES DE PUBLICACIÓN'
                 : 'YOUR ASSESSMENT WILL BE REVIEWED BEFORE PUBLICATION'}
@@ -737,7 +737,7 @@ export default function ParticipatePage() {
               <div className="inline-flex items-center px-4 py-2 border border-signal-teal/30 bg-signal-teal/5 font-mono text-signal-teal text-sm">
                 ID: {lastSubmissionId}
               </div>
-              <p className="text-sm font-mono text-umbral-muted">
+              <p className="text-sm font-mono text-white/65">
                 {locale === 'es'
                   ? '// PENDIENTE DE AUTORIZACIÓN ADMINISTRATIVA'
                   : '// PENDING ADMIN AUTHORIZATION'}
@@ -759,7 +759,7 @@ export default function ParticipatePage() {
                 ? '// ASIGNAR PESO DE PROBABILIDAD A CADA TRAYECTORIA'
                 : '// ASSIGN PROBABILITY WEIGHT TO EACH TRAJECTORY'}
             </h2>
-            <p className="text-xs font-mono text-umbral-muted mb-8">
+            <p className="text-sm font-mono text-white/65 mb-8">
               {locale === 'es'
                 ? '// Seleccione una valoración por escenario'
                 : '// Select one rating per scenario'}
@@ -778,8 +778,8 @@ export default function ParticipatePage() {
                         S{scenario.number} — {scenario.name[locale as 'en' | 'es']}
                       </span>
                     </div>
-                    <p className="text-xs font-mono text-umbral-muted">{scenario.shortDesc[locale as 'en' | 'es']}</p>
-                    <div className="flex gap-1 flex-wrap">
+                    <p className="text-sm font-mono text-white/65">{scenario.shortDesc[locale as 'en' | 'es']}</p>
+                    <div className="flex flex-col-reverse gap-1.5 sm:flex-row sm:flex-wrap sm:gap-1">
                       {LIKERT_LABELS.map((likert) => {
                         const btnStyle = getLikelihoodStyle(likert.value)
                         return (
@@ -787,10 +787,10 @@ export default function ParticipatePage() {
                             key={likert.value}
                             onClick={() => setPublicRatings(prev => ({ ...prev, [scenario.number]: likert.value }))}
                             className={cn(
-                              'flex-1 min-w-[80px] px-2 py-2 text-[10px] font-mono uppercase tracking-wider border transition-all',
+                              'flex-1 min-w-[80px] px-3 py-3 sm:px-2 sm:py-2 text-xs font-mono uppercase tracking-wider border transition-all',
                               selected === likert.value
                                 ? `${btnStyle.bg} ${btnStyle.text} ${btnStyle.border} ${btnStyle.shadow}`
-                                : 'border-umbral-ash text-umbral-muted bg-umbral-black/50 hover:border-umbral-steel',
+                                : 'border-umbral-ash text-white/65 bg-umbral-black/50 hover:border-umbral-steel',
                             )}
                           >
                             {likert.value} — {likert[locale as 'en' | 'es']}
@@ -824,7 +824,7 @@ export default function ParticipatePage() {
             </h2>
 
             <div className="border border-umbral-ash p-6 space-y-4 bg-umbral-black/50">
-              <p className="text-xs font-mono text-umbral-muted uppercase tracking-wider mb-3">
+              <p className="text-sm font-mono text-white/65 uppercase tracking-wider mb-3">
                 {locale === 'es' ? 'VALORACIONES DE ESCENARIOS' : 'SCENARIO RATINGS'}
               </p>
               {SCENARIOS.map((s) => {
@@ -877,7 +877,7 @@ export default function ParticipatePage() {
               <div className="inline-flex items-center px-4 py-2 border border-signal-teal/30 bg-signal-teal/5 font-mono text-signal-teal text-sm">
                 ID: {lastSubmissionId}
               </div>
-              <p className="text-sm font-mono text-umbral-muted">
+              <p className="text-sm font-mono text-white/65">
                 // {locale === 'es'
                   ? 'ACTUALIZANDO MONITOR PÚBLICO'
                   : 'UPDATING PUBLIC MONITOR'}
