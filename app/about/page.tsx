@@ -20,6 +20,7 @@ import {
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
 import { useEffect } from 'react'
+import { url } from 'inspector'
 
 // Animation variants
 const fadeInUp = {
@@ -72,34 +73,36 @@ const academicSources = [
 ]
 
 const mediaSources = [
-  { name: 'Efecto Cocuyo', url: 'https://efectococuyo.com' },
-  { name: 'El Pitazo', url: 'https://elpitazo.net' },
-  { name: 'Runrunes', url: 'https://runrun.es' },
-  { name: 'Tal Cual', url: 'https://talcualdigital.com' },
-  { name: 'Crónica Uno', url: 'https://cronica.uno' },
+  { name: 'Analítica', url: 'https://www.analitica.com' },
   { name: 'ArmandoInfo', url: 'https://armando.info' },
   { name: 'Caracas Chronicles', url: 'https://www.caracaschronicles.com' },
-  { name: 'La Patilla', url: 'https://www.lapatilla.com' },
-  { name: 'El Nacional', url: 'https://www.elnacional.com' },
-  { name: 'El Universal', url: 'https://www.eluniversal.com' },
+  { name: 'Caraota Digital', url: 'https://caraotadigital.net' },
+  { name: 'Crónica Uno', url: 'https://cronica.uno' },
+  { name: 'Efecto Cocuyo', url: 'https://efectococuyo.com' },
   { name: 'El Diario', url: 'https://eldiario.com' },
   { name: 'El Estímulo', url: 'https://elestimulo.com' },
-  { name: 'Caraota Digital', url: 'https://caraotadigital.net' },
-  { name: 'Analítica', url: 'https://www.analitica.com' }
+  { name: 'El Nacional', url: 'https://www.elnacional.com' },
+  { name: 'El Pitazo', url: 'https://elpitazo.net' },
+  { name: 'El Universal', url: 'https://www.eluniversal.com' },
+  { name: 'La Gran Aldea', url: 'https://lagranaldea.com' },
+  { name: 'La Patilla', url: 'https://www.lapatilla.com' },
+  { name: 'Monitoreamos', url: 'https://monitoreamos.com' },
+  { name: 'Runrunes', url: 'https://runrun.es' },
+  { name: 'Tal Cual', url: 'https://talcualdigital.com' }
 ]
 
 const humanRightsSources = [
-  { name: 'Foro Penal', url: 'https://foropenal.com' },
-  { name: 'PROVEA', url: 'https://provea.org' },
+  { name: 'Amnistía Internacional', url: 'https://www.amnesty.org/es/location/americas/south-america/venezuela/' },
   { name: 'CLIPPVE', url: 'https://www.clippve.com/' },
+  { name: 'Espacio Público', url: 'https://espaciopublico.ong/' },
+  { name: 'Foro Penal', url: 'https://foropenal.com' },
+  { name: 'Human Rights Watch', url: 'https://www.hrw.org/americas/venezuela' },
   { name: 'Justicia Encuentro y Perdón', url: 'https://www.jepvenezuela.com/' },
   { name: 'Observatorio Venezolano de Conflictividad Social', url: 'https://www.ovcs.org/' },
-  { name: 'Espacio Público', url: 'https://espaciopublico.ong/' },
+  { name: 'PROVEA', url: 'https://provea.org' },
   { name: 'Realidad Helicoide', url: 'https://vocesdelamemoriainc.org/' },
-  { name: 'Human Rights Watch', url: 'https://www.hrw.org/americas/venezuela' },
-  { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
   { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' },
-  { name: 'Amnistía Internacional', url: 'https://www.amnesty.org/es/location/americas/south-america/venezuela/' },
+  { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
   { name: 'WOLA (Washington Office on Latin America)', url: 'https://www.wola.org/region/venezuela/' }
 ]
 
