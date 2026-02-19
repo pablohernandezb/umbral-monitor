@@ -1,11 +1,54 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Globe, Coffee, HelpCircle, BookOpen, Newspaper } from 'lucide-react'
-import { useI18n, useTranslation, type Locale } from '@/i18n'
+import { Menu, X, Globe, Coffee, HelpCircle, BookOpen, Newspaper, Share2, Check } from 'lucide-react'
+import { useI18n, useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
+
+function ShareButton({ locale, className }: { locale: string; className?: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = useCallback(async () => {
+    const url = window.location.href
+    const title = document.title
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ url, title })
+        return
+      } catch {
+        // User cancelled or API unavailable — fall through to clipboard
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {}
+  }, [])
+
+  return (
+    <button
+      onClick={handleShare}
+      className={cn(
+        'p-2 rounded-md transition-colors',
+        copied
+          ? 'text-signal-teal bg-signal-teal/10'
+          : 'text-umbral-light hover:text-white hover:bg-umbral-ash',
+        className
+      )}
+      title={copied
+        ? (locale === 'es' ? '¡Enlace copiado!' : 'Link copied!')
+        : (locale === 'es' ? 'Compartir' : 'Share')
+      }
+    >
+      {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+    </button>
+  )
+}
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -92,10 +135,14 @@ export function Header() {
             >
               <Newspaper className="w-4 h-4" />
             </Link>
+            <ShareButton locale={locale} />
           </div>
 
           {/* Right side buttons */}
           <div className="flex items-center gap-2">
+            {/* Share button (mobile only — desktop version is in the nav icon row) */}
+            <ShareButton locale={locale} className="md:hidden" />
+
             {/* Language toggle */}
             <button
               onClick={toggleLocale}
