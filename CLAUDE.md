@@ -43,19 +43,25 @@ npm run seed     # Seed Supabase database (requires .env.local with SUPABASE_SER
 - Real-time functions return no-op unsubscribe in mock mode
 - `getSubmissionAverages()`: Computes mean scenario ratings from expert/public submissions (deduped by email, latest per participant)
 
+**`lib/cookie-consent.ts`**: Context-based consent management
+- Stores consent in localStorage: `null` (undecided), `true` (accepted), `false` (rejected)
+- Checks `NEXT_PUBLIC_GA_ID` to determine if consent is needed
+- Exports: `useCookieConsent()` hook, `acceptCookies()`, `rejectCookies()`, `resetConsent()`
+
 ### Database Schema (11 Tables)
 
 1. **`scenarios`**: 5 regime transformation scenarios with probability/status tracking
 2. **`regime_history`**: Historical democracy indices (1900-2024) with V-Dem style metrics
-3. **`news_feed`**: Aggregated news with categories and per-scenario vote counts
-4. **`political_prisoners`**: Aggregate detention statistics with demographic breakdowns
-5. **`prisoners_by_organization`**: Breakdown by reporting organization
-6. **`events_deed`**: Democratic Episodes Event Dataset (bilingual: en/es)
-7. **`reading_room`**: Curated resources (books, articles, reports, journalism)
-8. **`historical_episodes`**: Major regime periods (autocracy, democracy, transition)
-9. **`expert_submissions`**: Expert survey responses with `scenario_probabilities` JSONB, status workflow (pending/approved/rejected)
-10. **`public_submissions`**: Public survey responses with `scenario_probabilities` JSONB, status (published/deleted)
-11. **`fact_check_tweets`**: Curated fact-checking tweets (bilingual)
+3. **`news_feed`**: Aggregated news with categories and per-scenario vote counts (`votes_scenario_1` through `votes_scenario_5`)
+4. **`news_vote_log`**: Tracks votes by hashed IP to enforce one vote per IP per scenario per article
+5. **`political_prisoners`**: Aggregate detention statistics with demographic breakdowns
+6. **`prisoners_by_organization`**: Breakdown by reporting organization
+7. **`events_deed`**: Democratic Episodes Event Dataset (bilingual: en/es)
+8. **`reading_room`**: Curated resources (books, articles, reports, journalism)
+9. **`historical_episodes`**: Major regime periods (autocracy, democracy, transition)
+10. **`expert_submissions`**: Expert survey responses with `scenario_probabilities` JSONB, status workflow (pending/approved/rejected)
+11. **`public_submissions`**: Public survey responses with `scenario_probabilities` JSONB, status (published/deleted)
+12. **`fact_check_tweets`**: Curated fact-checking tweets (bilingual)
 
 **Scenario key-to-number mapping** (used in `scenario_probabilities` JSONB):
 - 1 = `regressedAutocracy`, 2 = `revertedLiberalization`, 3 = `stabilizedElectoralAutocracy`, 4 = `preemptedDemocraticTransition`, 5 = `democraticTransition`
@@ -85,17 +91,17 @@ All tables have:
 ```
 app/
 ├── page.tsx                    # Landing page (Command Center)
-├── layout.tsx                  # Root layout with I18nProvider
+├── layout.tsx                  # Root layout with I18nProvider, GoogleAnalytics, CookieBanner
 ├── about/                      # About page
 ├── how-did-we-get-here/        # Interactive timeline with DEED events
 ├── reading-room/               # Filterable resource archive
-├── news/                       # News feed page
+├── news/                       # News feed with search, category/source filters, pagination
 ├── participate/                # Public/expert survey (Likert 1-5 ratings per scenario)
-│   ├── page.tsx                # Survey UI with new/returning participant flows
+│   ├── page.tsx                # Multi-screen wizard (10+ screens) with new/returning flows
 │   └── actions.ts              # Server actions: submit, lookup, email validation
 ├── privacy-terms/              # Privacy policy & terms page
 ├── admin/                      # Admin dashboard (protected)
-│   ├── page.tsx                # Overview stats
+│   ├── page.tsx                # Overview stats (prisoners, news, reading room, submissions)
 │   ├── login/                  # Admin login
 │   ├── news/                   # News CRUD
 │   ├── prisoners/              # Political prisoners CRUD
@@ -104,33 +110,58 @@ app/
 │       ├── page.tsx            # Review, approve/reject expert submissions
 │       └── actions.ts          # Admin server actions for submissions
 └── api/
-    └── fact-check/refresh/     # API route for refreshing fact-check tweets
+    ├── fact-check/refresh/     # API route for refreshing fact-check tweets
+    ├── gdelt/                  # GDELT signals endpoint
+    └── news/scrape/            # News scraping endpoint
 ```
 
 ### Components
 
 **Layout Components** (`components/layout/`):
-- `Header.tsx`: Navigation + language toggle
+- `Header.tsx`: Navigation, language toggle, donate link, and **Share button** (see below)
 - `Footer.tsx`: Site footer
 
 **UI Components** (`components/ui/`):
 - `ScenarioCard.tsx`: Regime scenario cards with dual expert/public probability indicators (Likert 1-5 scale)
-- `NewsCard.tsx`: News feed items (supports compact mode)
+- `NewsCard.tsx`: News feed items with scenario voting buttons; supports compact mode
 - `MetricCard.tsx`: KPI/metric displays with trend indicators
 - `FAQAccordion.tsx`: FAQ accordion with expand/collapse
 - `Ticker.tsx`: Days-since counter
 - `ReadingCard.tsx`: Reading room resource cards
 - `FactCheckingFeed.tsx`: Curated fact-checking tweet feed
 - `ScenarioTimeline.tsx`: Scenario timeline visualization
+- `GdeltDashboard.tsx`: GDELT signal dashboard
 
 **Charts** (`components/charts/`):
 - `TrajectoryChart.tsx`: V-Dem index timeline with Recharts
+- `GdeltSignalChart.tsx`: GDELT signal visualization
 
 **Other Components** (`components/`):
-- `GoogleAnalytics.tsx`: GA4 integration
-- `CookieBanner.tsx`: Cookie consent banner
-- `CookiePreferences.tsx`: Cookie preferences modal
+- `GoogleAnalytics.tsx`: GA4 integration — tracks all pages except `/admin/*`; only activates when `NEXT_PUBLIC_GA_ID` is set and user has accepted cookie consent; uses `gtag()` and listens to `pathname` changes for SPA navigation
+- `CookieBanner.tsx`: Cookie consent banner — appears with 1-second delay when consent is `null`; buttons: Accept / Reject
+- `CookiePreferences.tsx`: Small button showing current consent status; clicking calls `resetConsent()` to re-show the banner
 - `admin/Toast.tsx`: Admin notification toasts
+
+### Share Button (`components/layout/Header.tsx`)
+
+The share menu is a subcomponent (`ShareButton`) inside `Header.tsx`. It appears in both desktop nav and mobile menu.
+
+**Supported channels:**
+- Native Web Share API (if available)
+- X/Twitter, Facebook, Messenger, WhatsApp, Telegram, LinkedIn, Email
+- Copy link (shows "Link copied!" confirmation for 2 seconds)
+
+Implementation: dropdown with click-outside detection and Escape key support; each platform opens a 600×500px popup window using `encodeURIComponent()` URLs.
+
+### News Voting System (`app/actions/news-votes.ts`)
+
+Server action: `voteForScenario(newsId, scenarioNumber)`
+
+- **IP hashing**: Hashes the request IP with a salt to prevent fraud
+- **Deduplication**: Checks `news_vote_log` table — returns `alreadyVoted: true` if the same IP already voted for that scenario on that article
+- **Counter update**: Increments `votes_scenario_X` column on `news_feed` table
+- **Client-side guard**: `NewsCard` also stores votes in localStorage to avoid redundant server calls
+- **Mock mode**: Returns a random count (no persistence)
 
 ## Development Workflows
 
@@ -173,18 +204,25 @@ useEffect(() => {
 - Colors: Charcoal/Black base (`#0a0a0b`, `#111113`), Teal accent (`#14b8a6`), Red (`#dc2626`), Amber (`#f59e0b`)
 - Typography: Space Grotesk (display), Inter (body), JetBrains Mono (monospace)
 - Components: Cards with inner glow shadows, terminal-style decorations, pulse animations, grid backgrounds
+- Participate page uses custom subcomponents: `TacticalButton`, `TacticalInput`, `ScreenShell`, `ScanLines`
 - All styles in `app/globals.css` and Tailwind utility classes
 
 **Path Alias**: `@/*` maps to project root (configured in `tsconfig.json`)
 
-### Participate System (Survey)
+## Participate System (Survey)
 
-The participate page (`app/participate/`) supports two flows:
-- **Expert**: Name, email, institution, ideology score + Likert 1-5 ratings per scenario. Status workflow: pending → approved/rejected.
-- **Public**: Email + Likert 1-5 ratings per scenario. Auto-published.
+The participate page (`app/participate/`) is a multi-screen wizard (10+ screens) supporting two flows:
+
+- **Expert**: Name, email, institution, ideology slider (0–10) + Likert 1–5 ratings per scenario. Status workflow: pending → approved/rejected.
+- **Public**: Email + Likert 1–5 ratings per scenario. Auto-published.
 - **Returning participants**: Email lookup searches `expert_submissions` (approved only) first, then `public_submissions`. Pre-fills previous ratings for re-submission (INSERT new row, not UPDATE).
 - **Email validation**: Server-side regex `/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/`. Emails lowercased on insert and lookup.
-- **Landing page integration**: `getSubmissionAverages()` computes per-scenario means from latest submission per email, displayed as dual indicators on ScenarioCard.
+- **Landing page integration**: `getSubmissionAverages()` computes per-scenario means from latest submission per email, displayed as dual indicators on `ScenarioCard`.
+
+**Scenario colors on Likert scale:**
+- 1–2: Red (very unlikely / unlikely)
+- 3–4: Amber (possible / likely)
+- 5: Teal (very likely)
 
 ## Important Notes
 
@@ -194,3 +232,5 @@ The participate page (`app/participate/`) supports two flows:
 - **Translation Keys**: Use dot notation (e.g., `scenarios.democraticTransition.title`)
 - **Component Pattern**: Most components are client components (`'use client'`) for interactivity
 - **Scenario ordering**: Cards display ordered by scenario number 1→5 (left to right)
+- **GA exclusion**: `GoogleAnalytics.tsx` skips tracking for any route starting with `/admin`
+- **Vote integrity**: `news_vote_log` enforces one vote per IP hash per scenario per article server-side; `NewsCard` enforces the same client-side via localStorage
