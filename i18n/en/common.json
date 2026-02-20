@@ -685,6 +685,45 @@
     "title": "Prediction Markets",
     "subtitle": "Real-time collective forecasts on Venezuela's political future"
   },
+  "ioda": {
+    "sectionTitle": "Internet & Connectivity",
+    "sectionSubtitle": "Real-time monitoring of Venezuela's internet infrastructure via IODA — tracking BGP routing, active probing, and network telescope signals.",
+    "monitor": {
+      "title": "INTERNET CONNECTIVITY MONITOR",
+      "subtitle": "Live signals and outage events for Venezuela",
+      "range": "Range",
+      "region": "Region",
+      "refreshLabel": "Refresh data",
+      "signalFetchError": "Signal fetch error",
+      "signalTimeSeries": "Signal Time Series",
+      "nationalRegion": "Venezuela (National)",
+      "source": "Source: IODA · Georgia Tech INETINTEL · CC BY 4.0",
+      "notYetUpdated": "Not yet updated"
+    },
+    "signals": {
+      "bgpLabel": "BGP",
+      "bgpDescription": "Visible /24 routing prefixes",
+      "probingLabel": "Probing",
+      "probingDescription": "Responsive /24 networks",
+      "telescopeLabel": "Telescope",
+      "telescopeDescription": "Network telescope (Merit NT)"
+    },
+    "status": {
+      "normal": "NORMAL",
+      "degraded": "DEGRADED",
+      "outage": "OUTAGE DETECTED",
+      "noData": "NO DATA"
+    },
+    "events": {
+      "title": "Recent Events",
+      "detected": "{count} detected",
+      "noOutages": "No outages detected",
+      "noOutagesSubtitle": "Internet signals are within normal parameters",
+      "severityLow": "LOW",
+      "severityMedium": "MEDIUM",
+      "severityCritical": "CRITICAL"
+    }
+  },
   "polymarket": {
     "title": "What are the markets saying?",
     "subtitle": "Real-time crowd forecasts on Venezuela's political future",

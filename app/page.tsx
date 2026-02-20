@@ -11,6 +11,7 @@ import {
   Calendar,
   TrendingUp,
   TrendingDown,
+  Wifi,
   Minus,
   ExternalLink,
   BarChart3,
@@ -40,6 +41,7 @@ import { TickerSimple } from '@/components/ui/Ticker'
 import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
+import { IodaDashboard } from '@/components/ioda/IodaDashboard'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
 import {
@@ -873,6 +875,37 @@ export default function LandingPage() {
                 </p>
               </div>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          INTERNET CONNECTIVITY SECTION
+          ============================================================ */}
+      <section id="connectivity" className="section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+              <Wifi className="w-7 h-7 text-signal-teal" />
+              {t('ioda.sectionTitle')}
+            </h2>
+            <p className="section-subtitle mx-auto">
+              {t('ioda.sectionSubtitle')}
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <IodaDashboard />
           </motion.div>
         </div>
       </section>

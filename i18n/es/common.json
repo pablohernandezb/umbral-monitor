@@ -685,6 +685,45 @@
     "title": "Mercados de Predicción",
     "subtitle": "Pronósticos colectivos en tiempo real sobre el futuro político de Venezuela"
   },
+  "ioda": {
+    "sectionTitle": "Internet y Conectividad",
+    "sectionSubtitle": "Monitoreo en tiempo real de la infraestructura de internet en Venezuela vía IODA — señales BGP, sondeo activo y telescopio de red.",
+    "monitor": {
+      "title": "MONITOR DE CONECTIVIDAD A INTERNET",
+      "subtitle": "Señales en vivo y eventos de interrupción para Venezuela",
+      "range": "Rango",
+      "region": "Región",
+      "refreshLabel": "Actualizar datos",
+      "signalFetchError": "Error al obtener señales",
+      "signalTimeSeries": "Series de tiempo",
+      "nationalRegion": "Venezuela (Nacional)",
+      "source": "Fuente: IODA · Georgia Tech INETINTEL · CC BY 4.0",
+      "notYetUpdated": "Sin actualizar"
+    },
+    "signals": {
+      "bgpLabel": "BGP",
+      "bgpDescription": "Prefijos /24 visibles en enrutamiento",
+      "probingLabel": "Sondeo",
+      "probingDescription": "Redes /24 con respuesta activa",
+      "telescopeLabel": "Telescopio",
+      "telescopeDescription": "Telescopio de red (Merit NT)"
+    },
+    "status": {
+      "normal": "NORMAL",
+      "degraded": "DEGRADADO",
+      "outage": "INTERRUPCIÓN DETECTADA",
+      "noData": "SIN DATOS"
+    },
+    "events": {
+      "title": "Eventos Recientes",
+      "detected": "{count} detectados",
+      "noOutages": "Sin interrupciones detectadas",
+      "noOutagesSubtitle": "Las señales de internet están dentro de parámetros normales",
+      "severityLow": "BAJO",
+      "severityMedium": "MEDIO",
+      "severityCritical": "CRÍTICO"
+    }
+  },
   "polymarket": {
     "title": "¿QUÉ DICEN LOS MERCADOS?",
     "subtitle": "Pronósticos colectivos en tiempo real sobre el futuro político de Venezuela",

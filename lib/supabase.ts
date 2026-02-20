@@ -458,6 +458,56 @@ CREATE POLICY "Authenticated delete fact_check_tweets"
   ON fact_check_tweets FOR DELETE
   TO authenticated
   USING (true);
+
+-- ============================================================
+-- IODA_SIGNALS TABLE
+-- Time-series internet connectivity signals (BGP, probing, telescope)
+-- Keyed by (entity_type, entity_code, timestamp) to support upserts
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ioda_signals (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  entity_type TEXT NOT NULL,         -- 'country' | 'region'
+  entity_code TEXT NOT NULL,         -- 'VE', 'VE.A', etc.
+  timestamp BIGINT NOT NULL,          -- Unix epoch seconds
+  bgp DOUBLE PRECISION,               -- BGP routing visibility (visible /24s)
+  probing DOUBLE PRECISION,           -- Active probing responsive /24s
+  telescope DOUBLE PRECISION,         -- Network telescope unique source IPs
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(entity_type, entity_code, timestamp)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ioda_signals_lookup
+  ON ioda_signals(entity_type, entity_code, timestamp DESC);
+
+ALTER TABLE ioda_signals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ioda_signals_public_read"
+  ON ioda_signals FOR SELECT USING (true);
+
+-- ============================================================
+-- IODA_EVENTS TABLE
+-- Discrete outage events detected by IODA
+-- Keyed by (entity_type, entity_code, datasource, start) for upserts
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ioda_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  entity_type TEXT NOT NULL,
+  entity_code TEXT NOT NULL,
+  datasource TEXT NOT NULL,           -- 'bgp' | 'ping-slash24' | 'ucsd-nt'
+  start BIGINT NOT NULL,              -- Unix epoch seconds
+  duration INTEGER NOT NULL,          -- Seconds
+  score DOUBLE PRECISION NOT NULL,    -- Severity score
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(entity_type, entity_code, datasource, start)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ioda_events_lookup
+  ON ioda_events(entity_type, entity_code, start DESC);
+
+ALTER TABLE ioda_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ioda_events_public_read"
+  ON ioda_events FOR SELECT USING (true);
 `
 
 // Export for reference
