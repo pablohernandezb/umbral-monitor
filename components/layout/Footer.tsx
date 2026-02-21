@@ -56,8 +56,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
-                  {t('nav.about')}
+                <Link href="/news" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('nav.newsRoom')}
                 </Link>
               </li>
               <li>
@@ -89,6 +89,11 @@ export function Footer() {
                 <a href="/about#contact" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {t('footer.contact')}
                 </a>
+              </li>
+              <li>
+                <Link href="/about" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                  {t('nav.about')}
+                </Link>
               </li>
             </ul>
           </div>
