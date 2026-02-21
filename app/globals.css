@@ -357,3 +357,30 @@
 .animate-slide-up {
   animation: slide-up 0.4s ease-out;
 }
+
+/* ============================================================
+   LEAFLET MAP CUSTOMIZATION
+   ============================================================ */
+.leaflet-container {
+  background: #0a0a0b !important;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.ioda-map-tooltip {
+  background: #0a0a0b !important;
+  border: 1px solid #3a3a42 !important;
+  border-radius: 4px !important;
+  color: #e5e5e5 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  padding: 4px 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.ioda-map-tooltip::before {
+  border-top-color: #3a3a42 !important;
+}
+
+.leaflet-control-attribution {
+  display: none !important;
+}

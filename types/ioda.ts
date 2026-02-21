@@ -106,3 +106,46 @@ export const TIME_RANGE_HOURS: Record<TimeRange, number> = {
   '48h': 48,
   '7d': 168,
 }
+
+// ============================================================
+// Subnational (per-state) region signal types
+// ============================================================
+
+/** IODA datasource identifiers for subnational signals */
+export type IODADatasource = 'bgp' | 'ping-slash24' | 'merit-nt'
+
+/** Time-series signal data for a single region + datasource */
+export interface RegionSignalData {
+  regionCode: string
+  regionName: string
+  datasource: string
+  from: number                   // Unix epoch seconds
+  step: number                   // Seconds between data points
+  values: (number | null)[]      // null = missing/unknown
+}
+
+/** Batch response from /api/ioda/regions */
+export interface RegionsBatchResponse {
+  datasource: string
+  regions: RegionSignalData[]
+  fetchedAt: string              // ISO timestamp
+  error: string | null
+}
+
+/** Outage severity classification */
+export type OutageSeverity = 'normal' | 'low' | 'degraded' | 'high' | 'critical'
+
+/** Computed outage score for a single state */
+export interface StateOutageScore {
+  regionCode: string
+  regionName: string
+  score: number
+  severity: OutageSeverity
+}
+
+/** Batch response from /api/ioda/outages (outage summaries for all regions) */
+export interface OutageScoresBatchResponse {
+  scores: StateOutageScore[]
+  fetchedAt: string
+  error: string | null
+}

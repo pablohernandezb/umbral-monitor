@@ -722,6 +722,22 @@
       "severityLow": "BAJO",
       "severityMedium": "MEDIO",
       "severityCritical": "CRÍTICO"
+    },
+    "subnational": {
+      "title": "CONECTIVIDAD ESTADAL",
+      "subtitle": "Mapa de calor de señales de internet por estado para las 25 regiones de Venezuela en las últimas 24 horas",
+      "datasource": "Señal",
+      "tabBgp": "BGP",
+      "tabProbing": "Sondeo Activo",
+      "tabTelescope": "Telescopio de Red",
+      "heatmapLabel": "Mapa de Calor Regional",
+      "mapLabel": "Mapa de Severidad de Interrupciones",
+      "severityNormal": "Normal",
+      "severityLow": "Bajo",
+      "severityDegraded": "Degradado",
+      "severityHigh": "Alto",
+      "severityCritical": "Crítico",
+      "outageScores": "Puntajes de Interrupción"
     }
   },
   "polymarket": {

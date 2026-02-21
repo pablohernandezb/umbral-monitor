@@ -722,6 +722,22 @@
       "severityLow": "LOW",
       "severityMedium": "MEDIUM",
       "severityCritical": "CRITICAL"
+    },
+    "subnational": {
+      "title": "SUBNATIONAL CONNECTIVITY",
+      "subtitle": "Per-state internet signal heatmap for Venezuela's 25 regions in the past 24 hours",
+      "datasource": "Signal",
+      "tabBgp": "BGP",
+      "tabProbing": "Active Probing",
+      "tabTelescope": "Network Telescope",
+      "heatmapLabel": "Regional Signal Heatmap",
+      "mapLabel": "Outage Severity Map",
+      "severityNormal": "Normal",
+      "severityLow": "Low",
+      "severityDegraded": "Degraded",
+      "severityHigh": "High",
+      "severityCritical": "Critical",
+      "outageScores": "Outage Scores"
     }
   },
   "polymarket": {

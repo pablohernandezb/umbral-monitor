@@ -11,6 +11,11 @@ import type {
   NormalizedSignalPoint,
   TimeRange,
   TIME_RANGE_HOURS,
+  RegionsBatchResponse,
+  RegionSignalData,
+  OutageSeverity,
+  StateOutageScore,
+  OutageScoresBatchResponse,
 } from '@/types/ioda'
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -257,5 +262,134 @@ export async function getStoredDashboardData(
     return { data: json, error: json.error }
   } catch (err) {
     return { data: null, error: err instanceof Error ? err.message : 'Network error' }
+  }
+}
+
+// ── Subnational Region Signals ────────────────────────────────────────────
+
+/**
+ * Client-side fetcher: loads batch region signals from our internal API.
+ */
+export async function getRegionSignals(
+  datasource: string = 'bgp',
+  hours: number = 24
+): Promise<RegionsBatchResponse> {
+  const qs = new URLSearchParams({ datasource, hours: String(hours) })
+  const res = await fetch(`/api/ioda/regions?${qs}`, { cache: 'no-store' })
+  if (!res.ok) {
+    return { datasource, regions: [], fetchedAt: new Date().toISOString(), error: `HTTP ${res.status}` }
+  }
+  return res.json() as Promise<RegionsBatchResponse>
+}
+
+/**
+ * Client-side fetcher: loads real IODA outage scores for all 25 regions.
+ */
+export async function getRegionOutageScores(): Promise<OutageScoresBatchResponse> {
+  const res = await fetch('/api/ioda/outages', { cache: 'no-store' })
+  if (!res.ok) {
+    return { scores: [], fetchedAt: new Date().toISOString(), error: `HTTP ${res.status}` }
+  }
+  return res.json() as Promise<OutageScoresBatchResponse>
+}
+
+/**
+ * Compute an outage score for a single region, matching IODA's approach.
+ *
+ * For each datasource, the "drop" is the absolute decrease of recent values
+ * below the baseline median:  drop = max(0, baseline_median - recent_mean).
+ * The final score sums the drops across all datasources.
+ *
+ * This means large networks (high baseline) with significant drops produce
+ * high scores, while small networks or stable ones stay near zero.
+ */
+export function computeOutageScore(
+  bgpValues: (number | null)[],
+  probingValues: (number | null)[],
+  telescopeValues: (number | null)[]
+): number {
+  function absoluteDrop(values: (number | null)[]): number {
+    const nums = values.filter((v): v is number => v !== null && v >= 0)
+    if (nums.length < 4) return 0
+
+    // Baseline: median of first 80% of the window
+    const baselineSlice = nums.slice(0, Math.max(4, Math.floor(nums.length * 0.8)))
+    const sorted = [...baselineSlice].sort((a, b) => a - b)
+    const median = sorted[Math.floor(sorted.length / 2)]
+    if (median === 0) return 0
+
+    // Recent: mean of last 10% of the window
+    const recentSlice = nums.slice(Math.max(0, nums.length - Math.max(3, Math.floor(nums.length * 0.1))))
+    const recentMean = recentSlice.reduce((a, b) => a + b, 0) / recentSlice.length
+
+    return Math.max(0, median - recentMean)
+  }
+
+  const dropBgp = absoluteDrop(bgpValues)
+  const dropProbing = absoluteDrop(probingValues)
+  const dropTelescope = absoluteDrop(telescopeValues)
+
+  // Sum of absolute drops — matches IODA's scoring where large drops yield large numbers
+  return dropBgp + dropProbing + dropTelescope
+}
+
+/**
+ * Classify an outage score into a severity level.
+ * Thresholds calibrated against IODA's observed scores:
+ *   Falcón ≈ 700k (critical), Lara ≈ 180k, Anzoátegui ≈ 15k, Miranda ≈ 9.9k (low–degraded)
+ */
+export function classifyOutageSeverity(score: number): OutageSeverity {
+  if (score <= 0) return 'normal'
+  if (score < 1000) return 'low'
+  if (score < 50000) return 'degraded'
+  if (score < 200000) return 'high'
+  return 'critical'
+}
+
+/**
+ * Format an outage score for compact display (e.g. 1.2M, 700k, 320).
+ */
+export function formatOutageScore(score: number): string {
+  if (score >= 1_000_000) return `${(score / 1_000_000).toFixed(1)}M`
+  if (score >= 1_000) return `${(score / 1_000).toFixed(0)}k`
+  return score.toFixed(0)
+}
+
+/**
+ * Map outage severity to a project color token.
+ */
+export function severityColor(severity: OutageSeverity): string {
+  switch (severity) {
+    case 'normal': return '#14b8a6'   // signal-teal
+    case 'low': return '#14b8a6'      // signal-teal (dim)
+    case 'degraded': return '#f59e0b' // signal-amber
+    case 'high': return '#dc2626'     // signal-red
+    case 'critical': return '#dc2626' // signal-red
+  }
+}
+
+/**
+ * Severity fill color for SVG map — lighter fills for map readability.
+ */
+export function severityFill(severity: OutageSeverity): string {
+  switch (severity) {
+    case 'normal': return '#14b8a620'   // teal very transparent
+    case 'low': return '#14b8a640'      // teal transparent
+    case 'degraded': return '#f59e0b50' // amber semi-transparent
+    case 'high': return '#dc262660'     // red semi-transparent
+    case 'critical': return '#dc262690' // red
+  }
+}
+
+/**
+ * Severity border/stroke color for SVG map.
+ */
+export function severityStroke(severity: OutageSeverity): string {
+  switch (severity) {
+    case 'normal': return '#14b8a650'
+    case 'low': return '#14b8a670'
+    case 'degraded': return '#f59e0b80'
+    case 'high': return '#dc262680'
+    case 'critical': return '#dc2626'
   }
 }

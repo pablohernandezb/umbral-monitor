@@ -152,7 +152,7 @@ export function ScenarioCard({ scenario, className, onClick, isActive, expertRat
             <div className="h-1.5 bg-umbral-ash rounded-full overflow-hidden">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', pRating > 0 ? getRatingColor(pRating) : 'bg-umbral-ash')}
-                style={{ width: `${(pRating / 5) * 100}%` }}
+                style={{ width: `${((pRating - 1) / 4) * 100}%` }}
               />
             </div>
           </div>
