@@ -316,7 +316,7 @@
 }
 
 .recharts-text {
-  fill: #6b6b76;
+  fill: #b8b8c4;
   font-size: 11px;
   font-family: 'JetBrains Mono', monospace;
 }
@@ -339,7 +339,7 @@
 }
 
 .recharts-tooltip-item {
-  color: #9ca3af !important;
+  color: #e0e0ea !important;
 }
 
 /* Cookie Banner Animation */

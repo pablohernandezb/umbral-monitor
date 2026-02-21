@@ -64,10 +64,7 @@ export function ScenarioCard({ scenario, className, onClick, isActive, expertRat
         'flex flex-col justify-between',
         onClick && 'cursor-pointer',
         isActive && 'bg-umbral-slate/30',
-        isActive && scenario.status === 'critical' && '!border-signal-red',
-        isActive && scenario.status === 'warning' && '!border-signal-amber',
-        isActive && scenario.status === 'stable' && '!border-signal-teal',
-        isActive && scenario.status === 'neutral' && '!border-umbral-muted',
+        isActive && '!border-signal-blue',
         className
       )}
     >

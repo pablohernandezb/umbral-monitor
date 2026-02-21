@@ -3,7 +3,7 @@
 import { useState, forwardRef } from 'react'
 import { X, Info } from 'lucide-react'
 import { useTranslation } from '@/i18n'
-import { cn, getProbabilityColor } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import type { Scenario } from '@/types'
 import type { TimelinePhase } from '@/data/scenario-phases'
 
@@ -18,8 +18,7 @@ export const ScenarioTimeline = forwardRef<HTMLDivElement, ScenarioTimelineProps
   const { t } = useTranslation()
   const [hoveredStep, setHoveredStep] = useState<number | null>(null)
 
-  // Get color based on probability
-  const color = getProbabilityColor(scenario.probability_label)
+  const color = '#3b82f6' // signal-blue
 
   return (
     <div

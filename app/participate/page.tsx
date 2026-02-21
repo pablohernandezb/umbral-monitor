@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, ChevronRight, ArrowLeft,
@@ -268,6 +268,11 @@ export default function ParticipatePage() {
   // Submission result
   const [lastSubmissionId, setLastSubmissionId] = useState('')
   const [submitError, setSubmitError] = useState('')
+
+  // Scroll to top on every screen transition (important on mobile)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+  }, [screen])
 
   // ---- Navigation helpers ----
 

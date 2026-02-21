@@ -16,8 +16,8 @@ const config: Config = {
           slate: '#1a1a1e',
           ash: '#252529',
           steel: '#3a3a42',
-          muted: '#6b6b76',
-          light: '#9ca3af',
+          muted: '#b8b8c4',
+          light: '#e0e0ea',
         },
         // Accent colors
         signal: {
