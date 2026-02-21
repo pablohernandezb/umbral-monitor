@@ -62,12 +62,20 @@ const academicSources = [
       en: 'Database of events during democratic change episodes.'
     }
   },
-    {
+  {
     name: 'The GDELT Project',
     url: 'https://www.gdeltproject.org/',
     description: {
       es: 'Base de datos de eventos globales extraídos de medios de comunicación.',
       en: 'Database of global events extracted from media sources.'
+    }
+  },
+    {
+    name: 'The IODA Project',
+    url: 'https://ioda.inetintel.cc.gatech.edu/',
+    description: {
+      es: 'Prototipo operativo que monitorea internet en tiempo real.',
+      en: 'Operational prototype system that monitors the internet in near-real time.'
     }
   },
 ]

@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import { supabase, IS_MOCK_MODE } from '@/lib/supabase'
 import type { GdeltDataPoint, GdeltApiResponse } from '@/types/gdelt'
 
-// Allow up to 30s for sequential GDELT fetches with rate limit delays
-export const maxDuration = 30
+// Vercel Hobby hard cap is 10s — keep this at 10 so the platform enforces it
+// cleanly rather than killing the function mid-upsert without a useful error.
+export const maxDuration = 10
 
 // GDELT DOC API v2 (the v1 Stability Timeline API is down)
 const GDELT_DOC_BASE = 'https://api.gdeltproject.org/api/v2/doc/doc'
@@ -39,42 +40,30 @@ function parseCsv(csvText: string): Map<string, number> {
   return map
 }
 
-// ── Sequential GDELT fetcher ──────────────────────────────────
-async function fetchWithDelay(url: string, delayMs: number): Promise<Response> {
-  if (delayMs > 0) {
-    await new Promise(resolve => setTimeout(resolve, delayMs))
+// ── Parallel GDELT fetcher ────────────────────────────────────
+// 6s per fetch leaves ~4s for Supabase read+upsert within the 10s cap.
+// If GDELT is slow and times out, the function still exits cleanly and
+// the existing DB rows are served — no mid-write corruption.
+async function safeGdeltFetch(url: string): Promise<Map<string, number>> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(6_000) })
+    if (!res.ok) return new Map()
+    const text = await res.text()
+    if (text.includes('<!')) return new Map()
+    return parseCsv(text)
+  } catch {
+    return new Map()
   }
-  return fetch(url)
 }
 
 async function fetchGdeltSignals() {
-  let instMap = new Map<string, number>()
-  let toneMap = new Map<string, number>()
-  let artMap = new Map<string, number>()
-
-  try {
-    const res = await fetchWithDelay(INSTABILITY_URL, 0)
-    if (res.ok) {
-      const text = await res.text()
-      if (!text.includes('<!')) instMap = parseCsv(text)
-    }
-  } catch { /* continue */ }
-
-  try {
-    const res = await fetchWithDelay(TONE_URL, 10000)
-    if (res.ok) {
-      const text = await res.text()
-      if (!text.includes('<!')) toneMap = parseCsv(text)
-    }
-  } catch { /* continue */ }
-
-  try {
-    const res = await fetchWithDelay(ARTVOLNORM_URL, 10000)
-    if (res.ok) {
-      const text = await res.text()
-      if (!text.includes('<!')) artMap = parseCsv(text)
-    }
-  } catch { /* continue */ }
+  // Run all three in parallel — eliminates the 20s of sequential delays
+  // that were causing the function to time out before completing the DB upsert
+  const [instMap, toneMap, artMap] = await Promise.all([
+    safeGdeltFetch(INSTABILITY_URL),
+    safeGdeltFetch(TONE_URL),
+    safeGdeltFetch(ARTVOLNORM_URL),
+  ])
 
   return { instMap, toneMap, artMap }
 }
