@@ -158,48 +158,44 @@ export async function refreshFactCheckTweets(): Promise<{
     return { success: false, fetched: 0, upserted: 0, errors: ['Supabase admin client not available'] }
   }
 
+  // Fetch all accounts in parallel — the old sequential + 5s delays approach
+  // caused Vercel Hobby (10s cap) to time out after the first account.
+  // X Basic allows 10 req/15min; 3 concurrent search requests is well within that.
+  const results = await Promise.allSettled(
+    FACT_CHECK_ACCOUNTS.map(account => fetchAccountTweets(account))
+  )
+
+  // Upsert each account's tweets, collecting errors
   for (let i = 0; i < FACT_CHECK_ACCOUNTS.length; i++) {
     const account = FACT_CHECK_ACCOUNTS[i]
+    const result = results[i]
 
-    // Delay between accounts to respect free-tier rate limits (skip first)
-    if (i > 0) {
-      await new Promise(resolve => setTimeout(resolve, 5000))
-    }
-
-    try {
-      const tweets = await fetchAccountTweets(account)
-      totalFetched += tweets.length
-
-      if (tweets.length === 0) {
-        errors.push(`No tweets fetched for @${account.username}`)
-        continue
-      }
-
-      // Upsert tweets (on conflict of tweet_id, update text and fetched_at)
-      const { error } = await supabase
-        .from('fact_check_tweets')
-        .upsert(
-          tweets.map(t => ({
-            ...t,
-            alert_tags: t.alert_tags,
-          })),
-          { onConflict: 'tweet_id' }
-        )
-
-      if (error) {
-        errors.push(`Supabase upsert error for @${account.username}: ${error.message}`)
-      } else {
-        totalUpserted += tweets.length
-      }
-    } catch (err) {
+    if (result.status === 'rejected') {
+      const err = result.reason
       const message = err instanceof Error ? err.message : String(err)
       errors.push(`Failed to fetch @${account.username}: ${message}`)
+      continue
+    }
 
-      // If rate limited, stop trying remaining accounts
-      if (err instanceof XApiError && err.status === 429) {
-        errors.push(`Rate limited — skipping remaining accounts`)
-        break
-      }
+    const tweets = result.value
+    totalFetched += tweets.length
+
+    if (tweets.length === 0) {
+      errors.push(`No tweets fetched for @${account.username}`)
+      continue
+    }
+
+    const { error } = await supabase
+      .from('fact_check_tweets')
+      .upsert(
+        tweets.map(t => ({ ...t, alert_tags: t.alert_tags })),
+        { onConflict: 'tweet_id' }
+      )
+
+    if (error) {
+      errors.push(`Supabase upsert error for @${account.username}: ${error.message}`)
+    } else {
+      totalUpserted += tweets.length
     }
   }
 
