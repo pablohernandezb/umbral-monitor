@@ -205,6 +205,22 @@ CREATE TABLE IF NOT EXISTS gdelt_data (
 CREATE INDEX IF NOT EXISTS idx_gdelt_data_date ON gdelt_data(date);
 
 -- ============================================================
+-- GDELT_EVENTS TABLE
+-- Manually curated key political events shown on GDELT timeline
+-- ============================================================
+CREATE TABLE IF NOT EXISTS gdelt_events (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  date DATE NOT NULL,
+  tier_en TEXT NOT NULL CHECK (tier_en IN ('CRITICAL', 'HIGH', 'MEDIUM', 'LOW')),
+  tier_es TEXT NOT NULL,
+  label_en TEXT NOT NULL,
+  label_es TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gdelt_events_date ON gdelt_events(date);
+
+-- ============================================================
 -- NEWS_VOTE_LOG TABLE
 -- One row per (news article × IP hash × scenario).
 -- Prevents the same IP from voting for the same scenario twice.
@@ -236,6 +252,7 @@ ALTER TABLE events_deed ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reading_room ENABLE ROW LEVEL SECURITY;
 ALTER TABLE historical_episodes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE gdelt_data ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gdelt_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE news_vote_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expert_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public_submissions ENABLE ROW LEVEL SECURITY;
@@ -250,6 +267,7 @@ CREATE POLICY "Public read events_deed" ON events_deed FOR SELECT USING (true);
 CREATE POLICY "Public read reading_room" ON reading_room FOR SELECT USING (true);
 CREATE POLICY "Public read historical_episodes" ON historical_episodes FOR SELECT USING (true);
 CREATE POLICY "Public read gdelt_data" ON gdelt_data FOR SELECT USING (true);
+CREATE POLICY "Public read gdelt_events" ON gdelt_events FOR SELECT USING (true);
 
 -- news_vote_log: no public read (privacy); anon can insert (server action uses service role)
 CREATE POLICY "Anon insert news_vote_log"

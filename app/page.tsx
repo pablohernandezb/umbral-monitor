@@ -28,7 +28,12 @@ import {
   CircleQuestionMark,
   SquareActivity,
   ChartArea,
-  MessageCircleWarning
+  MessageCircleWarning,
+  Landmark,
+  Undo,
+  Vote,
+  RotateCcw,
+  HandFist,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
@@ -657,6 +662,33 @@ export default function LandingPage() {
             <p className="section-subtitle mx-auto">
               {t('landing.news.subtitle')}
             </p>
+
+            {/* Scenario voting instruction + legend */}
+            <div className="mt-5 flex flex-col items-center gap-3">
+              <p className="text-xs text-umbral-muted max-w-xl">
+                {locale === 'es'
+                  ? 'En cada noticia puedes indicar qué escenario favorece presionando el botón correspondiente:'
+                  : 'On each news card you can indicate which scenario it supports by pressing the corresponding button:'
+                }
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {([
+                  { key: 'regressedAutocracy', Icon: HandFist },
+                  { key: 'revertedLiberalization', Icon: RotateCcw },
+                  { key: 'stabilizedElectoralAutocracy', Icon: Vote },
+                  { key: 'preemptedDemocraticTransition', Icon: Undo },
+                  { key: 'democraticTransition', Icon: Landmark },
+                ] as const).map(({ key, Icon }) => (
+                  <span
+                    key={key}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border bg-signal-blue/10 border-signal-blue/20 text-xs"
+                  >
+                    <Icon className="w-3.5 h-3.5 shrink-0 text-signal-blue" />
+                    <span className="text-umbral-light">{t(`scenarios.${key}.name`)}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           <motion.div

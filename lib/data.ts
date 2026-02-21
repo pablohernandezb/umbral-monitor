@@ -15,6 +15,7 @@ import type {
   PublicSubmission,
   ApiResponse,
 } from '@/types'
+import type { GdeltEvent } from '@/types/gdelt'
 
 // Import mock data
 import {
@@ -28,6 +29,7 @@ import {
   mockReadingRoom,
   mockHistoricalEpisodes,
   mockFactCheckTweets,
+  mockGdeltEvents,
 } from '@/data/mock'
 
 // ============================================================
@@ -727,5 +729,92 @@ export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAve
       publicCount: publicRows.length,
     },
     error: expertRes.error?.message || publicRes.error?.message || null,
+  }
+}
+
+// ============================================================
+// GDELT EVENTS (curated timeline annotations)
+// ============================================================
+
+export async function getGdeltEvents(): Promise<ApiResponse<GdeltEvent[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: mockGdeltEvents, error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('gdelt_events')
+    .select('*')
+    .order('date', { ascending: true })
+
+  return {
+    data: data as GdeltEvent[] | null,
+    error: error?.message || null,
+  }
+}
+
+export async function createGdeltEvent(
+  event: Omit<GdeltEvent, 'id' | 'created_at'>
+): Promise<ApiResponse<GdeltEvent>> {
+  if (IS_MOCK_MODE || !supabase) {
+    const newEvent: GdeltEvent = { ...event, id: `mock-${Date.now()}`, created_at: new Date().toISOString() }
+    mockGdeltEvents.push(newEvent)
+    mockGdeltEvents.sort((a, b) => a.date.localeCompare(b.date))
+    return { data: newEvent, error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('gdelt_events')
+    .insert(event)
+    .select()
+    .single()
+
+  return {
+    data: data as GdeltEvent | null,
+    error: error?.message || null,
+  }
+}
+
+export async function updateGdeltEvent(
+  id: string,
+  event: Partial<Omit<GdeltEvent, 'id' | 'created_at'>>
+): Promise<ApiResponse<GdeltEvent>> {
+  if (IS_MOCK_MODE || !supabase) {
+    const idx = mockGdeltEvents.findIndex(e => e.id === id)
+    if (idx !== -1) {
+      mockGdeltEvents[idx] = { ...mockGdeltEvents[idx], ...event }
+      mockGdeltEvents.sort((a, b) => a.date.localeCompare(b.date))
+      return { data: mockGdeltEvents[idx], error: null }
+    }
+    return { data: null, error: 'Not found' }
+  }
+
+  const { data, error } = await supabase
+    .from('gdelt_events')
+    .update(event)
+    .eq('id', id)
+    .select()
+    .single()
+
+  return {
+    data: data as GdeltEvent | null,
+    error: error?.message || null,
+  }
+}
+
+export async function deleteGdeltEvent(id: string): Promise<ApiResponse<null>> {
+  if (IS_MOCK_MODE || !supabase) {
+    const idx = mockGdeltEvents.findIndex(e => e.id === id)
+    if (idx !== -1) mockGdeltEvents.splice(idx, 1)
+    return { data: null, error: null }
+  }
+
+  const { error } = await supabase
+    .from('gdelt_events')
+    .delete()
+    .eq('id', id)
+
+  return {
+    data: null,
+    error: error?.message || null,
   }
 }

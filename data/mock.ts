@@ -10,6 +10,7 @@ import type {
   HistoricalEpisode,
   FactCheckTweet,
 } from '@/types'
+import type { GdeltEvent } from '@/types/gdelt'
 
 // ============================================================
 // SCENARIOS MOCK DATA
@@ -3907,4 +3908,19 @@ export const mockFactCheckTweets: FactCheckTweet[] = [
     fetched_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
   },
+]
+
+// ============================================================
+// GDELT EVENTS MOCK DATA
+// Seeded from data/gdelt-annotations.ts
+// ============================================================
+export const mockGdeltEvents: GdeltEvent[] = [
+  { id: 'ge-1', date: '2026-01-03', tier_en: 'CRITICAL', tier_es: 'CRÍTICO', label_en: 'US Operation / Maduro captured', label_es: 'Operación de EE.UU. / Maduro capturado', created_at: '2026-01-03T00:00:00Z' },
+  { id: 'ge-2', date: '2026-01-05', tier_en: 'HIGH', tier_es: 'ALTA', label_en: 'Delcy Rodríguez sworn in', label_es: 'Delcy Rodríguez juramentada', created_at: '2026-01-05T00:00:00Z' },
+  { id: 'ge-3', date: '2026-01-10', tier_en: 'HIGH', tier_es: 'ALTA', label_en: 'Emergency decree + crackdowns', label_es: 'Decreto de emergencia + represión', created_at: '2026-01-10T00:00:00Z' },
+  { id: 'ge-4', date: '2026-01-15', tier_en: 'MEDIUM', tier_es: 'MEDIA', label_en: 'Machado meets Trump', label_es: 'Machado se reúne con Trump', created_at: '2026-01-15T00:00:00Z' },
+  { id: 'ge-5', date: '2026-01-20', tier_en: 'MEDIUM', tier_es: 'MEDIA', label_en: '$300M oil payment deal', label_es: 'Acuerdo petrolero de $300M', created_at: '2026-01-20T00:00:00Z' },
+  { id: 'ge-6', date: '2026-01-29', tier_en: 'MEDIUM', tier_es: 'MEDIA', label_en: 'Hydrocarbon law signed', label_es: 'Ley de hidrocarburos firmada', created_at: '2026-01-29T00:00:00Z' },
+  { id: 'ge-7', date: '2026-02-05', tier_en: 'LOW', tier_es: 'BAJA', label_en: 'Amnesty law debate begins', label_es: 'Comienza debate de ley de amnistía', created_at: '2026-02-05T00:00:00Z' },
+  { id: 'ge-8', date: '2026-02-12', tier_en: 'LOW', tier_es: 'BAJA', label_en: 'Rodríguez pledges elections (NBC)', label_es: 'Rodríguez promete elecciones (NBC)', created_at: '2026-02-12T00:00:00Z' },
 ]

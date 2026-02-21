@@ -21,13 +21,13 @@ const categoryColors: Record<string, string> = {
   international: 'bg-signal-teal/10 text-signal-teal border-signal-teal/30',
 }
 
-// Scenario icons and config
+// Scenario icons and config — order matches scenarioKeyToNumber (1→5)
 const scenarioConfig: { key: string; icon: LucideIcon; number: number }[] = [
-  { key: 'democraticTransition', icon: Landmark, number: 1 },
-  { key: 'preemptedDemocraticTransition', icon: Undo, number: 2 },
+  { key: 'regressedAutocracy', icon: HandFist, number: 1 },
+  { key: 'revertedLiberalization', icon: RotateCcw, number: 2 },
   { key: 'stabilizedElectoralAutocracy', icon: Vote, number: 3 },
-  { key: 'revertedLiberalization', icon: RotateCcw, number: 4 },
-  { key: 'regressedAutocracy', icon: HandFist, number: 5 },
+  { key: 'preemptedDemocraticTransition', icon: Undo, number: 4 },
+  { key: 'democraticTransition', icon: Landmark, number: 5 },
 ]
 
 export function NewsCard({ item, compact = false, className, onVote }: NewsCardProps) {

@@ -26,3 +26,14 @@ export interface GdeltAnnotation {
   label_en: string
   label_es: string
 }
+
+/** DB-backed GDELT timeline event (superset of GdeltAnnotation) */
+export interface GdeltEvent {
+  id: string
+  date: string              // YYYY-MM-DD
+  tier_en: GdeltAnnotationTier
+  tier_es: string
+  label_en: string
+  label_es: string
+  created_at: string
+}

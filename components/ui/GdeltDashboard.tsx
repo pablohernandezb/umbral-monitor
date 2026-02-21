@@ -5,13 +5,15 @@ import { Activity, TrendingDown, TrendingUp, Radio } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { GdeltSignalChart } from '@/components/charts/GdeltSignalChart'
-import { GDELT_ANNOTATIONS, TIER_COLORS } from '@/data/gdelt-annotations'
+import { TIER_COLORS } from '@/data/gdelt-annotations'
 import { mockGdeltData } from '@/data/gdelt-mock'
-import type { GdeltDataPoint, GdeltApiResponse } from '@/types/gdelt'
+import { getGdeltEvents } from '@/lib/data'
+import type { GdeltDataPoint, GdeltApiResponse, GdeltEvent } from '@/types/gdelt'
 
 export function GdeltDashboard() {
   const { t, locale } = useTranslation()
   const [data, setData] = useState<GdeltDataPoint[]>([])
+  const [events, setEvents] = useState<GdeltEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [fetchedAt, setFetchedAt] = useState<string | null>(null)
@@ -21,24 +23,31 @@ export function GdeltDashboard() {
 
     async function fetchData() {
       try {
-        const res = await fetch('/api/gdelt')
-        const json: GdeltApiResponse = await res.json()
+        const [gdeltRes, eventsRes] = await Promise.allSettled([
+          fetch('/api/gdelt').then(r => r.json() as Promise<GdeltApiResponse>),
+          getGdeltEvents(),
+        ])
 
         if (cancelled) return
 
-        if (json.data && json.data.length > 0) {
-          setData(json.data)
-          setFetchedAt(json.fetchedAt)
-          if (json.error) setError(json.error)
+        if (gdeltRes.status === 'fulfilled') {
+          const json = gdeltRes.value
+          if (json.data && json.data.length > 0) {
+            setData(json.data)
+            setFetchedAt(json.fetchedAt)
+            if (json.error) setError(json.error)
+          } else {
+            setData(mockGdeltData)
+            setError('mock')
+          }
         } else {
-          // Fallback to mock data
           setData(mockGdeltData)
           setError('mock')
         }
-      } catch {
-        if (cancelled) return
-        setData(mockGdeltData)
-        setError('mock')
+
+        if (eventsRes.status === 'fulfilled' && eventsRes.value.data) {
+          setEvents(eventsRes.value.data)
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -220,32 +229,37 @@ export function GdeltDashboard() {
                 {t('gdelt.timeline.title')}
               </h4>
               <div className="space-y-1 md:space-y-1.5">
-                {GDELT_ANNOTATIONS.map((annotation, i) => (
+                {events.map((event) => (
                   <div
-                    key={annotation.date}
+                    key={event.id}
                     className="flex items-center gap-3 px-3 py-2 md:py-2.5 rounded-md hover:bg-umbral-ash/20 transition-colors group"
                   >
                     <span
                       className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full shrink-0 ring-2 ring-offset-1 ring-offset-umbral-black"
                       style={{
-                        backgroundColor: TIER_COLORS[annotation.tier_en],
-                        boxShadow: `0 0 6px ${TIER_COLORS[annotation.tier_en]}40`,
+                        backgroundColor: TIER_COLORS[event.tier_en],
+                        boxShadow: `0 0 6px ${TIER_COLORS[event.tier_en]}40`,
                       }}
                     />
                     <span className="text-xs md:text-sm font-mono text-umbral-muted w-24 md:w-28 shrink-0">
-                      {formatDate(annotation.date)}
+                      {formatDate(event.date)}
                     </span>
                     <span className="text-xs md:text-sm text-umbral-light group-hover:text-white transition-colors">
-                      {locale === 'es' ? annotation.label_es : annotation.label_en}
+                      {locale === 'es' ? event.label_es : event.label_en}
                     </span>
                     <span
                       className="text-[9px] md:text-xs font-mono ml-auto shrink-0 opacity-60"
-                      style={{ color: TIER_COLORS[annotation.tier_en] }}
+                      style={{ color: TIER_COLORS[event.tier_en] }}
                     >
-                      {locale === 'es' ? annotation.tier_es : annotation.tier_en}
+                      {locale === 'es' ? event.tier_es : event.tier_en}
                     </span>
                   </div>
                 ))}
+                {events.length === 0 && (
+                  <p className="text-xs text-umbral-muted text-center py-3">
+                    {locale === 'es' ? 'Sin eventos registrados' : 'No events recorded'}
+                  </p>
+                )}
               </div>
             </div>
 

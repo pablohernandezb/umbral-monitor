@@ -107,7 +107,7 @@ export default async function AdminDashboardPage() {
       {/* Quick Actions */}
       <div className="bg-[#111113] border border-gray-800 rounded-lg p-6">
         <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <Link
             href="/admin/prisoners"
             className="p-6 border border-gray-700 hover:border-teal-500/50 rounded-lg transition-colors group"
@@ -187,6 +187,27 @@ export default async function AdminDashboardPage() {
                 </h3>
                 <p className="text-gray-400 text-sm">
                   Review expert submissions and moderate public poll responses
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/gdelt-events"
+            className="p-6 border border-gray-700 hover:border-sky-500/50 rounded-lg transition-colors group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-sky-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-white font-semibold mb-1 group-hover:text-sky-400 transition-colors">
+                  GDELT Event Timeline
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  Add, edit, and remove key political events shown on the GDELT signal chart
                 </p>
               </div>
             </div>
