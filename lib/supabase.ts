@@ -526,6 +526,45 @@ ALTER TABLE ioda_events ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "ioda_events_public_read"
   ON ioda_events FOR SELECT USING (true);
+
+-- ============================================================
+-- IODA_REGION_SIGNALS TABLE
+-- Latest 24h signal values per Venezuelan state, per datasource
+-- One row per (region_code, datasource) — upserted by daily cron
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ioda_region_signals (
+  region_code TEXT NOT NULL,
+  region_name TEXT NOT NULL,
+  datasource  TEXT NOT NULL,              -- 'bgp' | 'ping-slash24' | 'merit-nt'
+  from_epoch  BIGINT NOT NULL,            -- Unix epoch of first value
+  step_seconds INT NOT NULL DEFAULT 300,  -- Seconds between data points
+  values      JSONB NOT NULL DEFAULT '[]',-- Array of (number | null)
+  fetched_at  TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (region_code, datasource)
+);
+
+ALTER TABLE ioda_region_signals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ioda_region_signals_public_read"
+  ON ioda_region_signals FOR SELECT USING (true);
+
+-- ============================================================
+-- IODA_REGION_OUTAGES TABLE
+-- Latest outage score + severity per Venezuelan state
+-- One row per region_code — upserted by daily cron
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ioda_region_outages (
+  region_code TEXT PRIMARY KEY,
+  region_name TEXT NOT NULL,
+  score       DOUBLE PRECISION NOT NULL DEFAULT 0,
+  severity    TEXT NOT NULL DEFAULT 'normal',
+  fetched_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE ioda_region_outages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ioda_region_outages_public_read"
+  ON ioda_region_outages FOR SELECT USING (true);
 `
 
 // Export for reference

@@ -294,6 +294,31 @@ export async function getRegionOutageScores(): Promise<OutageScoresBatchResponse
 }
 
 /**
+ * Supabase mode: reads pre-stored region signals from DB via the sync-subnational route.
+ */
+export async function getStoredRegionSignals(datasource: string): Promise<RegionsBatchResponse> {
+  const res = await fetch(
+    `/api/ioda/sync-subnational?datasource=${encodeURIComponent(datasource)}`,
+    { cache: 'no-store' }
+  )
+  if (!res.ok) {
+    return { datasource, regions: [], fetchedAt: new Date().toISOString(), error: `HTTP ${res.status}` }
+  }
+  return res.json() as Promise<RegionsBatchResponse>
+}
+
+/**
+ * Supabase mode: reads pre-stored region outage scores from DB via the sync-subnational route.
+ */
+export async function getStoredRegionOutages(): Promise<OutageScoresBatchResponse> {
+  const res = await fetch('/api/ioda/sync-subnational?outages=true', { cache: 'no-store' })
+  if (!res.ok) {
+    return { scores: [], fetchedAt: new Date().toISOString(), error: `HTTP ${res.status}` }
+  }
+  return res.json() as Promise<OutageScoresBatchResponse>
+}
+
+/**
  * Compute an outage score for a single region, matching IODA's approach.
  *
  * For each datasource, the "drop" is the absolute decrease of recent values

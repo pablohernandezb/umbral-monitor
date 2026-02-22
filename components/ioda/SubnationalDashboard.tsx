@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { MapPin, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from '@/i18n'
 import { useIoda } from '@/hooks/useIoda'
-import { getRegionSignals, getRegionOutageScores } from '@/lib/ioda'
+import { getRegionSignals, getRegionOutageScores, getStoredRegionSignals, getStoredRegionOutages } from '@/lib/ioda'
+import { IS_MOCK_MODE } from '@/lib/supabase'
 import { StateHeatmap } from './StateHeatmap'
 import { VenezuelaMap } from './VenezuelaMap'
 import { OutageScoreList } from './OutageScoreList'
@@ -39,7 +40,7 @@ export function SubnationalDashboard() {
 
   // Fetch BGP data (loads on mount)
   const bgpResult = useIoda<RegionsBatchResponse>({
-    fetcher: () => getRegionSignals('bgp', 24),
+    fetcher: () => IS_MOCK_MODE ? getRegionSignals('bgp', 24) : getStoredRegionSignals('bgp'),
     deps: [],
     autoRefresh: false,
   })
@@ -48,7 +49,7 @@ export function SubnationalDashboard() {
   const probingResult = useIoda<RegionsBatchResponse>({
     fetcher: () =>
       activatedTabs.has('ping-slash24')
-        ? getRegionSignals('ping-slash24', 24)
+        ? (IS_MOCK_MODE ? getRegionSignals('ping-slash24', 24) : getStoredRegionSignals('ping-slash24'))
         : Promise.resolve({ datasource: 'ping-slash24', regions: [], fetchedAt: new Date().toISOString(), error: null }),
     deps: [activatedTabs.has('ping-slash24')],
     autoRefresh: false,
@@ -58,15 +59,15 @@ export function SubnationalDashboard() {
   const telescopeResult = useIoda<RegionsBatchResponse>({
     fetcher: () =>
       activatedTabs.has('merit-nt')
-        ? getRegionSignals('merit-nt', 24)
+        ? (IS_MOCK_MODE ? getRegionSignals('merit-nt', 24) : getStoredRegionSignals('merit-nt'))
         : Promise.resolve({ datasource: 'merit-nt', regions: [], fetchedAt: new Date().toISOString(), error: null }),
     deps: [activatedTabs.has('merit-nt')],
     autoRefresh: false,
   })
 
-  // Fetch real IODA outage scores (loads on mount)
+  // Fetch outage scores (live in mock mode, stored in Supabase mode)
   const outageResult = useIoda<OutageScoresBatchResponse>({
-    fetcher: () => getRegionOutageScores(),
+    fetcher: () => IS_MOCK_MODE ? getRegionOutageScores() : getStoredRegionOutages(),
     deps: [],
     autoRefresh: false,
   })
@@ -78,8 +79,33 @@ export function SubnationalDashboard() {
         : telescopeResult
 
   const regions = activeResult.data?.regions ?? []
-  const loading = activeResult.loading
   const error = activeResult.error
+
+  // Retry logic: if the fetch completed but some states have no values,
+  // wait 1.5 s and re-fetch, up to MAX_RETRIES times per tab.
+  const MAX_RETRIES = 2
+  const retryCountRef = useRef(0)
+
+  // Reset retry counter whenever the active tab changes
+  useEffect(() => {
+    retryCountRef.current = 0
+  }, [activeTab])
+
+  const hasEmptyStates = !activeResult.loading && regions.some((r) => r.values.length === 0)
+  const isRetrying = hasEmptyStates && retryCountRef.current < MAX_RETRIES
+  const refresh = activeResult.refresh
+
+  useEffect(() => {
+    if (!isRetrying) return
+    const timer = setTimeout(() => {
+      retryCountRef.current += 1
+      refresh()
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [isRetrying, refresh])
+
+  // Show skeleton while the initial fetch is in progress OR while retrying
+  const loading = activeResult.loading || isRetrying
 
   // Build scores Map from real IODA outage data
   const outageScores = useMemo(() => {
@@ -168,6 +194,7 @@ export function SubnationalDashboard() {
               regions={regions}
               hoveredState={hoveredState}
               onHoverState={setHoveredState}
+              outageScores={outageScores}
               loading={loading}
             />
           </div>

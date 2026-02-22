@@ -30,7 +30,6 @@ export const VENEZUELA_STATES: VenezuelaState[] = [
   { code: '4497', name: 'Aragua', nameEn: 'Aragua', iodaCode: '4497' },
   { code: '4498', name: 'La Guaira', nameEn: 'La Guaira', iodaCode: '4498' },
   { code: '4499', name: 'Distrito Capital', nameEn: 'Capital District', iodaCode: '4499' },
-  { code: '4500', name: 'Dependencias Federales', nameEn: 'Federal Dependencies', iodaCode: '4500' },
   { code: '4501', name: 'Guárico', nameEn: 'Guárico', iodaCode: '4501' },
   { code: '4502', name: 'Monagas', nameEn: 'Monagas', iodaCode: '4502' },
   { code: '4503', name: 'Miranda', nameEn: 'Miranda', iodaCode: '4503' },
