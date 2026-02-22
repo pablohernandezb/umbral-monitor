@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { Monitor, RefreshCw, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from '@/i18n'
-import { getSignals, getOutageEvents, normalizeSignalSeries, getStoredDashboardData } from '@/lib/ioda'
+import { getSignals, getOutageEvents, normalizeSignalSeries, getStoredDashboardData, getRegionOutageScores, getStoredRegionOutages } from '@/lib/ioda'
 import { IS_MOCK_MODE } from '@/lib/supabase'
 import { useIoda } from '@/hooks/useIoda'
 import { StatusBadge } from './StatusBadge'
@@ -17,8 +17,12 @@ import type {
   IODAOutageEvent,
   ConnectivityStatus,
   TimeRange,
+  OutageScoresBatchResponse,
+  StateOutageScore,
 } from '@/types/ioda'
 import { TIME_RANGE_HOURS } from '@/types/ioda'
+import { VenezuelaMap } from './VenezuelaMap'
+import { OutageScoreList } from './OutageScoreList'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -73,20 +77,6 @@ function deriveStatus(
   return 'normal'
 }
 
-// ── Skeleton ───────────────────────────────────────────────────────────────
-
-function ChartSkeleton() {
-  return (
-    <>
-      {['BGP', 'Probing', 'Telescope'].map((label) => (
-        <div key={label} className="h-[200px] bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
-          <span className="text-[10px] font-mono text-umbral-muted">{label}…</span>
-        </div>
-      ))}
-    </>
-  )
-}
-
 // ── Dashboard ──────────────────────────────────────────────────────────────
 
 export function IodaDashboard({
@@ -98,6 +88,7 @@ export function IodaDashboard({
   const [entityType, setEntityType] = useState(defaultEntityType)
   const [entityCode, setEntityCode] = useState(defaultEntityCode)
   const [selectedRegion, setSelectedRegion] = useState<IODAEntity | null>(null)
+  const [hoveredState, setHoveredState] = useState<string | null>(null)
 
   const handleRegionSelect = useCallback((entity: IODAEntity | null) => {
     setSelectedRegion(entity)
@@ -140,6 +131,23 @@ export function IodaDashboard({
     // Data updates once/day via cron — auto-refresh would only re-read the same DB rows
     autoRefresh: false,
   })
+
+  const outageResult = useIoda<OutageScoresBatchResponse>({
+    fetcher: () => IS_MOCK_MODE ? getRegionOutageScores() : getStoredRegionOutages(),
+    deps: [],
+    autoRefresh: false,
+  })
+
+  const outageScores = useMemo(() => {
+    const map = new Map<string, StateOutageScore>()
+    for (const s of outageResult.data?.scores ?? []) map.set(s.regionCode, s)
+    return map
+  }, [outageResult.data])
+
+  const scoresList = useMemo(
+    () => [...(outageResult.data?.scores ?? [])].sort((a, b) => b.score - a.score),
+    [outageResult.data]
+  )
 
   const status = deriveStatus(data?.signals ?? [], data?.events ?? [])
   const signals = data?.signals ?? []
@@ -232,31 +240,50 @@ export function IodaDashboard({
           {t('ioda.monitor.signalTimeSeries')} · {selectedRegion?.name ?? t('ioda.monitor.nationalRegion')}
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 items-stretch">
-          {/* Signal charts — 3/4 width on desktop */}
-          <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {loading ? (
-              <ChartSkeleton />
-            ) : (
-              <>
-                <SignalChart
-                  data={signals}
-                  events={events}
-                  dataKey="bgp"
-                  label={t('ioda.signals.bgpLabel')}
-                  description={t('ioda.signals.bgpDescription')}
-                  color="#f59e0b"
-                  height={160}
-                />
-                <SignalChart
-                  data={signals}
-                  events={events}
-                  dataKey="probing"
-                  label={t('ioda.signals.probingLabel')}
-                  description={t('ioda.signals.probingDescription')}
-                  color="#3b82f6"
-                  height={160}
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+          {/* Left 2/3: signal charts + event list */}
+          <div className="lg:col-span-2 flex flex-col gap-3">
+            {/* Top row: BGP + Probing */}
+            <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {loading ? (
+                <>
+                  {['BGP', 'Probing'].map((l) => (
+                    <div key={l} className="min-h-[140px] bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
+                      <span className="text-[10px] font-mono text-umbral-muted">{l}…</span>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <SignalChart
+                    data={signals}
+                    events={events}
+                    dataKey="bgp"
+                    label={t('ioda.signals.bgpLabel')}
+                    description={t('ioda.signals.bgpDescription')}
+                    color="#f59e0b"
+                    className="h-full"
+                  />
+                  <SignalChart
+                    data={signals}
+                    events={events}
+                    dataKey="probing"
+                    label={t('ioda.signals.probingLabel')}
+                    description={t('ioda.signals.probingDescription')}
+                    color="#3b82f6"
+                    className="h-full"
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Bottom row: Telescope + Event List */}
+            <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+              {loading ? (
+                <div className="min-h-[140px] bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
+                  <span className="text-[10px] font-mono text-umbral-muted">Telescope…</span>
+                </div>
+              ) : (
                 <SignalChart
                   data={signals}
                   events={events}
@@ -264,15 +291,46 @@ export function IodaDashboard({
                   label={t('ioda.signals.telescopeLabel')}
                   description={t('ioda.signals.telescopeDescription')}
                   color="#dc2626"
-                  height={160}
+                  className="h-full"
                 />
-              </>
-            )}
+              )}
+              <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden">
+                <OutageEventList events={events} loading={loading} />
+              </div>
+            </div>
           </div>
 
-          {/* Outage event list — 1/4 width on desktop */}
-          <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden">
-            <OutageEventList events={events} loading={loading} />
+          {/* Right 1/3: connectivity map + outage scores */}
+          <div className="flex flex-col gap-4">
+            <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg p-3 overflow-hidden">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="w-2 h-2 rounded-full bg-signal-teal shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-wider text-umbral-muted">
+                  {t('ioda.subnational.mapLabel')}
+                </span>
+              </div>
+              <VenezuelaMap
+                scores={outageScores}
+                hoveredState={hoveredState}
+                onHoverState={setHoveredState}
+                loading={outageResult.loading}
+              />
+            </div>
+
+            <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg p-3 overflow-hidden">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="w-2 h-2 rounded-full bg-signal-amber shrink-0" />
+                <span className="text-[10px] font-mono uppercase tracking-wider text-umbral-muted">
+                  {t('ioda.subnational.outageScores')}
+                </span>
+              </div>
+              <OutageScoreList
+                scores={scoresList}
+                hoveredState={hoveredState}
+                onHoverState={setHoveredState}
+                loading={outageResult.loading}
+              />
+            </div>
           </div>
         </div>
 

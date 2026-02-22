@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { cn } from '@/lib/utils'
 import {
   AreaChart,
   Area,
@@ -22,7 +23,10 @@ export interface SingleSignalChartProps {
   label: string
   description: string
   color: string
+  /** Fixed pixel height. Omit to fill the parent container via flex. */
   height?: number
+  /** Extra classes applied to the outer card div (e.g. "h-full"). */
+  className?: string
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -119,9 +123,12 @@ export function SignalChart({
   label,
   description,
   color,
-  height = 160,
+  height,
+  className,
 }: SingleSignalChartProps) {
   const gradientId = `grad-${dataKey}`
+  // When no fixed height is given, fill the flex parent
+  const fillParent = height === undefined
 
   // Deduplicate outage reference lines
   const outageTimestamps = useMemo(
@@ -132,7 +139,7 @@ export function SignalChart({
   const hasData = data.some(p => p[dataKey] !== null)
 
   return (
-    <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg p-3 flex flex-col gap-2">
+    <div className={cn('bg-umbral-charcoal border border-umbral-ash rounded-lg p-3 flex flex-col gap-2', className)}>
       {/* Card header */}
       <div className="flex items-start justify-between gap-2">
         <div>
@@ -145,13 +152,17 @@ export function SignalChart({
         <SignalStats data={data} dataKey={dataKey} color={color} />
       </div>
 
-      {/* Chart area */}
+      {/* Chart area — flex-1 + min-h-0 lets it fill the card when no fixed height is set */}
       {!hasData ? (
-        <div style={{ height }} className="flex items-center justify-center">
+        <div
+          style={fillParent ? undefined : { height }}
+          className={cn('flex items-center justify-center', fillParent && 'flex-1 min-h-0')}
+        >
           <span className="text-[10px] font-mono text-umbral-muted">No {label} data available</span>
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={height}>
+        <div className={cn(fillParent && 'flex-1 min-h-0')}>
+        <ResponsiveContainer width="100%" height={fillParent ? '100%' : height}>
           <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -217,6 +228,7 @@ export function SignalChart({
             />
           </AreaChart>
         </ResponsiveContainer>
+        </div>
       )}
     </div>
   )

@@ -607,7 +607,7 @@ export default function ParticipatePage() {
             </h2>
             <p className="text-sm font-mono text-white/65 mb-8">
               {locale === 'es'
-                ? '// Estos escenarios se basan en el marco metdológico de Maerz et al. (2023) sobre episodios de transformación de regímenes.'
+                ? '// Estos escenarios se basan en el marco metodológico de Maerz et al. (2023) sobre episodios de transformación de regímenes.'
                 : '// These scenarios are based on the methodological framework of Maerz et al. (2023) on episodes of regime transformation.'}
             </p>
 

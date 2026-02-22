@@ -47,7 +47,6 @@ import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
 import { IodaDashboard } from '@/components/ioda/IodaDashboard'
-import { SubnationalDashboard } from '@/components/ioda/SubnationalDashboard'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
 import {
@@ -939,15 +938,6 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <IodaDashboard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mt-6"
-          >
-            <SubnationalDashboard />
           </motion.div>
         </div>
       </section>
