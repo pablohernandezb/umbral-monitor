@@ -248,7 +248,7 @@ export function IodaDashboard({
               {loading ? (
                 <>
                   {['BGP', 'Probing'].map((l) => (
-                    <div key={l} className="min-h-[140px] bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
+                    <div key={l} className="h-[220px] sm:h-full bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
                       <span className="text-[10px] font-mono text-umbral-muted">{l}…</span>
                     </div>
                   ))}
@@ -262,7 +262,7 @@ export function IodaDashboard({
                     label={t('ioda.signals.bgpLabel')}
                     description={t('ioda.signals.bgpDescription')}
                     color="#f59e0b"
-                    className="h-full"
+                    className="h-[220px] sm:h-full"
                   />
                   <SignalChart
                     data={signals}
@@ -271,7 +271,7 @@ export function IodaDashboard({
                     label={t('ioda.signals.probingLabel')}
                     description={t('ioda.signals.probingDescription')}
                     color="#3b82f6"
-                    className="h-full"
+                    className="h-[220px] sm:h-full"
                   />
                 </>
               )}
@@ -280,7 +280,7 @@ export function IodaDashboard({
             {/* Bottom row: Telescope + Event List */}
             <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
               {loading ? (
-                <div className="min-h-[140px] bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
+                <div className="h-[220px] sm:h-full bg-umbral-ash/10 rounded-lg animate-pulse flex items-center justify-center">
                   <span className="text-[10px] font-mono text-umbral-muted">Telescope…</span>
                 </div>
               ) : (
@@ -291,10 +291,10 @@ export function IodaDashboard({
                   label={t('ioda.signals.telescopeLabel')}
                   description={t('ioda.signals.telescopeDescription')}
                   color="#dc2626"
-                  className="h-full"
+                  className="h-[220px] sm:h-full"
                 />
               )}
-              <div className="bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden">
+              <div className="h-[220px] sm:h-full bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden">
                 <OutageEventList events={events} loading={loading} />
               </div>
             </div>
