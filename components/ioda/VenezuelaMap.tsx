@@ -209,7 +209,7 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
   }, [hoveredState, scores, ready])
 
   return (
-    <div className="relative w-full h-full min-h-[280px]">
+    <div className="relative w-full h-full min-h-[320px]">
       {loading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-umbral-black/80">
           <div className="animate-spin w-6 h-6 border-2 border-signal-teal border-t-transparent rounded-full" />
