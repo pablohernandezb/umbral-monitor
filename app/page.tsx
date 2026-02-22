@@ -34,11 +34,14 @@ import {
   Vote,
   RotateCcw,
   HandFist,
+  GitBranch,
+  TrendingUpDown,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
 import { ScenarioCard } from '@/components/ui/ScenarioCard'
 import { ScenarioTimeline } from '@/components/ui/ScenarioTimeline'
+import { ScenarioTrajectoryPanel } from '@/components/ui/ScenarioTrajectoryPanel'
 import { NewsCard } from '@/components/ui/NewsCard'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { FAQAccordion } from '@/components/ui/FAQAccordion'
@@ -106,10 +109,12 @@ export default function LandingPage() {
   const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
+  const [showTrajectoryPanel, setShowTrajectoryPanel] = useState(false)
 
   // Refs for scrolling
   const scenarioCardsRef = useRef<HTMLDivElement>(null)
   const scenarioTimelineRef = useRef<HTMLDivElement>(null)
+  const trajectoryPanelRef = useRef<HTMLDivElement>(null)
 
   // Load data on mount
   useEffect(() => {
@@ -164,6 +169,19 @@ export default function LandingPage() {
 
     loadData()
   }, [])
+
+  // Scroll to trajectory panel when opened
+  useEffect(() => {
+    if (showTrajectoryPanel && trajectoryPanelRef.current) {
+      setTimeout(() => {
+        const element = trajectoryPanelRef.current
+        if (element) {
+          const offsetPosition = element.getBoundingClientRect().top + window.pageYOffset - 100
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  }, [showTrajectoryPanel])
 
   // Scroll to timeline when scenario is selected, scroll to cards when closed
   useEffect(() => {
@@ -440,6 +458,26 @@ export default function LandingPage() {
                   </div>
                 )}
 
+                  {/* Trajectory panel toggle */}
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowTrajectoryPanel(v => !v)}
+                      className={cn(
+                        'flex items-center gap-2 text-xs font-mono transition-colors px-3 py-1.5 rounded-md border mt-5',
+                        showTrajectoryPanel
+                          ? 'text-signal-blue border-signal-blue/40 bg-signal-blue/10 hover:bg-signal-blue/15'
+                          : 'text-umbral-muted border-umbral-ash hover:text-signal-blue hover:border-signal-blue/30 hover:bg-signal-blue/5'
+                      )}
+                    >
+                      <TrendingUpDown className="w-3.5 h-3.5" />
+                      {showTrajectoryPanel
+                        ? t('scenarios.trajectoryPanel.buttonClose')
+                        : t('scenarios.trajectoryPanel.button')
+                      }
+                    </button>
+                  </div>
+
                 {/* Footer stats */}
                 <div className="flex items-center gap-2 mt-6 pt-4 border-t border-umbral-ash">
                   <div className="flex items-center gap-2">
@@ -457,6 +495,21 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+
+            {/* Trajectory Panel */}
+            {showTrajectoryPanel && (
+              <div ref={trajectoryPanelRef} className="mt-4">
+                <ScenarioTrajectoryPanel
+                  onClose={() => {
+                    setShowTrajectoryPanel(false)
+                    scenarioCardsRef.current?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start',
+                    })
+                  }}
+                />
+              </div>
+            )}
 
             {/* Deployable Timeline Panel */}
             {activeScenarioId && (() => {

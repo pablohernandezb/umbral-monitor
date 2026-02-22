@@ -709,8 +709,8 @@ export default function ParticipatePage() {
 
             <p className="mt-6 text-xs font-mono text-signal-amber border border-signal-amber/20 bg-signal-amber/5 px-4 py-3">
               // {locale === 'es'
-                ? 'SU EVALUACIÓN SERÁ REVISADA ANTES DE PUBLICACIÓN'
-                : 'YOUR ASSESSMENT WILL BE REVIEWED BEFORE PUBLICATION'}
+                ? 'SU EVALUACIÓN SERÁ REVISADA ANTES DE SER CONTADA EN EL MONITOREO PÚBLICO'
+                : 'YOUR ASSESSMENT WILL BE REVIEWED BEFORE BEING COUNTED IN THE PUBLIC MONITORING'}
             </p>
 
             {submitError && (

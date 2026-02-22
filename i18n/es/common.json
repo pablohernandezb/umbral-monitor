@@ -229,6 +229,30 @@
     },
     "timeline": {
       "disclaimer": "Estos eventos están basados en experiencias previas tanto en el país como a nivel mundial y no representan una predicción de lo que va a suceder."
+    },
+    "trajectoryPanel": {
+      "title": "Trayectorias Posibles del Régimen",
+      "subtitle": "Proyecciones del Índice de Democracia Electoral bajo cada escenario",
+      "button": "Ver gráfico de trayectorias posibles",
+      "buttonClose": "Ocultar gráfico de trayectorias",
+      "disclaimer": "Estas trayectorias son proyecciones analíticas basadas en episodios comparados a nivel mundial. No representan predicciones definitivas del curso de los eventos.",
+      "scenarios": {
+        "regressedAutocracy": {
+          "description": "Profundización autoritaria: el régimen consolida el control, elimina espacios de disidencia y revierte cualquier apertura previa. El Índice de Democracia Electoral cae hacia niveles comparables a Cuba o Corea del Norte. Implica mayor represión, aislamiento internacional y dependencia total de círculos de lealtad."
+        },
+        "revertedLiberalization": {
+          "description": "Apertura táctica seguida de cierre: el régimen experimenta una liberalización inicial bajo presión internacional, pero luego clausura las reformas para preservar el control de las élites. Similar a Nicaragua 2016–2018, donde la apertura sirvió para aliviar presión sin ceder poder real."
+        },
+        "stabilizedElectoralAutocracy": {
+          "description": "Equilibrio autoritario estable: el régimen mantiene elecciones sin sustancia competitiva real. La fachada democrática coexiste con control institucional. El EDI sube levemente pero se estabiliza en zona autocrática, configurando un nuevo equilibrio de bajo nivel como Zimbabwe bajo Mugabe."
+        },
+        "preemptedDemocraticTransition": {
+          "description": "Transición bloqueada: la oposición avanza políticamente pero el Estado profundo chavista —fuerzas de seguridad, poder judicial, paramilitares— bloquea la consolidación democrática. La fragmentación interna y la ingobernabilidad debilitan al gobierno entrante antes de que pueda reformar las instituciones."
+        },
+        "democraticTransition": {
+          "description": "Ruptura y transición plena: colapso del régimen autoritario y consolidación democrática. Requiere defección militar, unidad opositora sostenida y presión internacional coordinada. El EDI cruza el umbral democrático (0.5) gracias a elecciones libres, reforma institucional y supervisión internacional."
+        }
+      }
     }
   },
   "scenarioPhases": {

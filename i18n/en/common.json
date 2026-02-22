@@ -229,6 +229,30 @@
     },
     "timeline": {
       "disclaimer": "These events are based on previous experiences both in the country and worldwide and do not represent a prediction of what is going to happen."
+    },
+    "trajectoryPanel": {
+      "title": "Possible Regime Trajectories",
+      "subtitle": "Projected Electoral Democracy Index paths under each scenario",
+      "button": "View possible trajectories graph",
+      "buttonClose": "Hide trajectories graph",
+      "disclaimer": "These trajectories are analytical projections based on comparative global episodes. They do not represent definitive predictions of the course of events.",
+      "scenarios": {
+        "regressedAutocracy": {
+          "description": "Authoritarian deepening: the regime consolidates control, eliminates spaces for dissent, and reverses any prior opening. The Electoral Democracy Index falls toward levels comparable to Cuba or North Korea, implying greater repression, international isolation, and total dependence on loyalty networks."
+        },
+        "revertedLiberalization": {
+          "description": "Tactical opening followed by closure: the regime experiments with initial liberalization under international pressure, but then reverses reforms to preserve elite control. Similar to Nicaragua 2016–2018, where the opening served to relieve pressure without conceding real power."
+        },
+        "stabilizedElectoralAutocracy": {
+          "description": "Stable authoritarian equilibrium: the regime maintains elections without real competitive substance. A democratic facade coexists with institutional control. The EDI rises slightly but stabilizes in the autocratic zone, establishing a new low-level equilibrium akin to Zimbabwe under Mugabe."
+        },
+        "preemptedDemocraticTransition": {
+          "description": "Blocked transition: the opposition advances politically but the chavista deep state—security forces, judiciary, paramilitaries—blocks democratic consolidation. Internal fragmentation and ungovernability weaken the incoming government before it can reform institutions."
+        },
+        "democraticTransition": {
+          "description": "Rupture and full transition: collapse of the authoritarian regime and democratic consolidation. Requires military defection, sustained opposition unity, and coordinated international pressure. The EDI crosses the democratic threshold (0.5) through free elections, institutional reform, and international oversight."
+        }
+      }
     }
   },
   "scenarioPhases": {
