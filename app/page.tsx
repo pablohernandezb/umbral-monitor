@@ -464,13 +464,13 @@ export default function LandingPage() {
                       type="button"
                       onClick={() => setShowTrajectoryPanel(v => !v)}
                       className={cn(
-                        'flex items-center gap-2 text-xs font-mono transition-colors px-3 py-1.5 rounded-md border mt-5',
+                        'flex items-center gap-2 text-xs font-mono transition-colors px-3 py-1.5 rounded-md border mt-5 text-white/85',
                         showTrajectoryPanel
-                          ? 'text-signal-blue border-signal-blue/40 bg-signal-blue/10 hover:bg-signal-blue/15'
-                          : 'text-umbral-muted border-umbral-ash hover:text-signal-blue hover:border-signal-blue/30 hover:bg-signal-blue/5'
+                          ? 'border-signal-blue/40 bg-signal-blue/10 hover:bg-signal-blue/15'
+                          : 'border-umbral-ash hover:text-signal-blue hover:border-signal-blue/30 hover:bg-signal-blue/5'
                       )}
                     >
-                      <TrendingUpDown className="w-3.5 h-3.5" />
+                      <TrendingUpDown className="w-3.5 h-3.5 text-signal-blue" />
                       {showTrajectoryPanel
                         ? t('scenarios.trajectoryPanel.buttonClose')
                         : t('scenarios.trajectoryPanel.button')

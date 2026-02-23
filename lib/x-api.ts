@@ -20,7 +20,7 @@ interface AccountConfig {
 const FACT_CHECK_ACCOUNTS: AccountConfig[] = [
   { username: 'cazamosfakenews' },
   { username: 'cotejoinfo' },
-  { username: 'Factchequeado' },
+  { username: 'factchequeado' },
 ]
 
 // Alert keywords to detect in tweet text
