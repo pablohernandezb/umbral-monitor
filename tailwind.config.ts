@@ -51,6 +51,7 @@ const config: Config = {
         'xxs': '0.625rem',
       },
       animation: {
+        'ping-sm': 'ping-sm 2s cubic-bezier(0, 0, 0.2, 1) infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'glow': 'glow 2s ease-in-out infinite alternate',
         'scan': 'scan 2s linear infinite',
@@ -61,6 +62,9 @@ const config: Config = {
         'pulse-border': 'pulseBorder 2s ease-in-out infinite',
       },
       keyframes: {
+        'ping-sm': {
+          '75%, 100%': { transform: 'scale(1.2)', opacity: '0' },
+        },
         glow: {
           '0%': { opacity: '0.5' },
           '100%': { opacity: '1' },

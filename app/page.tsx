@@ -310,13 +310,16 @@ export default function LandingPage() {
               variants={fadeInUp}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
             >
-              <Link
-                href="/participate"
-                className="btn btn-primary text-base px-8 py-3 group"
-              >
-                {t('common.participate')}
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <div className="relative inline-flex">
+                <span className="absolute inset-0 rounded-lg animate-ping-sm bg-signal-teal/25 pointer-events-none" />
+                <Link
+                  href="/participate"
+                  className="btn btn-primary text-base px-8 py-3 group relative"
+                >
+                  {t('common.participate')}
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
               <Link
                 href="/how-did-we-get-here"
                 className="btn btn-secondary text-base px-8 py-3 group"
@@ -1078,13 +1081,16 @@ export default function LandingPage() {
                 : 'Join Umbral and support monitoring by sharing your insights.'
               }
             </p>
-            <Link href="/participate" className="btn btn-primary px-8 py-3 text-base">
-              {locale === 'es'
-                ? 'Participa'
-                : 'Participate'
-              }
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            <div className="relative inline-flex">
+              <span className="absolute inset-0 rounded-lg animate-ping-sm bg-signal-teal/25 pointer-events-none" />
+              <Link href="/participate" className="btn btn-primary px-8 py-3 text-base relative">
+                {locale === 'es'
+                  ? 'Participa'
+                  : 'Participate'
+                }
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

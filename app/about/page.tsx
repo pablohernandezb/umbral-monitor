@@ -111,6 +111,7 @@ const humanRightsSources = [
   { name: 'Realidad Helicoide', url: 'https://vocesdelamemoriainc.org/' },
   { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' },
   { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
+  { name: 'VE sin Filtro', url: 'https://vesinfiltro.org/' },
   { name: 'WOLA (Washington Office on Latin America)', url: 'https://www.wola.org/region/venezuela/' }
 ]
 
