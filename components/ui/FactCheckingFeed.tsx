@@ -197,10 +197,7 @@ export function FactCheckingFeed() {
       >
         <div
           ref={scrollRef}
-          className={cn(
-            'flex gap-4 w-max',
-            shouldPause ? 'animate-none' : 'animate-scroll-left'
-          )}
+          className="flex gap-4 w-max animate-scroll-left"
           style={{
             animationPlayState: shouldPause ? 'paused' : 'running',
           }}
