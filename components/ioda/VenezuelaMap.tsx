@@ -49,6 +49,7 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layersRef = useRef<Map<string, L.Layer>>(new Map())
+  const layerNamesRef = useRef<Map<string, string>>(new Map())
   const [ready, setReady] = useState(false)
 
   // Initialize map
@@ -120,6 +121,7 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
 
           if (iodaCode) {
             layersRef.current.set(iodaCode, layer)
+            layerNamesRef.current.set(iodaCode, name)
           }
 
           layer.on('mouseover', () => {
@@ -169,12 +171,13 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
         mapRef.current = null
       }
       layersRef.current.clear()
+      layerNamesRef.current.clear()
     }
     // We initialize once; score changes are handled in the effect below
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Update styles when scores change
+  // Update styles and tooltips when scores change
   useEffect(() => {
     if (!ready) return
     layersRef.current.forEach((layer, code) => {
@@ -186,8 +189,19 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
         color: severityColor(severity) + '80',
         weight: 1,
       })
+
+      const name = layerNamesRef.current.get(code)
+      if (name) {
+        const label = SEVERITY_LABELS[severity][locale as 'en' | 'es']
+        const scoreText = score && score.score > 0 ? ` · ${formatOutageScore(score.score)}` : ''
+        layer.unbindTooltip()
+        layer.bindTooltip(`${name} · ${label}${scoreText}`, {
+          className: 'ioda-map-tooltip',
+          sticky: true,
+        })
+      }
     })
-  }, [scores, ready])
+  }, [scores, ready, locale])
 
   // Sync hover from heatmap → map
   useEffect(() => {
