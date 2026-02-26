@@ -1,6 +1,5 @@
 import Parser from 'rss-parser'
 import Anthropic from '@anthropic-ai/sdk'
-import * as cheerio from 'cheerio'
 import { createAdminClient } from './supabase-server'
 
 // ============================================================
@@ -30,7 +29,6 @@ export interface SourceConfig {
   feedUrl: string     // RSS feed URL (empty string if HTML-only)
   lang: 'es' | 'en'
   skipVenezuelaFilter?: boolean  // true for Venezuela-only sites
-  scrapeHtml?: boolean           // true = scrape HTML instead of RSS
 }
 
 export const NEWS_SOURCES: SourceConfig[] = [
@@ -114,98 +112,6 @@ export async function fetchAllRSSArticles(
   }
 
   return limit ? allArticles.slice(0, limit) : allArticles
-}
-
-// ============================================================
-// HTML SCRAPING (for sites without RSS feeds)
-// ============================================================
-
-const MONTH_MAP: Record<string, number> = {
-  enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
-  julio: 6, agosto: 7, septiembre: 8, octubre: 9, noviembre: 10, diciembre: 11,
-}
-
-/**
- * Parse a Spanish date string like "febrero 12, 2026" into a Date.
- */
-function parseSpanishDate(dateStr: string): Date | null {
-  const match = dateStr.trim().toLowerCase().match(/(\w+)\s+(\d{1,2}),?\s+(\d{4})/)
-  if (!match) return null
-  const month = MONTH_MAP[match[1]]
-  if (month === undefined) return null
-  return new Date(Number(match[3]), month, Number(match[2]))
-}
-
-/**
- * Scrape articles from Tal Cual's homepage via HTML parsing.
- * Structure: .post_attribute contains the date, sibling <a> has the headline and link.
- */
-export async function scrapeTalCualArticles(
-  siteUrl: string,
-  cutoffDate: Date,
-  maxPages: number = 5
-): Promise<RSSArticle[]> {
-  const allArticles: RSSArticle[] = []
-  const seenLinks = new Set<string>()
-
-  for (let page = 1; page <= maxPages; page++) {
-    const url = page > 1 ? `${siteUrl}/page/${page}/` : siteUrl
-    try {
-      const res = await fetch(url, {
-        headers: { 'User-Agent': 'Umbral-News-Monitor/1.0' },
-      })
-      if (!res.ok) break
-
-      const html = await res.text()
-      const $ = cheerio.load(html)
-
-      let hasOlderThanCutoff = false
-      let foundOnPage = 0
-
-      // Each article block has a .post_attribute (date) and a sibling <a> (link + headline)
-      $('.post_attribute').each((_, el) => {
-        const dateText = $(el).text().trim()
-        const pubDate = parseSpanishDate(dateText)
-        if (!pubDate) return
-
-        if (pubDate < cutoffDate) {
-          hasOlderThanCutoff = true
-          return
-        }
-
-        // Find the sibling link in the same parent container
-        const parent = $(el).parent()
-        const linkEl = parent.find('a[href*="talcualdigital.com/"]').first()
-        const link = linkEl.attr('href') || ''
-        const title = linkEl.text().trim()
-
-        if (!link || !title) return
-        if (/\/(category|tag|page|autor|author)\//i.test(link)) return
-        if (seenLinks.has(link)) return
-
-        seenLinks.add(link)
-        allArticles.push({
-          title,
-          link,
-          description: '',
-          pubDate: pubDate.toISOString(),
-          categories: [],
-        })
-        foundOnPage++
-      })
-
-      console.log(`   [HTML] Page ${page}: found ${foundOnPage} articles`)
-      if (hasOlderThanCutoff || foundOnPage === 0) break
-
-      // Delay between pages
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    } catch (err) {
-      console.error(`   [HTML] Error fetching page ${page}:`, err instanceof Error ? err.message : err)
-      break
-    }
-  }
-
-  return allArticles
 }
 
 // ============================================================

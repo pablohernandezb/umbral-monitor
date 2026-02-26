@@ -8,8 +8,8 @@ const MARKETS = [
   {
     // Binary market: "Will Trump meet with Delcy Rodríguez by March 31?" — replaces the
     // multi-outcome event "venezuela-leader-end-of-2026" which the embed API doesn't support
-    slug: 'will-trump-meet-with-delcy-rodrguez-by-march-31',
-    key: 'trumpMeetsDelcy',
+    slug: 'will-venezuela-become-51st-state',
+    key: 'venezuelaBecomes51stState',
   },
   {
     slug: 'will-mara-corina-machado-enter-venezuela-by-march-31-426-698',
@@ -25,10 +25,16 @@ const MARKETS = [
   },
 ]
 
+const HEADER_HEIGHT = 37 // px — title bar inside the card
+const DEFAULT_EMBED_HEIGHT = 440 // fallback before first postMessage
+
 function MarketEmbed({ slug, title }: { slug: string; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const [width, setWidth] = useState<number>(0)
+  const [embedHeight, setEmbedHeight] = useState<number>(DEFAULT_EMBED_HEIGHT)
 
+  // Track container width for the embed URL
   useEffect(() => {
     if (!containerRef.current) return
     const observer = new ResizeObserver((entries) => {
@@ -40,6 +46,18 @@ function MarketEmbed({ slug, title }: { slug: string; title: string }) {
     return () => observer.disconnect()
   }, [])
 
+  // Listen for height postMessages from the Polymarket embed
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== 'https://embed.polymarket.com') return
+      if (iframeRef.current?.contentWindow !== event.source) return
+      const h = event.data?.height ?? event.data?.frameHeight
+      if (typeof h === 'number' && h > 0) setEmbedHeight(h)
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [])
+
   const embedUrl = width > 0
     ? `https://embed.polymarket.com/market.html?market=${slug}&theme=dark&features=volume,chart,filters&width=${width}`
     : null
@@ -47,7 +65,8 @@ function MarketEmbed({ slug, title }: { slug: string; title: string }) {
   return (
     <div
       ref={containerRef}
-      className="w-full h-[480px] bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden flex flex-col"
+      style={{ height: embedHeight + HEADER_HEIGHT }}
+      className="w-full bg-umbral-charcoal border border-umbral-ash rounded-lg overflow-hidden flex flex-col"
     >
       <div className="px-3 py-2 border-b border-umbral-ash/50 flex items-center justify-between shrink-0">
         <p className="text-xs text-white font-medium leading-snug line-clamp-1">{title}</p>
@@ -63,12 +82,12 @@ function MarketEmbed({ slug, title }: { slug: string; title: string }) {
       </div>
       {embedUrl && (
         <iframe
+          ref={iframeRef}
           src={embedUrl}
           title={title}
           style={{
-            flex: 1,
             width: '100%',
-            minHeight: 0,
+            height: embedHeight,
             border: 'none',
             display: 'block',
           }}
