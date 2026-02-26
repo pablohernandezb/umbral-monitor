@@ -1,5 +1,5 @@
 /**
- * One-off script to scrape only Tal Cual articles.
+ * One-off script to scrape only Tal Cual articles via RSS.
  * Usage: npx tsx data/scrape-talcual.ts
  */
 import { config } from 'dotenv'
@@ -8,7 +8,7 @@ config({ path: '.env.local' })
 import { createClient } from '@supabase/supabase-js'
 import {
   NEWS_SOURCES,
-  scrapeTalCualArticles,
+  fetchAllRSSArticles,
   detectCategory,
   isVenezuelaRelated,
   translateBatch,
@@ -23,11 +23,13 @@ async function main() {
     return
   }
 
-  console.log('Fetching Tal Cual...')
-  const articles = await scrapeTalCualArticles(source.url, CUTOFF_DATE)
+  console.log('Fetching Tal Cual via RSS...')
+  const articles = await fetchAllRSSArticles(source.feedUrl, CUTOFF_DATE)
   console.log(`Found ${articles.length} articles`)
 
-  const filtered = articles.filter(a => isVenezuelaRelated(a.title, a.description))
+  const filtered = source.skipVenezuelaFilter
+    ? articles
+    : articles.filter(a => isVenezuelaRelated(a.title, a.description))
   console.log(`${filtered.length} Venezuela-related after filtering`)
 
   if (filtered.length === 0) {
