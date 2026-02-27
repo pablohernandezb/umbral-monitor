@@ -7,13 +7,7 @@ import { createAdminClient } from './supabase-server'
 // RSS parsing, categorization, Venezuela filter, and translation
 // ============================================================
 
-const parser = new Parser({
-  timeout: 15000,
-  headers: {
-    'User-Agent': 'Umbral-News-Monitor/1.0',
-    Accept: 'application/rss+xml, application/xml, text/xml',
-  },
-})
+const parser = new Parser()
 
 export interface RSSArticle {
   title: string
@@ -55,7 +49,20 @@ export async function fetchRSSPage(feedUrl: string, page: number = 1): Promise<R
   const url = page > 1 ? `${feedUrl}?paged=${page}` : feedUrl
 
   try {
-    const feed = await parser.parseURL(url)
+    // Use fetch + parseString so HTTP 4xx/5xx responses that still return
+    // valid RSS content are handled correctly (e.g. Tal Cual returns 404
+    // with a full valid feed body due to a server misconfiguration).
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(15000),
+      headers: {
+        'User-Agent': 'Umbral-News-Monitor/1.0',
+        Accept: 'application/rss+xml, application/xml, text/xml, */*',
+      },
+    })
+    const text = await res.text()
+    // Bail early if the body is clearly not XML (e.g. an HTML error page)
+    if (!text.trimStart().startsWith('<')) return []
+    const feed = await parser.parseString(text)
     return feed.items.map(item => ({
       title: item.title?.trim() || '',
       link: item.link?.trim() || '',
@@ -64,7 +71,10 @@ export async function fetchRSSPage(feedUrl: string, page: number = 1): Promise<R
       categories: (item.categories || []).map(c => typeof c === 'string' ? c : ''),
     }))
   } catch (err) {
-    // Page doesn't exist or feed error — return empty
+    // Page 2+ not existing is expected — only log errors on the first page
+    if (page === 1) {
+      console.error(`[RSS] Failed to fetch ${url}:`, err instanceof Error ? err.message : err)
+    }
     return []
   }
 }

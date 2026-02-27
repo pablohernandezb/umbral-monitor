@@ -39,7 +39,7 @@ export function OutageScoreList({ scores, hoveredState, onHoverState, loading }:
   const maxScore = nonZero[0]?.score ?? 1
 
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-0.5 md:max-h-[260px] md:overflow-y-auto">
       {/* Header row */}
       <div className="flex items-center justify-between px-2 py-1">
         <span className="text-[9px] font-mono text-umbral-muted uppercase tracking-wider">
