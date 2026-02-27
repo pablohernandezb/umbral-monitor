@@ -38,7 +38,7 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">Recursos</h4>
+            <h4 className="text-sm font-semibold text-white mb-4">{t('footer.resources')}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/participate" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
