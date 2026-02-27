@@ -201,10 +201,11 @@
     "contact": "Contact",
     "privacy": "Privacy",
     "monitor": "Monitor",
-    "participate": "Participa",
+    "participate": "Participate",
     "howDidWeGetHere": "How Did We Get Here?",
     "support": "Support",
-    "copyright": "Umbral • For educational purposes"
+    "copyright": "Umbral • For educational purposes",
+    "resources": "Resources"
   },
   "scenarios": {
     "democraticTransition": {
