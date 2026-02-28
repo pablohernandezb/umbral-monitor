@@ -81,7 +81,7 @@ export function Footer() {
                 <CookiePreferences />
               </li>
               <li>
-                <a href="https://buymeacoffee.com/pablohernandezb" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
+                <a href="https://buymeacoffee.com/pablohernandezb" target="_blank" rel="noopener noreferrer" className="text-sm text-umbral-muted hover:text-signal-teal transition-colors">
                   {t('footer.support')}
                 </a>
               </li>
@@ -107,6 +107,8 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <a
               href="https://github.com/pablohernandezb/umbral-monitor"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-umbral-muted hover:text-signal-teal transition-colors"
               aria-label="GitHub"
             >
