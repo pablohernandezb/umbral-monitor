@@ -49,6 +49,7 @@ import { TickerSimple } from '@/components/ui/Ticker'
 import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
+import { StarVotingConsensus } from '@/components/ui/StarVotingConsensus'
 import { IodaDashboard } from '@/components/ioda/IodaDashboard'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
@@ -60,8 +61,9 @@ import {
   getPrisonersByOrganization,
   getHistoricalEpisodes,
   getSubmissionAverages,
+  getLatestStarSnapshot,
 } from '@/lib/data'
-import type { SubmissionAverages } from '@/lib/data'
+import type { SubmissionAverages, StarVotingResults } from '@/lib/data'
 import { voteForScenario } from '@/app/actions/news-votes'
 import { daysSince, cn } from '@/lib/utils'
 import type { 
@@ -107,6 +109,7 @@ export default function LandingPage() {
   const [prisonerStats, setPrisonerStats] = useState<PoliticalPrisoner | null>(null)
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
   const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
+  const [starResults, setStarResults] = useState<StarVotingResults | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
   const [showTrajectoryPanel, setShowTrajectoryPanel] = useState(false)
@@ -128,6 +131,7 @@ export default function LandingPage() {
           prisonersRes,
           prisonersByOrgRes,
           submissionAvgsRes,
+          starRes,
         ] = await Promise.allSettled([
           getScenarios(),
           getRegimeHistory(),
@@ -136,6 +140,7 @@ export default function LandingPage() {
           getLatestPrisonerStats(),
           getPrisonersByOrganization(),
           getSubmissionAverages(),
+          getLatestStarSnapshot(),
         ])
 
         if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) {
@@ -160,6 +165,7 @@ export default function LandingPage() {
         if (prisonersRes.status === 'fulfilled' && prisonersRes.value.data) setPrisonerStats(prisonersRes.value.data)
         if (prisonersByOrgRes.status === 'fulfilled' && prisonersByOrgRes.value.data) setPrisonersByOrg(prisonersByOrgRes.value.data)
         if (submissionAvgsRes.status === 'fulfilled' && submissionAvgsRes.value.data) setSubmissionAvgs(submissionAvgsRes.value.data)
+        if (starRes.status === 'fulfilled' && starRes.value.data) setStarResults(starRes.value.data)
       } catch (error) {
         console.error('Failed to load data:', error)
       } finally {
@@ -363,6 +369,14 @@ export default function LandingPage() {
               {t('landing.scenarios.subtitle')}
             </p>
           </motion.div>
+
+          {/* STAR Voting consensus panels */}
+          <StarVotingConsensus
+            expertResult={starResults?.expert ?? null}
+            publicResult={starResults?.public ?? null}
+            scenarios={scenarios}
+          />
+
           {/* Section header - moved inside the terminal */}
           <motion.div
             key={loading ? 'loading' : 'loaded'}

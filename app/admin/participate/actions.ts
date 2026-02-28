@@ -105,6 +105,28 @@ export async function updateExpertStatusAction(
   }
 }
 
+export async function deleteExpertSubmissionAction(id: string) {
+  const supabase = createAdminClient()
+
+  if (!supabase) {
+    return { data: null, error: null }
+  }
+
+  const { error } = await supabase
+    .from('expert_submissions')
+    .delete()
+    .eq('id', id)
+
+  if (!error) {
+    revalidatePath('/admin/participate')
+  }
+
+  return {
+    data: null,
+    error: error?.message || null,
+  }
+}
+
 // ============================================================
 // PUBLIC SUBMISSIONS
 // ============================================================

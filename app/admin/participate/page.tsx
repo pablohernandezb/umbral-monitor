@@ -6,6 +6,7 @@ import {
   getAllExpertSubmissionsAction,
   getAllPublicSubmissionsAction,
   updateExpertStatusAction,
+  deleteExpertSubmissionAction,
   deletePublicSubmissionAction,
 } from './actions'
 import { Toast } from '@/components/admin/Toast'
@@ -104,6 +105,22 @@ export default function ParticipateAdminPage() {
       }
     } catch {
       setToast({ message: 'Failed to reject submission', type: 'error' })
+    }
+  }
+
+  const handleDeleteExpert = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this expert submission?')) return
+
+    try {
+      const result = await deleteExpertSubmissionAction(id)
+      if (result.error) {
+        setToast({ message: result.error, type: 'error' })
+      } else {
+        setToast({ message: 'Expert submission deleted', type: 'success' })
+        setExpertSubmissions(prev => prev.filter(s => s.id !== id))
+      }
+    } catch {
+      setToast({ message: 'Failed to delete submission', type: 'error' })
     }
   }
 
@@ -299,15 +316,26 @@ export default function ParticipateAdminPage() {
                     <p className="text-gray-400 text-sm">{sub.institution}</p>
                     <p className="text-gray-500 text-sm">{sub.email}</p>
                   </div>
-                  <div className="text-right text-sm">
-                    <p className="text-gray-500 font-mono">
-                      {new Date(sub.submitted_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </p>
-                    <p className="text-gray-600 text-xs mt-1">{sub.id}</p>
+                  <div className="flex items-center gap-3 text-right text-sm">
+                    <div>
+                      <p className="text-gray-500 font-mono">
+                        {new Date(sub.submitted_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </p>
+                      <p className="text-gray-600 text-xs mt-1">{sub.id}</p>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteExpert(sub.id)}
+                      className="p-1.5 text-red-400/50 hover:text-red-400 transition-colors rounded hover:bg-red-950/30"
+                      title="Delete submission"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 

@@ -19,8 +19,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
-import { useEffect } from 'react'
-import { url } from 'inspector'
+import { useEffect, useState } from 'react'
+import { getPlatformCounts } from '@/lib/data'
+import type { PlatformCounts } from '@/lib/data'
 
 // Animation variants
 const fadeInUp = {
@@ -123,6 +124,13 @@ const factcheckingSources = [
 
 export default function AboutPage() {
   const { t, locale } = useTranslation()
+  const [counts, setCounts] = useState<PlatformCounts | null>(null)
+
+  useEffect(() => {
+    getPlatformCounts().then(({ data }) => {
+      if (data) setCounts(data)
+    })
+  }, [])
 
   useEffect(() => {
     if (window.location.hash) {
@@ -256,9 +264,9 @@ export default function AboutPage() {
                     ? 'Democratizando información analítica'
                     : 'Democratizing analytical information'
                 },
-              ].map((item) => (
-                <motion.div 
-                  key={item.title}
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
                   variants={fadeInUp}
                   className="card p-5 flex items-start gap-4"
                 >
@@ -323,6 +331,33 @@ export default function AboutPage() {
                   <p className="text-3xl font-bold text-signal-blue font-mono mb-1">5</p>
                   <p className="text-sm text-umbral-muted">
                     {locale === 'es' ? 'Escenarios monitoreados' : 'Monitored scenarios'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                <div className="text-center p-4 bg-umbral-slate/30 rounded-lg">
+                  <p className="text-3xl font-bold text-signal-green font-mono mb-1">
+                    {counts ? counts.newsCount.toLocaleString() : '—'}
+                  </p>
+                  <p className="text-sm text-umbral-muted">
+                    {locale === 'es' ? 'Noticias archivadas' : 'Archived news articles'}
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-umbral-slate/30 rounded-lg">
+                  <p className="text-3xl font-bold text-signal-red font-mono mb-1">
+                    {counts ? counts.submissionsCount.toLocaleString() : '—'}
+                  </p>
+                  <p className="text-sm text-umbral-muted">
+                    {locale === 'es' ? 'Evaluaciones registradas' : 'Registered assessments'}
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-umbral-slate/30 rounded-lg">
+                  <p className="text-3xl font-bold text-signal-purple font-mono mb-1">
+                    {counts ? counts.readingRoomCount.toLocaleString() : '—'}
+                  </p>
+                  <p className="text-sm text-umbral-muted">
+                    {locale === 'es' ? 'Recursos en sala de lectura' : 'Reading room resources'}
                   </p>
                 </div>
               </div>

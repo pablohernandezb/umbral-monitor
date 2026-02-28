@@ -565,6 +565,66 @@ ALTER TABLE ioda_region_outages ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "ioda_region_outages_public_read"
   ON ioda_region_outages FOR SELECT USING (true);
+
+-- ============================================================
+-- STAR_VOTING_SNAPSHOTS TABLE
+-- Daily STAR voting consensus results for expert and public groups
+-- One row per date — upserted by daily analytics cron
+-- ============================================================
+CREATE TABLE IF NOT EXISTS star_voting_snapshots (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  date DATE UNIQUE NOT NULL DEFAULT CURRENT_DATE,
+  -- Expert group
+  expert_winner              INTEGER,
+  expert_finalist1           INTEGER,
+  expert_finalist2           INTEGER,
+  expert_finalist1_votes     INTEGER NOT NULL DEFAULT 0,
+  expert_finalist2_votes     INTEGER NOT NULL DEFAULT 0,
+  expert_no_preference_votes INTEGER NOT NULL DEFAULT 0,
+  expert_total_voters        INTEGER NOT NULL DEFAULT 0,
+  expert_scores              JSONB NOT NULL DEFAULT '{}',
+  -- Public group
+  public_winner              INTEGER,
+  public_finalist1           INTEGER,
+  public_finalist2           INTEGER,
+  public_finalist1_votes     INTEGER NOT NULL DEFAULT 0,
+  public_finalist2_votes     INTEGER NOT NULL DEFAULT 0,
+  public_no_preference_votes INTEGER NOT NULL DEFAULT 0,
+  public_total_voters        INTEGER NOT NULL DEFAULT 0,
+  public_scores              JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_star_voting_snapshots_date
+  ON star_voting_snapshots(date DESC);
+
+ALTER TABLE star_voting_snapshots ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "star_voting_snapshots_public_read"
+  ON star_voting_snapshots FOR SELECT USING (true);
+
+-- ============================================================
+-- SUBMISSION_AVERAGES_SNAPSHOTS TABLE
+-- Daily per-scenario average ratings for expert and public groups
+-- One row per date — upserted by daily analytics cron
+-- ============================================================
+CREATE TABLE IF NOT EXISTS submission_averages_snapshots (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  date            DATE UNIQUE NOT NULL DEFAULT CURRENT_DATE,
+  expert_averages JSONB NOT NULL DEFAULT '{}',  -- { "1": 3.2, "2": 2.1, ... }
+  public_averages JSONB NOT NULL DEFAULT '{}',
+  expert_count    INTEGER NOT NULL DEFAULT 0,
+  public_count    INTEGER NOT NULL DEFAULT 0,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_submission_averages_snapshots_date
+  ON submission_averages_snapshots(date DESC);
+
+ALTER TABLE submission_averages_snapshots ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "submission_averages_snapshots_public_read"
+  ON submission_averages_snapshots FOR SELECT USING (true);
 `
 
 // Export for reference

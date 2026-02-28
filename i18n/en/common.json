@@ -127,7 +127,7 @@
     },
     "methodology": {
       "title": "Methodology",
-      "content": "We use a multi-source approach combining academic democracy indices (V-Dem), historical regime episode datasets (ERT, DEED), independent media monitoring, and human rights organization data. Scenario probabilities are derived from analysis of global historical patterns of regime transitions."
+      "content": "We use a multi-source approach combining academic democracy indices (V-Dem), historical regime episode datasets (ERT, DEED), independent media monitoring, and human rights organization data. Scenario probabilities are derived from analysis of global historical patterns of regime transitions. The consensus scenarios between experts and citizens are calculated using the Star Voting methodology."
     },
     "sources": {
       "title": "Data Sources",
@@ -245,7 +245,7 @@
           "description": "Tactical opening followed by closure: the regime experiments with initial liberalization under international pressure, but then reverses reforms to preserve elite control. Similar to Nicaragua 2016–2018, where the opening served to relieve pressure without conceding real power."
         },
         "stabilizedElectoralAutocracy": {
-          "description": "Stable authoritarian equilibrium: the regime maintains elections without real competitive substance. A democratic facade coexists with institutional control. The EDI rises slightly but stabilizes in the autocratic zone, establishing a new low-level equilibrium akin to Zimbabwe under Mugabe."
+          "description": "Stable authoritarian equilibrium: the regime maintains elections without real competitive substance. A democratic facade coexists with institutional control. The EDI rises slightly but stabilizes in the autocratic zone, establishing a new low-level authoritarian equilibrium."
         },
         "preemptedDemocraticTransition": {
           "description": "Blocked transition: the opposition advances politically but the chavista deep state—security forces, judiciary, paramilitaries—blocks democratic consolidation. Internal fragmentation and ungovernability weaken the incoming government before it can reform institutions."

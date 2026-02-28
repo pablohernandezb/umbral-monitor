@@ -733,6 +733,200 @@ export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAve
 }
 
 // ============================================================
+// STAR VOTING CONSENSUS (for landing page panels)
+// ============================================================
+
+export interface StarResult {
+  winner: number | null          // winning scenario number (1-5), null if no data
+  finalist1: number | null       // scenario with highest round-1 total score
+  finalist2: number | null       // scenario with second-highest round-1 total score
+  finalist1Votes: number         // runoff votes for finalist 1
+  finalist2Votes: number         // runoff votes for finalist 2
+  noPreferenceVotes: number      // submissions that rated both finalists equally
+  totalVoters: number
+  scores: Record<number, number> // round-1 total scores per scenario
+}
+
+export interface StarVotingResults {
+  expert: StarResult
+  public: StarResult
+}
+
+export function computeStarVoting(
+  rows: Array<{ scenario_probabilities: Record<number, number> | null }>
+): StarResult {
+  const emptyScores: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  const empty: StarResult = {
+    winner: null, finalist1: null, finalist2: null,
+    finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
+    totalVoters: 0, scores: emptyScores,
+  }
+  if (rows.length === 0) return empty
+
+  // Round 1 — sum scores per scenario
+  const scores: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  for (const row of rows) {
+    if (!row.scenario_probabilities) continue
+    for (let s = 1; s <= 5; s++) {
+      const v = row.scenario_probabilities[s]
+      if (typeof v === 'number' && v > 0) scores[s] += v
+    }
+  }
+
+  // Pick top-2 finalists by total score
+  const ranked = (Object.entries(scores) as [string, number][])
+    .map(([k, v]) => ({ scenario: Number(k), score: v }))
+    .sort((a, b) => b.score - a.score)
+
+  if (ranked.length < 2) return { ...empty, scores, totalVoters: rows.length }
+
+  const f1 = ranked[0].scenario
+  const f2 = ranked[1].scenario
+
+  // Round 2 — runoff: count how many voters preferred each finalist
+  let f1Votes = 0, f2Votes = 0, noPreference = 0
+  for (const row of rows) {
+    if (!row.scenario_probabilities) continue
+    const r1 = row.scenario_probabilities[f1] ?? 0
+    const r2 = row.scenario_probabilities[f2] ?? 0
+    if (r1 > r2) f1Votes++
+    else if (r2 > r1) f2Votes++
+    else noPreference++
+  }
+
+  return {
+    winner: f1Votes >= f2Votes ? f1 : f2,
+    finalist1: f1,
+    finalist2: f2,
+    finalist1Votes: f1Votes,
+    finalist2Votes: f2Votes,
+    noPreferenceVotes: noPreference,
+    totalVoters: rows.length,
+    scores,
+  }
+}
+
+export async function getStarVotingResults(): Promise<ApiResponse<StarVotingResults>> {
+  const emptyResult: StarResult = {
+    winner: null, finalist1: null, finalist2: null,
+    finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
+    totalVoters: 0, scores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  }
+  const empty: StarVotingResults = { expert: emptyResult, public: emptyResult }
+
+  if (IS_MOCK_MODE || !supabase) return { data: empty, error: null }
+
+  type SubmissionRow = { email: string; scenario_probabilities: Record<number, number> | null; submitted_at: string }
+
+  const [expertRes, publicRes] = await Promise.all([
+    supabase
+      .from('expert_submissions')
+      .select('email, scenario_probabilities, submitted_at')
+      .eq('status', 'approved')
+      .order('submitted_at', { ascending: false }),
+    supabase
+      .from('public_submissions')
+      .select('email, scenario_probabilities, submitted_at')
+      .order('submitted_at', { ascending: false }),
+  ])
+
+  // Deduplicate by email — keep latest submission per participant (rows already sorted DESC)
+  function dedupeByEmail(rows: SubmissionRow[]): SubmissionRow[] {
+    const seen = new Set<string>()
+    const result: SubmissionRow[] = []
+    for (const row of rows) {
+      const email = row.email.toLowerCase()
+      if (!seen.has(email)) { seen.add(email); result.push(row) }
+    }
+    return result
+  }
+
+  const expertRows = dedupeByEmail((expertRes.data || []) as SubmissionRow[])
+  const publicRows = dedupeByEmail((publicRes.data || []) as SubmissionRow[])
+
+  return {
+    data: {
+      expert: computeStarVoting(expertRows),
+      public: computeStarVoting(publicRows),
+    },
+    error: expertRes.error?.message || publicRes.error?.message || null,
+  }
+}
+
+/**
+ * Read the most recent STAR voting snapshot from the DB.
+ * Falls back to an empty result when no snapshot exists yet.
+ */
+export async function getLatestStarSnapshot(): Promise<ApiResponse<StarVotingResults>> {
+  const emptyResult: StarResult = {
+    winner: null, finalist1: null, finalist2: null,
+    finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
+    totalVoters: 0, scores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  }
+  const empty: StarVotingResults = { expert: emptyResult, public: emptyResult }
+
+  if (IS_MOCK_MODE || !supabase) return { data: empty, error: null }
+
+  const { data, error } = await supabase
+    .from('star_voting_snapshots')
+    .select('*')
+    .order('date', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) return { data: empty, error: error.message }
+  if (!data) return { data: empty, error: null }
+
+  const toResult = (p: 'expert' | 'public'): StarResult => ({
+    winner:              data[`${p}_winner`]              ?? null,
+    finalist1:           data[`${p}_finalist1`]           ?? null,
+    finalist2:           data[`${p}_finalist2`]           ?? null,
+    finalist1Votes:      data[`${p}_finalist1_votes`]     ?? 0,
+    finalist2Votes:      data[`${p}_finalist2_votes`]     ?? 0,
+    noPreferenceVotes:   data[`${p}_no_preference_votes`] ?? 0,
+    totalVoters:         data[`${p}_total_voters`]        ?? 0,
+    scores:              (data[`${p}_scores`] as Record<number, number>) ?? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  })
+
+  return {
+    data: { expert: toResult('expert'), public: toResult('public') },
+    error: null,
+  }
+}
+
+// ============================================================
+// PLATFORM COUNTS (for about page methodology section)
+// ============================================================
+
+export interface PlatformCounts {
+  newsCount: number
+  submissionsCount: number
+  readingRoomCount: number
+}
+
+export async function getPlatformCounts(): Promise<ApiResponse<PlatformCounts>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: { newsCount: 0, submissionsCount: 0, readingRoomCount: 0 }, error: null }
+  }
+
+  const [newsRes, expertRes, publicRes, readingRes] = await Promise.all([
+    supabase.from('news_feed').select('*', { count: 'exact', head: true }),
+    supabase.from('expert_submissions').select('*', { count: 'exact', head: true }),
+    supabase.from('public_submissions').select('*', { count: 'exact', head: true }),
+    supabase.from('reading_room').select('*', { count: 'exact', head: true }),
+  ])
+
+  return {
+    data: {
+      newsCount: newsRes.count ?? 0,
+      submissionsCount: (expertRes.count ?? 0) + (publicRes.count ?? 0),
+      readingRoomCount: readingRes.count ?? 0,
+    },
+    error: newsRes.error?.message || expertRes.error?.message || publicRes.error?.message || readingRes.error?.message || null,
+  }
+}
+
+// ============================================================
 // GDELT EVENTS (curated timeline annotations)
 // ============================================================
 

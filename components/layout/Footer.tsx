@@ -106,7 +106,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="#"
+              href="https://github.com/pablohernandezb/umbral-monitor"
               className="text-umbral-muted hover:text-signal-teal transition-colors"
               aria-label="GitHub"
             >

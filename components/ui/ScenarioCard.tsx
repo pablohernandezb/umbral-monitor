@@ -39,10 +39,10 @@ function getRatingColor(rating: number): string {
 function getRatingLabel(rating: number, locale: string): string {
   if (rating === 0) return locale === 'es' ? 'Sin datos' : 'No data'
   const rounded = Math.round(rating * 10) / 10
-  if (rating >= 4) return locale === 'es' ? `${rounded} — Alta` : `${rounded} — High`
-  if (rating >= 3) return locale === 'es' ? `${rounded} — Media` : `${rounded} — Medium`
-  if (rating >= 2) return locale === 'es' ? `${rounded} — Baja` : `${rounded} — Low`
-  return locale === 'es' ? `${rounded} — Muy baja` : `${rounded} — Very low`
+  if (rating >= 4) return locale === 'es' ? `Alta (${rounded})` : `High (${rounded})`
+  if (rating >= 3) return locale === 'es' ? `Media (${rounded})` : `Medium (${rounded})`
+  if (rating >= 2) return locale === 'es' ? `Baja (${rounded})` : `Low (${rounded})`
+  return locale === 'es' ? `Muy baja (${rounded})` : `Very low (${rounded})`
 }
 
 export function ScenarioCard({ scenario, className, onClick, isActive, expertRating, publicRating }: ScenarioCardProps) {
@@ -116,10 +116,10 @@ export function ScenarioCard({ scenario, className, onClick, isActive, expertRat
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] text-umbral-muted uppercase tracking-wide">
+              <span className="text-[9.5px] text-umbral-muted uppercase tracking-wide">
                 {locale === 'es' ? 'Expertos' : 'Experts'}
               </span>
-              <span className="text-[10px] font-mono text-umbral-light">
+              <span className="text-[9.5px] font-mono text-umbral-light">
                 {getRatingLabel(eRating, locale)}
               </span>
             </div>
@@ -139,10 +139,10 @@ export function ScenarioCard({ scenario, className, onClick, isActive, expertRat
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] text-umbral-muted uppercase tracking-wide">
+              <span className="text-[9.5px] text-umbral-muted uppercase tracking-wide">
                 {locale === 'es' ? 'Público' : 'Public'}
               </span>
-              <span className="text-[10px] font-mono text-umbral-light">
+              <span className="text-[9.5px] font-mono text-umbral-light">
                 {getRatingLabel(pRating, locale)}
               </span>
             </div>

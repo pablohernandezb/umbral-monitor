@@ -127,7 +127,7 @@
     },
     "methodology": {
       "title": "Metodología",
-      "content": "Utilizamos un enfoque multi-fuente que combina índices académicos de democracia (V-Dem), datasets históricos de episodios de régimen (ERT, DEED), monitoreo de medios independientes y datos de organizaciones de derechos humanos. Las probabilidades de escenarios se derivan de análisis de patrones históricos globales de transiciones de régimen."
+      "content": "Utilizamos un enfoque multi-fuente que combina índices académicos de democracia (V-Dem), datasets históricos de episodios de régimen (ERT, DEED), monitoreo de medios independientes y datos de organizaciones de derechos humanos. Las probabilidades de escenarios se derivan de análisis de patrones históricos globales de transiciones de régimen. Los escenarios de consenso entre expertos y ciudadanos, son calculados usando la metodología de la Votación Estrella"
     },
     "sources": {
       "title": "Fuentes de Datos",
@@ -245,7 +245,7 @@
           "description": "Apertura táctica seguida de cierre: el régimen experimenta una liberalización inicial bajo presión internacional, pero luego clausura las reformas para preservar el control de las élites. Similar a Nicaragua 2016–2018, donde la apertura sirvió para aliviar presión sin ceder poder real."
         },
         "stabilizedElectoralAutocracy": {
-          "description": "Equilibrio autoritario estable: el régimen mantiene elecciones sin sustancia competitiva real. La fachada democrática coexiste con control institucional. El EDI sube levemente pero se estabiliza en zona autocrática, configurando un nuevo equilibrio de bajo nivel como Zimbabwe bajo Mugabe."
+          "description": "Equilibrio autoritario estable: el régimen mantiene elecciones sin sustancia competitiva real. La fachada democrática coexiste con control institucional. El EDI sube levemente pero se estabiliza en zona autocrática, configurando un nuevo equilibrio de bajo nivel autoritario."
         },
         "preemptedDemocraticTransition": {
           "description": "Transición bloqueada: la oposición avanza políticamente pero el Estado profundo chavista —fuerzas de seguridad, poder judicial, paramilitares— bloquea la consolidación democrática. La fragmentación interna y la ingobernabilidad debilitan al gobierno entrante antes de que pueda reformar las instituciones."
