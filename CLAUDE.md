@@ -26,10 +26,12 @@ npm run lint     # ESLint validation
 # Database
 npm run seed     # Seed Supabase database (requires .env.local with SUPABASE_SERVICE_ROLE_KEY)
 
-# Manual cron triggers (dev)
-curl "http://localhost:3000/api/gdelt?force=true"
-curl "http://localhost:3000/api/ioda/sync?force=true&secret=umbral-cron-a7f3e9b1c2d4"
-curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2d4"
+# Manual cron triggers (dev) — use curl.exe on Windows PowerShell
+curl.exe "http://localhost:3000/api/gdelt?force=true"
+curl.exe "http://localhost:3000/api/ioda/sync?force=true&secret=umbral-cron-a7f3e9b1c2d4"
+curl.exe "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2d4"
+curl.exe "http://localhost:3000/api/news/scrape?secret=umbral-cron-a7f3e9b1c2d4"
+curl.exe "http://localhost:3000/api/analytics/snapshot?secret=umbral-cron-a7f3e9b1c2d4"
 ```
 
 ## Architecture
@@ -38,7 +40,7 @@ curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2
 
 **`lib/supabase.ts`**: Database client and schema
 - Exports `IS_MOCK_MODE` flag that determines data source
-- Contains full PostgreSQL schema in `SCHEMA_SQL` export (14 tables with RLS policies)
+- Contains full PostgreSQL schema in `SCHEMA_SQL` export (16 tables with RLS policies)
 - Creates Supabase client only when valid credentials exist
 
 **`lib/data.ts`**: Data access layer with graceful fallback
@@ -47,6 +49,10 @@ curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2
 - Provides real-time subscription functions: `subscribeToNews()`, `subscribeToPrisonerStats()`, `subscribeToScenarios()`
 - Real-time functions return no-op unsubscribe in mock mode
 - `getSubmissionAverages()`: Computes mean scenario ratings from expert/public submissions (deduped by email, latest per participant)
+- `computeStarVoting()` (exported): Pure function implementing STAR voting — Round 1 sums scores to find top-2 finalists; Round 2 runs a runoff vote. Used by both `getStarVotingResults()` and the analytics snapshot cron.
+- `getStarVotingResults()`: Computes STAR voting live from the DB (used by the analytics cron to write snapshots)
+- `getLatestStarSnapshot()`: Reads the most recent row from `star_voting_snapshots` — used by the landing page instead of live computation
+- `getPlatformCounts()`: Returns row counts for `news_feed`, `expert_submissions + public_submissions`, and `reading_room` (used by the About page methodology section)
 
 **`lib/ioda.ts`**: IODA Internet connectivity utilities
 - `getSignals()`, `getOutageEvents()`, `getOutageAlerts()`, `getVenezuelaRegions()`: Live IODA API calls proxied through `/api/ioda`
@@ -59,6 +65,14 @@ curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2
 - `formatOutageScore()`: Compact display (`700k`, `1.2M`)
 - `severityColor()`, `severityFill()`, `severityStroke()`: Severity → color helpers for map + charts
 
+**`lib/news-scraper.ts`**: RSS news scraping, categorization, Venezuela relevance filter, and Claude translation
+- `fetchRSSPage()`: uses `fetch() + parser.parseString()` — handles servers that return HTTP 4xx with a valid RSS body (Tal Cual returns 404 + full feed)
+- `fetchAllRSSArticles()`: paginates through WordPress `?paged=N` pages back to a cutoff date
+- `isVenezuelaRelated()`: regex keyword filter (Maduro, Guaidó, PDVSA, CNE, etc.) — skipped for `skipVenezuelaFilter: true` sources
+- `detectCategory()`: classifies articles into political / economic / social / international from URL + title + RSS categories
+- `translateBatch()`: batch-translates headlines + summaries via Claude Haiku
+- `runNewsScraper()`: orchestrates all sources in parallel → deduplicates Venezuela filter → batch-translates → upserts to `news_feed`
+
 **`lib/x-api.ts`**: X (Twitter) API client
 - Fetches tweets from `cazamosfakenews`, `cotejoinfo`, `Factchequeado` via `tweets/search/recent`
 - Requires X Basic plan bearer token (`X_BEARER_TOKEN` env var)
@@ -69,7 +83,7 @@ curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2
 - Checks `NEXT_PUBLIC_GA_ID` to determine if consent is needed
 - Exports: `useCookieConsent()` hook, `acceptCookies()`, `rejectCookies()`, `resetConsent()`
 
-### Database Schema (14 Tables)
+### Database Schema (16 Tables)
 
 1. **`scenarios`**: 5 regime transformation scenarios with probability/status tracking
 2. **`regime_history`**: Historical democracy indices (1900-2024) with V-Dem style metrics
@@ -85,6 +99,8 @@ curl "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2
 12. **`fact_check_tweets`**: Curated fact-checking tweets (bilingual), upserted daily by cron
 13. **`gdelt_data`**: GDELT media signals archive — `date`, `instability`, `tone`, `artvolnorm`; populated by daily cron
 14. **`ioda_signals`** + **`ioda_events`**: National IODA connectivity signals and outage events; populated by daily cron at 06:00 UTC
+15. **`star_voting_snapshots`**: Daily STAR voting consensus results — one row per date, expert + public winner/finalists/votes/scores; upserted by analytics cron at 14:00 UTC
+16. **`submission_averages_snapshots`**: Daily per-scenario average ratings — one row per date, expert + public means and participant counts; upserted by analytics cron at 14:00 UTC
 
 **Scenario key-to-number mapping** (used in `scenario_probabilities` JSONB):
 - 1 = `regressedAutocracy`, 2 = `revertedLiberalization`, 3 = `stabilizedElectoralAutocracy`, 4 = `preemptedDemocraticTransition`, 5 = `democraticTransition`
@@ -93,14 +109,18 @@ All tables have Row Level Security (RLS) enabled with public read-only access.
 
 ### Cron Jobs (`vercel.json`)
 
-All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization. **Vercel Hobby hard cap is 10s** — all cron handlers must complete within that limit.
+All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization. **Vercel Hobby hard cap is 10s** — all cron handlers must complete within that limit (exception: `/api/analytics/snapshot` has `maxDuration=60`).
 
-| Schedule | Endpoint | Purpose |
+| Schedule (UTC) | Endpoint | Purpose |
 |---|---|---|
-| `0 8 * * *` | `/api/fact-check/refresh` | Fetch tweets from 3 X fact-checking accounts |
 | `59 4 * * *` | `/api/gdelt?force=true` | Fetch & archive GDELT media signals (120-day window) |
-| `0 11 * * *` | `/api/news/scrape` | Scrape and store news articles |
-| `0 6 * * *` | `/api/ioda/sync?force=true&secret=...` | Fetch & archive national IODA signals + events |
+| `0 6 * * *` | `/api/ioda/sync` | Fetch & archive national IODA signals + events |
+| `0 8 * * *` | `/api/ioda/sync-subnational` | Fetch & archive subnational IODA region signals + outages |
+| `0 10 * * *` | `/api/fact-check/refresh` | Fetch tweets from 3 X fact-checking accounts |
+| `0 12 * * *` | `/api/news/scrape` | Scrape and store latest news articles |
+| `0 14 * * *` | `/api/analytics/snapshot` | Compute & store daily STAR voting + averages snapshots |
+
+**Scheduling rule**: cron jobs must be spaced at least 90 minutes apart (Vercel Hobby cold-start safety margin).
 
 **Parallel fetch pattern** (critical for Hobby 10s cap): all external HTTP calls within a single cron handler must use `Promise.all` / `Promise.allSettled`. Sequential fetches with delays will time out.
 
@@ -139,7 +159,7 @@ app/
 │   ├── prisoners/              # Political prisoners CRUD
 │   ├── reading-room/           # Reading room CRUD
 │   └── participate/            # Expert/public submission management
-│       ├── page.tsx            # Review, approve/reject expert submissions
+│       ├── page.tsx            # Review, approve/reject/delete expert; delete public submissions
 │       └── actions.ts          # Admin server actions for submissions
 └── api/
     ├── fact-check/refresh/     # Cron: fetch tweets from 3 X fact-checking accounts
@@ -149,7 +169,8 @@ app/
     │   ├── sync/               # Cron: archive national IODA signals + events to Supabase
     │   ├── regions/            # Batch signals for all 25 VE regions (for subnational heatmap)
     │   └── outages/            # Batch outage scores for all 25 VE regions (for map + list)
-    └── news/scrape/            # Cron: news scraping endpoint
+    ├── news/scrape/            # Cron: news scraping endpoint
+    └── analytics/snapshot/     # Cron: compute & store daily STAR voting + averages snapshots
 ```
 
 ### Components
@@ -168,14 +189,15 @@ app/
 - `FactCheckingFeed.tsx`: Curated fact-checking tweet feed (3 accounts: cazamosfakenews, cotejoinfo, Factchequeado)
 - `ScenarioTimeline.tsx`: Scenario timeline visualization
 - `GdeltDashboard.tsx`: GDELT media signals dashboard (instability, tone, article volume; daily archive; key events timeline)
-- `PolymarketDashboard.tsx`: Prediction markets dashboard integrating Polymarket data
+- `PolymarketDashboard.tsx`: Prediction markets dashboard integrating Polymarket embed iframes; dynamic height via `postMessage` listener
+- `StarVotingConsensus.tsx`: Two panels showing the daily STAR voting consensus scenario for experts and citizens; reads from `star_voting_snapshots` DB table (not live-computed); percentage color-coded green/amber/red by vote share; scenario icon + description tooltip
 
 **IODA Components** (`components/ioda/`):
 - `IodaDashboard.tsx`: National connectivity dashboard — 3 separate signal charts (BGP, Active Probing, Telescope) + outage event list. In Supabase mode reads exclusively from DB; mock mode fetches live IODA.
 - `SubnationalDashboard.tsx`: State-level dashboard — heatmap + choropleth map + outage score list
 - `StateHeatmap.tsx`: Horizon-style heatmap of all 25 states × time (lazy-loads per datasource tab)
-- `VenezuelaMap.tsx`: Leaflet choropleth map colored by outage severity; includes Guayana Esequiba (dashed, no score data); hover synced with heatmap
-- `OutageScoreList.tsx`: Ranked list of states with active outages, colored by severity
+- `VenezuelaMap.tsx`: Leaflet choropleth map colored by outage severity; includes Guayana Esequiba (dashed, no score data); hover synced with heatmap. Uses `layerNamesRef` + `layersRef` to rebind tooltips when scores update (avoids stale "Normal" labels)
+- `OutageScoreList.tsx`: Ranked list of states with active outages, colored by severity; `md:max-h-[260px] md:overflow-y-auto` to cap height on desktop
 - `OutageEventList.tsx`: List of discrete outage events with datasource labels and severity badges
 - `SignalChart.tsx`: Single-signal AreaChart card with auto-scaled Y-axis and gradient fill
 - `StatusBadge.tsx`: Connectivity status pill (`normal|degraded|outage|no-data`), fully i18n
@@ -303,3 +325,7 @@ The participate page (`app/participate/`) is a multi-screen wizard (10+ screens)
 - **Vercel Hobby 10s limit**: All cron handlers must complete within 10s. Use `Promise.all`/`Promise.allSettled` for parallel external fetches. Sequential fetches with delays will time out and silently skip remaining items.
 - **IODA API v2 quirks**: `signals/raw` returns `{ data: [[sig1, sig2, ...]] }` — double-nested array, requires `.flat()`. Events/alerts use query params (`?entityType=&entityCode=`), not path segments. Telescope datasource is `merit-nt` (replaced `ucsd-nt`).
 - **react-leaflet version**: Must stay at `^4.2.1` — v5 requires React 19; project is on React 18.
+- **STAR voting snapshots**: Landing page reads from `star_voting_snapshots` (populated daily at 14:00 UTC by `/api/analytics/snapshot`). The first run must be triggered manually after table creation. `computeStarVoting()` is exported so the cron route can import it without circular deps.
+- **About page live counts**: `getPlatformCounts()` uses Supabase `{ count: 'exact', head: true }` queries — returns zeros in mock mode.
+- **framer-motion + locale key bug**: never use locale-dependent strings as React `key` props on `motion.*` elements inside `whileInView` + `once: true` containers — locale change will unmount/remount them and they'll stay invisible. Use stable index or ID keys instead.
+- **PowerShell curl**: Windows PowerShell's `curl` is an alias for `Invoke-WebRequest`. Use `curl.exe` to invoke real curl for cron testing.

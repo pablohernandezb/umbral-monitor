@@ -9,6 +9,7 @@ An open-source analytical platform monitoring regime transformation dynamics in 
 ## Features
 
 - **Scenario Analysis** — Five evidence-based regime transformation scenarios rated by experts and the public on a Likert 1–5 scale, with aggregated probability indicators
+- **STAR Voting Consensus** — Daily-computed consensus scenario panels for experts and the public using STAR voting (Score Then Automatic Runoff); stored as daily snapshots in Supabase
 - **Historical Trajectory** — V-Dem style democracy index chart spanning 1900–2024
 - **Live News Feed** — Aggregated news with category filtering, source filtering, full-text search, and per-scenario voting
 - **Political Prisoners Tracker** — Aggregate detention statistics with demographic breakdowns by reporting organization
@@ -35,8 +36,8 @@ An open-source analytical platform monitoring regime transformation dynamics in 
 | Database | Supabase (PostgreSQL) with Row Level Security |
 | Charts | Recharts |
 | Maps | Leaflet + react-leaflet 4.x (React 18 compatible) |
-| AI | Anthropic SDK |
-| Scraping | Cheerio, RSS Parser |
+| AI | Anthropic SDK (Claude Haiku for news translation) |
+| Scraping | RSS Parser (rss-parser) |
 | Icons | Lucide React |
 
 ---
@@ -119,7 +120,7 @@ If you want to connect a real Supabase database:
 npm run seed
 ```
 
-The schema creates 14 tables with RLS policies. Real-time subscriptions are enabled for `news_feed`, `political_prisoners`, and `scenarios`.
+The schema creates 16 tables with RLS policies. Real-time subscriptions are enabled for `news_feed`, `political_prisoners`, and `scenarios`.
 
 ---
 
@@ -129,17 +130,24 @@ Automated data collection runs on Vercel's scheduler (configured in `vercel.json
 
 | Schedule (UTC) | Endpoint | Purpose |
 |---|---|---|
-| Daily 08:00 | `/api/fact-check/refresh` | Fetch latest tweets from 3 fact-checking accounts |
 | Daily 04:59 | `/api/gdelt?force=true` | Archive GDELT media signals (120-day rolling window) |
-| Daily 11:00 | `/api/news/scrape` | Scrape and store news articles |
 | Daily 06:00 | `/api/ioda/sync` | Archive national IODA connectivity signals + events |
+| Daily 08:00 | `/api/ioda/sync-subnational` | Archive subnational IODA region signals + outage scores |
+| Daily 10:00 | `/api/fact-check/refresh` | Fetch latest tweets from 3 fact-checking accounts |
+| Daily 12:00 | `/api/news/scrape` | Scrape and store latest news articles |
+| Daily 14:00 | `/api/analytics/snapshot` | Compute & store STAR voting + submission averages snapshots |
 
 You can trigger any cron job manually during development:
 
 ```bash
+# On macOS/Linux
+curl "http://localhost:3000/api/analytics/snapshot?secret=<CRON_SECRET>"
+curl "http://localhost:3000/api/news/scrape?secret=<CRON_SECRET>"
 curl "http://localhost:3000/api/fact-check/refresh?secret=<CRON_SECRET>"
 curl "http://localhost:3000/api/gdelt?force=true"
-curl "http://localhost:3000/api/ioda/sync?force=true&secret=<CRON_SECRET>"
+
+# On Windows PowerShell use curl.exe
+curl.exe "http://localhost:3000/api/analytics/snapshot?secret=<CRON_SECRET>"
 ```
 
 ---
@@ -165,7 +173,8 @@ umbral-project/
 │       │   ├── sync/           # Cron: archive national signals + events to Supabase
 │       │   ├── regions/        # Batch signals for all 25 VE regions
 │       │   └── outages/        # Batch outage scores for all 25 VE regions
-│       └── news/scrape/        # Cron: news scraping
+│       ├── news/scrape/        # Cron: news scraping
+│       └── analytics/snapshot/ # Cron: STAR voting + averages snapshots
 ├── components/
 │   ├── layout/                 # Header (with share menu), Footer
 │   ├── ui/                     # ScenarioCard, NewsCard, GdeltDashboard, PolymarketDashboard, etc.
@@ -247,4 +256,4 @@ Contributions are welcome. Please open an issue to discuss proposed changes befo
 
 ## License
 
-[MIT](LICENSE)
+[Apache License 2.0](LICENSE)
