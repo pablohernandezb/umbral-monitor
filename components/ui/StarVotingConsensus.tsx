@@ -67,8 +67,8 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
 
   // Traffic-light color for the percentage
   const pctColor = pct === null ? '#6b7280'
-    : pct >= 66 ? '#22c55e'   // green
-    : pct >= 34 ? '#f59e0b'   // amber
+    : pct >= 75 ? '#22c55e'   // green
+    : pct >= 55 ? '#f59e0b'   // amber
     :             '#dc2626'    // red
 
   return (
