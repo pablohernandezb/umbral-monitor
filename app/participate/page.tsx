@@ -747,6 +747,11 @@ export default function ParticipatePage() {
                   ? '// PENDIENTE DE AUTORIZACIÓN ADMINISTRATIVA'
                   : '// PENDING ADMIN AUTHORIZATION'}
               </p>
+              <p className="text-sm font-mono text-white/65">
+                {locale === 'es'
+                  ? 'Gracias por participar. Su evaluación contribuirá al monitoreo público de escenarios para Venezuela. Con tu correo electrónico puedes participar nuevamente en el futuro y actualizar tus preferencias.'
+                  : 'Thank you for participating. Your assessment will contribute to the public monitoring of scenarios for Venezuela. With your email, you can participate again in the future and update your preferences.'}
+              </p>
               <TacticalButton onClick={resetAll}>
                 {locale === 'es' ? 'VOLVER AL INICIO' : 'RETURN TO START'}
               </TacticalButton>
@@ -886,6 +891,11 @@ export default function ParticipatePage() {
                 // {locale === 'es'
                   ? 'ACTUALIZANDO MONITOR PÚBLICO'
                   : 'UPDATING PUBLIC MONITOR'}
+              </p>
+              <p className="text-sm font-mono text-white/65">
+                {locale === 'es'
+                  ? 'Gracias por participar. Su evaluación contribuirá al monitoreo público de escenarios para Venezuela. Con tu correo electrónico puedes participar nuevamente en el futuro y actualizar tus preferencias.'
+                  : 'Thank you for participating. Your assessment will contribute to the public monitoring of scenarios for Venezuela. With your email, you can participate again in the future and update your preferences.'}
               </p>
               <TacticalButton onClick={resetAll}>
                 {locale === 'es' ? 'VOLVER AL INICIO' : 'RETURN TO START'}
