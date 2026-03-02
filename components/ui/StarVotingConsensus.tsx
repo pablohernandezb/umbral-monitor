@@ -123,26 +123,26 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
       ) : (
         <>
           {/* Main content: icon left · name center · % right */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* Large scenario icon */}
             {WinnerIcon && (
               <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0"
+                className="w-12 h-12 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center shrink-0"
                 style={{ backgroundColor: `${color}20`, border: `1px solid ${color}40` }}
               >
-                <WinnerIcon className="w-8 h-8" style={{ color }} />
+                <WinnerIcon className="w-6 h-6 lg:w-8 lg:h-8" style={{ color }} />
               </div>
             )}
 
             {/* Scenario name — middle */}
-            <p className="flex-1 text-lg md:text-2xl font-semibold text-white leading-snug">
+            <p className="flex-1 text-base md:text-base lg:text-2xl font-semibold text-white leading-snug">
               {winnerName}
             </p>
 
             {/* Large percentage — right */}
             {pct !== null && (
               <span
-                className="text-5xl md:text-7xl font-bold tabular-nums leading-none shrink-0"
+                className="text-4xl md:text-4xl lg:text-7xl font-bold tabular-nums leading-none shrink-0"
                 style={{ color: pctColor }}
               >
                 {pct}%
