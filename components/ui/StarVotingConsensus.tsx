@@ -151,11 +151,11 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
           </div>
 
           {/* Footer */}
-          <p className="text-[10px] text-umbral-muted">
+          {/*<p className="text-[10px] text-umbral-muted">
             {locale === 'es'
               ? `Basado en ${result.totalVoters} ${assessmentsLabel}`
               : `Based on ${result.totalVoters} ${assessmentsLabel}`}
-          </p>
+          </p>*/}
         </>
       )}
     </div>

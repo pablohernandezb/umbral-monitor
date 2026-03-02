@@ -176,6 +176,34 @@ export function isVenezuelaRelated(title: string, description: string): boolean 
 }
 
 // ============================================================
+// CONTENT EXCLUSION FILTER
+// ============================================================
+
+/**
+ * Matches sports, entertainment, and celebrity content that should be
+ * excluded even when it mentions Venezuela (e.g. Venezuelan athletes,
+ * pop artists, or sports leagues).
+ */
+const SPORTS_KEYWORDS =
+  /\b(deport[eios]|deportivo|b[eé]isbol|baloncesto|b[aá]squet(?:bol)?|basketball|voleibol|volleyball|nataci[oó]n|atletismo|ciclismo|boxeo|ajedrez|tenis|golf|jonr[oó]n|pitcher|bateador|lanzador|receptor|outfielder|cancha|estadio|goleador|grandes? ligas?|MLB|NFL|NBA|FIFA|NHL|LVBP|copa (am[eé]rica|libertadores|del rey|davis)|mundial de f[uú]tbol|liga (de f[uú]tbol|venezolana de b[eé]isbol)|partido de f[uú]tbol|equipo de f[uú]tbol|seleci[oó]n de f[uú]tbol)\b/i
+
+const ENTERTAINMENT_KEYWORDS =
+  /\b(far[aá]ndul|entretenimiento|espect[aá]culo|telenovela|celebridad|cantante|m[uú]sico|concierto|[aá]lbum musical|pel[ií]cula|temporada televisiva|reality show|influencer)\b/i
+
+/**
+ * Returns true if the article is about sports or entertainment and should
+ * be excluded from the news feed.
+ */
+export function isExcludedContent(title: string, description: string, url: string): boolean {
+  // URL-based: many RSS feeds have /deportes/ or /entretenimiento/ in the path
+  if (/\/(deportes?|sports?|entertainment|entretenimiento|espectaculos?|farandul)\//i.test(url)) {
+    return true
+  }
+  const text = `${title} ${description}`
+  return SPORTS_KEYWORDS.test(text) || ENTERTAINMENT_KEYWORDS.test(text)
+}
+
+// ============================================================
 // TRANSLATION VIA CLAUDE HAIKU
 // ============================================================
 
@@ -286,9 +314,10 @@ export async function runNewsScraper(): Promise<RunScraperResult> {
   const fetched = await Promise.allSettled(
     NEWS_SOURCES.map(async source => {
       const articles = await fetchAllRSSArticles(source.feedUrl, cutoffDate, 2, 10)
-      const filtered = source.skipVenezuelaFilter
+      const filtered = (source.skipVenezuelaFilter
         ? articles
         : articles.filter(a => isVenezuelaRelated(a.title, a.description))
+      ).filter(a => !isExcludedContent(a.title, a.description, a.link))
 
       if (filtered.length === 0) return { source, article: null }
 
