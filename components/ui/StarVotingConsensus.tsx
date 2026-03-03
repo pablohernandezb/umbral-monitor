@@ -46,9 +46,6 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
   const groupLabel = isExpert
     ? (locale === 'es' ? 'Escenario de consenso entre expertos' : 'Expert Consensus')
     : (locale === 'es' ? 'Escenario de consenso entre ciudadanos' : 'Citizen Consensus')
-  const assessmentsLabel = isExpert
-    ? (locale === 'es' ? 'evaluaciones de expertos' : 'expert assessments')
-    : (locale === 'es' ? 'evaluaciones ciudadanas' : 'citizen assessments')
 
   const hasData = result.winner !== null && result.totalVoters > 0
 
@@ -65,11 +62,6 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
   const winnerVotes = result.winner === result.finalist1 ? result.finalist1Votes : result.finalist2Votes
   const pct         = result.totalVoters > 0 ? Math.round((winnerVotes / result.totalVoters) * 100) : null
 
-  // Traffic-light color for the percentage
-  const pctColor = pct === null ? '#6b7280'
-    : pct >= 75 ? '#22c55e'   // green
-    : pct >= 55 ? '#f59e0b'   // amber
-    :             '#dc2626'    // red
 
   return (
     <div
@@ -143,7 +135,7 @@ function ConsensusPanel({ result, group, scenarios }: PanelProps) {
             {pct !== null && (
               <span
                 className="text-4xl md:text-4xl lg:text-7xl font-bold tabular-nums leading-none shrink-0"
-                style={{ color: pctColor }}
+                style={{ color }}
               >
                 {pct}%
               </span>
