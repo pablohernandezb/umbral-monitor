@@ -7,6 +7,27 @@ import { useTranslation } from '@/i18n'
 import { getFactCheckTweets } from '@/lib/data'
 import type { FactCheckTweet } from '@/types'
 
+const LOCAL_AVATARS: Record<string, string> = {
+  'cazamosfakenews': '/images/avatars/cazamosfakenews.jpg',
+  'cotejoinfo':      '/images/avatars/cotejoinfo.jpg',
+  'factchequeado':   '/images/avatars/factchequeando.png',
+}
+
+const ALERT_TAG_I18N: Record<string, { es: string; en: string }> = {
+  'FALSO':      { es: 'FALSO',      en: 'FALSE' },
+  'FALSE':      { es: 'FALSO',      en: 'FALSE' },
+  'ENGAÑOSO':   { es: 'ENGAÑOSO',   en: 'MISLEADING' },
+  'MISLEADING': { es: 'ENGAÑOSO',   en: 'MISLEADING' },
+  'DESMENTIDO': { es: 'DESMENTIDO', en: 'DEBUNKED' },
+  'DEBUNKED':   { es: 'DESMENTIDO', en: 'DEBUNKED' },
+}
+
+function translateAlertTag(tag: string, locale: string): string {
+  const entry = ALERT_TAG_I18N[tag.toUpperCase()]
+  if (!entry) return tag
+  return locale === 'es' ? entry.es : entry.en
+}
+
 function TweetCard({ tweet, locale, t }: { tweet: FactCheckTweet; locale: string; t: (key: string) => string }) {
   const text = locale === 'es' ? tweet.text_es : (tweet.text_en || tweet.text_es)
   const hasAlert = tweet.alert_tags.length > 0
@@ -23,7 +44,7 @@ function TweetCard({ tweet, locale, t }: { tweet: FactCheckTweet; locale: string
         <div className="flex gap-1.5">
           {tweet.alert_tags.map(tag => (
             <span key={tag} className="text-[10px] font-mono font-bold text-signal-red bg-signal-red/10 border border-signal-red/30 px-1.5 py-0.5 rounded uppercase tracking-wider">
-              {tag}
+              {translateAlertTag(tag, locale)}
             </span>
           ))}
         </div>
@@ -32,14 +53,18 @@ function TweetCard({ tweet, locale, t }: { tweet: FactCheckTweet; locale: string
       {/* Header: avatar + handle + time */}
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-umbral-ash/80 border border-umbral-steel overflow-hidden flex-shrink-0">
-          <img
-            src={tweet.profile_image_url}
-            alt={tweet.display_name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${tweet.display_name.charAt(0)}&background=1a1a2e&color=14b8a6&size=32`
-            }}
-          />
+          {(tweet.profile_image_url || LOCAL_AVATARS[tweet.username]) ? (
+            <img
+              src={tweet.profile_image_url || LOCAL_AVATARS[tweet.username]}
+              alt={tweet.display_name}
+              className="w-full h-full object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-umbral-charcoal text-signal-teal text-xs font-bold">
+              {tweet.display_name.charAt(0).toUpperCase()}
+            </div>
+          )}
         </div>
         <a
           href={`https://x.com/${tweet.username}`}
