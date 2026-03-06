@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+
+# Allow indexing of public pages
+Allow: /
+Allow: /about
+Allow: /news
+Allow: /reading-room
+Allow: /how-did-we-get-here
+Allow: /participate
+Allow: /privacy-terms

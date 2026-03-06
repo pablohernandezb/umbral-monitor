@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(upstreamUrl, {
       // 5-minute server-side cache; IODA data is updated every few minutes
-      next: { revalidate: 300 },
+      next: { revalidate: 3600 },
       headers: { Accept: 'application/json' },
     })
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=300',
       },
     })
   } catch (err) {
