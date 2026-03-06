@@ -862,8 +862,8 @@ export default function LandingPage() {
               <motion.div variants={fadeInUp}>
                 <MetricCard
                   label={t('landing.prisoners.total')}
-                  value={prisonerStats?.total_count || 711}
-                  trend={{ value: 67, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
+                  value={prisonerStats?.total_count || 526}
+                  trend={{ value: 42, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
                   size="large"
                 />
               </motion.div>
