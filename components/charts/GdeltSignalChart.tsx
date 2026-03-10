@@ -14,14 +14,17 @@ import {
 import { useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { GDELT_ANNOTATIONS, TIER_COLORS, SIGNAL_COLORS } from '@/data/gdelt-annotations'
-import type { GdeltDataPoint, GdeltSignalKey } from '@/types/gdelt'
+import type { GdeltDataPoint, GdeltEvent, GdeltSignalKey } from '@/types/gdelt'
 
 interface GdeltSignalChartProps {
   data: GdeltDataPoint[]
   height?: number
+  events?: GdeltEvent[]
 }
 
-export function GdeltSignalChart({ data, height = 350 }: GdeltSignalChartProps) {
+export function GdeltSignalChart({ data, height = 350, events = [] }: GdeltSignalChartProps) {
+  // Use DB events when available, fall back to hardcoded annotations
+  const activeAnnotations = events.length > 0 ? events : GDELT_ANNOTATIONS
   const { t, locale } = useTranslation()
   const [visibleSignals, setVisibleSignals] = useState<Record<GdeltSignalKey, boolean>>({
     instability: true,
@@ -34,10 +37,10 @@ export function GdeltSignalChart({ data, height = 350 }: GdeltSignalChartProps) 
   }
 
   const annotationMap = useMemo(() => {
-    const map = new Map<string, typeof GDELT_ANNOTATIONS[0]>()
-    GDELT_ANNOTATIONS.forEach(a => map.set(a.date, a))
+    const map = new Map<string, typeof activeAnnotations[0]>()
+    activeAnnotations.forEach(a => map.set(a.date, a))
     return map
-  }, [])
+  }, [activeAnnotations])
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr + 'T00:00:00')
@@ -166,15 +169,21 @@ export function GdeltSignalChart({ data, height = 350 }: GdeltSignalChartProps) 
 
             <Tooltip content={<CustomTooltip />} />
 
-            {/* Annotation reference lines */}
-            {GDELT_ANNOTATIONS.map(a => (
+            {/* Event reference lines — colored by tier */}
+            {activeAnnotations.map(a => (
               <ReferenceLine
                 key={a.date}
                 x={a.date}
                 yAxisId="left"
                 stroke={TIER_COLORS[a.tier_en]}
                 strokeDasharray="3 3"
-                strokeOpacity={0.6}
+                strokeOpacity={0.7}
+                label={{
+                  value: '●',
+                  position: 'top',
+                  fill: TIER_COLORS[a.tier_en],
+                  fontSize: 8,
+                }}
               />
             ))}
 

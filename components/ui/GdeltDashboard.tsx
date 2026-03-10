@@ -217,10 +217,10 @@ export function GdeltDashboard() {
 
             {/* Chart */}
             <div className="block md:hidden">
-              <GdeltSignalChart data={data} height={250} />
+              <GdeltSignalChart data={data} height={250} events={events} />
             </div>
             <div className="hidden md:block">
-              <GdeltSignalChart data={data} height={350} />
+              <GdeltSignalChart data={data} height={350} events={events} />
             </div>
 
             {/* Event timeline */}
