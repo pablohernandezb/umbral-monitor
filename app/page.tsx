@@ -50,7 +50,7 @@ import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
 import { StarVotingConsensus } from '@/components/ui/StarVotingConsensus'
-import { IodaDashboard } from '@/components/ioda/IodaDashboard'
+import ConnectivitySection from '@/components/connectivity/ConnectivitySection'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
 import {
@@ -62,8 +62,10 @@ import {
   getHistoricalEpisodes,
   getSubmissionAverages,
   getLatestStarSnapshot,
+  getBlockedDomains,
 } from '@/lib/data'
 import type { SubmissionAverages, StarVotingResults } from '@/lib/data'
+import type { BlockedDomain } from '@/types'
 import { voteForScenario } from '@/app/actions/news-votes'
 import { daysSince, cn } from '@/lib/utils'
 import type { 
@@ -110,6 +112,7 @@ export default function LandingPage() {
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
   const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
   const [starResults, setStarResults] = useState<StarVotingResults | null>(null)
+  const [blockingData, setBlockingData] = useState<BlockedDomain[]>([])
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
   const [showTrajectoryPanel, setShowTrajectoryPanel] = useState(false)
@@ -132,6 +135,7 @@ export default function LandingPage() {
           prisonersByOrgRes,
           submissionAvgsRes,
           starRes,
+          blockingRes,
         ] = await Promise.allSettled([
           getScenarios(),
           getRegimeHistory(),
@@ -141,6 +145,7 @@ export default function LandingPage() {
           getPrisonersByOrganization(),
           getSubmissionAverages(),
           getLatestStarSnapshot(),
+          getBlockedDomains(),
         ])
 
         if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) {
@@ -166,6 +171,7 @@ export default function LandingPage() {
         if (prisonersByOrgRes.status === 'fulfilled' && prisonersByOrgRes.value.data) setPrisonersByOrg(prisonersByOrgRes.value.data)
         if (submissionAvgsRes.status === 'fulfilled' && submissionAvgsRes.value.data) setSubmissionAvgs(submissionAvgsRes.value.data)
         if (starRes.status === 'fulfilled' && starRes.value.data) setStarResults(starRes.value.data)
+        if (blockingRes.status === 'fulfilled' && blockingRes.value.data) setBlockingData(blockingRes.value.data)
       } catch (error) {
         console.error('Failed to load data:', error)
       } finally {
@@ -982,32 +988,19 @@ export default function LandingPage() {
       </section>
 
       {/* ============================================================
-          INTERNET CONNECTIVITY SECTION
+          INTERNET CONNECTIVITY & DOMAIN BLOCKING SECTION
           ============================================================ */}
       <section id="connectivity" className="section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-            className="text-center mb-8"
-          >
-            <h2 className="section-title mb-4 flex items-center justify-center gap-3">
-              <Wifi className="w-7 h-7 text-signal-teal" />
-              {t('ioda.sectionTitle')}
-            </h2>
-            <p className="section-subtitle mx-auto">
-              {t('ioda.sectionSubtitle')}
-            </p>
-          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <IodaDashboard />
+            <ConnectivitySection
+              blockingData={blockingData}
+            />
           </motion.div>
         </div>
       </section>

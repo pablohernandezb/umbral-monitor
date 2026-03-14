@@ -778,6 +778,66 @@
       "embassyReopens": "Will the US embassy in Venezuela reopen by March 31?"
     }
   },
+  "connectivity": {
+    "sectionTitle": "Internet & connectivity",
+    "tabs": {
+      "connectivity": "Internet connectivity",
+      "blocking": "Domain blocking"
+    }
+  },
+  "blocking": {
+    "title": "Domain blocking monitor",
+    "subtitle": "Censorship by ISP across Venezuelan internet providers",
+    "providers": "Blocking by ISP provider",
+    "categories": "Domain categories",
+    "methods": "Blocking methods detected",
+    "details": "Domain details",
+    "accessible": "Accessible",
+    "clearFilters": "Clear filters",
+    "filtered": "Filtered",
+    "showingAll": "Showing {count} domains",
+    "domainsTestedLabel": "Domains tested",
+    "blockedLabel": "Blocked at least once",
+    "blockingRateLabel": "Blocking rate",
+    "providersLabel": "ISPs monitored",
+    "cat": {
+      "NEWS": "News",
+      "ANON": "Anonymization",
+      "COMM": "Commerce",
+      "POLR": "Politics",
+      "HUMR": "Human rights",
+      "GRP": "Social media",
+      "PORN": "Adult",
+      "ECON": "Economy",
+      "MMED": "Multimedia",
+      "COMT": "Communication",
+      "PUBH": "Health",
+      "HATE": "Hate"
+    },
+    "blockType": {
+      "DNS": "DNS poisoning",
+      "TCP IP": "TCP/IP blocking",
+      "HTTP/HTTPS": "HTTP/HTTPS filtering",
+      "ok": "Accessible"
+    },
+    "admin": {
+      "title": "Domain blocking management",
+      "uploadTitle": "Upload new CSV",
+      "uploadDesc": "CSV must have headers: site, domain, category, CANTV, Movistar, Digitel, Inter, Netuno, Airtek, G-Network",
+      "batchLabel": "Batch label (optional)",
+      "chooseFile": "Choose CSV file...",
+      "upload": "Upload",
+      "uploading": "Uploading...",
+      "batchHistory": "Batch history",
+      "noBatches": "No batches uploaded yet.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "preview": "Preview (first 10 rows)"
+    }
+  },
   "gdelt": {
     "title": "GDELT SIGNAL DASHBOARD",
     "subtitle": "Real-time media signals from the GDELT Project monitoring Venezuela coverage",

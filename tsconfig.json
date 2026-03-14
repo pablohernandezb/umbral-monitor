@@ -38,6 +38,7 @@
   "exclude": [
     "node_modules",
     "mock",
-    "data/seed.ts"
+    "data/seed.ts",
+    "others"
   ]
 }

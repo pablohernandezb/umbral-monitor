@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:api.ioda.inetintel.cc.gatech.edu)"
+      "WebFetch(domain:api.ioda.inetintel.cc.gatech.edu)",
+      "Bash(cd \"D:/projects/umbral-project\" && npm run build 2>&1 | head -100)",
+      "Bash(cd \"D:/projects/umbral-project\" && npm run build 2>&1 | head -80)",
+      "Bash(cd \"D:/projects/umbral-project\" && npm run build 2>&1 | grep -E \"Type error|error TS\" | head -20)",
+      "Bash(cd \"D:/projects/umbral-project\" && npm run build 2>&1 | tail -30)"
     ]
   }
 }

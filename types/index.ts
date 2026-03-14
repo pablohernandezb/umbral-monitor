@@ -237,3 +237,35 @@ export interface FAQItemProps {
   answer: string
   defaultOpen?: boolean
 }
+
+// ─── Domain Blocking ───────────────────────────────────────────
+
+export interface BlockedDomain {
+  id: number;
+  batch_id: string;
+  site: string;
+  domain: string;
+  category: string;
+  cantv: string;
+  movistar: string;
+  digitel: string;
+  inter: string;
+  netuno: string;
+  airtek: string;
+  g_network: string;
+  uploaded_at: string;
+}
+
+export interface BlockedDomainBatch {
+  id: string;
+  label: string | null;
+  source_file: string | null;
+  row_count: number;
+  is_active: boolean;
+  uploaded_at: string;
+}
+
+export type BlockingCategory =
+  | 'NEWS' | 'ANON' | 'COMM' | 'POLR' | 'HUMR'
+  | 'GRP'  | 'PORN' | 'ECON' | 'MMED' | 'COMT'
+  | 'PUBH' | 'HATE';

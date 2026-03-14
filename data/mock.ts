@@ -9,6 +9,7 @@ import type {
   ReadingRoomItem,
   HistoricalEpisode,
   FactCheckTweet,
+  BlockedDomain,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 
@@ -3923,4 +3924,47 @@ export const mockGdeltEvents: GdeltEvent[] = [
   { id: 'ge-6', date: '2026-01-29', tier_en: 'MEDIUM', tier_es: 'MEDIA', label_en: 'Hydrocarbon law signed', label_es: 'Ley de hidrocarburos firmada', created_at: '2026-01-29T00:00:00Z' },
   { id: 'ge-7', date: '2026-02-05', tier_en: 'LOW', tier_es: 'BAJA', label_en: 'Amnesty law debate begins', label_es: 'Comienza debate de ley de amnistía', created_at: '2026-02-05T00:00:00Z' },
   { id: 'ge-8', date: '2026-02-12', tier_en: 'LOW', tier_es: 'BAJA', label_en: 'Rodríguez pledges elections (NBC)', label_es: 'Rodríguez promete elecciones (NBC)', created_at: '2026-02-12T00:00:00Z' },
+]
+
+// ============================================================
+// BLOCKED DOMAINS MOCK DATA
+// ============================================================
+export const mockBlockedDomains: BlockedDomain[] = [
+  // ANON — VPN / anonymization
+  { id: 1, batch_id: 'mock-batch', site: 'Tunnelbear', domain: 'tunnelbear.com', category: 'ANON', cantv: 'DNS+HTTP/HTTPS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 2, batch_id: 'mock-batch', site: 'Psiphon', domain: 'psiphon.ca', category: 'ANON', cantv: 'DNS+TCP IP', movistar: 'DNS', digitel: 'ok', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 3, batch_id: 'mock-batch', site: 'Proton VPN', domain: 'protonvpn.com', category: 'ANON', cantv: 'DNS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 4, batch_id: 'mock-batch', site: 'Navegador Tor', domain: 'www.torproject.org', category: 'ANON', cantv: 'TCP IP', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 5, batch_id: 'mock-batch', site: 'NordVPN', domain: 'nordvpn.com', category: 'ANON', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'ok', airtek: 'HTTP/HTTPS', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // NEWS — News media
+  { id: 6, batch_id: 'mock-batch', site: 'El Pitazo', domain: 'elpitazo.net', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 7, batch_id: 'mock-batch', site: 'Infobae', domain: 'www.infobae.com', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 8, batch_id: 'mock-batch', site: 'La Patilla', domain: 'lapatilla.com', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 9, batch_id: 'mock-batch', site: 'El Nacional', domain: 'www.elnacional.com', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 10, batch_id: 'mock-batch', site: 'Runrunes', domain: 'runrun.es', category: 'NEWS', cantv: 'DNS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 11, batch_id: 'mock-batch', site: 'Efecto Cocuyo', domain: 'efectococuyo.com', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 12, batch_id: 'mock-batch', site: 'The Wall Street Journal', domain: 'www.wsj.com', category: 'NEWS', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // POLR — Political / opposition
+  { id: 13, batch_id: 'mock-batch', site: 'Resultados Presidenciales 2024', domain: 'resultadospresidencialesvenezuela2024.com', category: 'POLR', cantv: 'DNS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 14, batch_id: 'mock-batch', site: 'Presidencia VE', domain: 'presidenciave.com', category: 'POLR', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 15, batch_id: 'mock-batch', site: 'De Macedonia Con Amor', domain: 'www.demacedoniaconamor.com', category: 'POLR', cantv: 'DNS+TCP IP', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // HUMR — Human rights
+  { id: 16, batch_id: 'mock-batch', site: 'VE Sin Filtro', domain: 'vesinfiltro.com', category: 'HUMR', cantv: 'DNS', movistar: 'HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 17, batch_id: 'mock-batch', site: 'IPYS Venezuela', domain: 'ipysvenezuela.org', category: 'HUMR', cantv: 'DNS', movistar: 'HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 18, batch_id: 'mock-batch', site: 'Change.org', domain: 'www.change.org', category: 'HUMR', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // GRP — Social media
+  { id: 19, batch_id: 'mock-batch', site: 'X', domain: 'x.com', category: 'GRP', cantv: 'DNS+HTTP/HTTPS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 20, batch_id: 'mock-batch', site: 'X', domain: 'twitter.com', category: 'GRP', cantv: 'DNS+HTTP/HTTPS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // COMM — Commerce / streaming
+  { id: 21, batch_id: 'mock-batch', site: 'Airtm', domain: 'airtm.com', category: 'COMM', cantv: 'DNS', movistar: 'DNS', digitel: 'DNS', inter: 'ok', netuno: 'DNS', airtek: 'ok', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 22, batch_id: 'mock-batch', site: 'Signal', domain: 'signal.org', category: 'COMT', cantv: 'DNS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'DNS', uploaded_at: '2026-03-01T00:00:00Z' },
+
+  // ECON — Economy / finance
+  { id: 23, batch_id: 'mock-batch', site: 'Monitor Dolar Venezuela', domain: 'monitordolarvenezuela.com', category: 'ECON', cantv: 'DNS+TCP IP', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'DNS+TCP IP', g_network: 'DNS+TCP IP', uploaded_at: '2026-03-01T00:00:00Z' },
+  { id: 24, batch_id: 'mock-batch', site: 'Yadio', domain: 'yadio.io', category: 'ECON', cantv: 'DNS+HTTPS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
 ]

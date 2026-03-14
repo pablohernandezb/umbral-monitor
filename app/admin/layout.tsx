@@ -99,6 +99,18 @@ export default async function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/blocking"
+              className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+                <span className="font-medium">Domain Blocking</span>
+              </div>
+            </Link>
+
+            <Link
               href="/admin/participate"
               className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
             >

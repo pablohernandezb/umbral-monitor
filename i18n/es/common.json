@@ -778,6 +778,66 @@
       "embassyReopens": "¿Reabrirá la embajada de EE.UU. en Venezuela antes del 31 de marzo?"
     }
   },
+  "connectivity": {
+    "sectionTitle": "Internet y conectividad",
+    "tabs": {
+      "connectivity": "Conectividad de internet",
+      "blocking": "Bloqueo de dominios"
+    }
+  },
+  "blocking": {
+    "title": "Monitor de bloqueo de dominios",
+    "subtitle": "Censura por proveedor de internet en Venezuela",
+    "providers": "Bloqueo por proveedor",
+    "categories": "Categorías de dominio",
+    "methods": "Métodos de bloqueo detectados",
+    "details": "Detalles de dominio",
+    "accessible": "Accesible",
+    "clearFilters": "Limpiar filtros",
+    "filtered": "Filtrado",
+    "showingAll": "Mostrando {count} dominios",
+    "domainsTestedLabel": "Dominios evaluados",
+    "blockedLabel": "Bloqueados al menos una vez",
+    "blockingRateLabel": "Tasa de bloqueo",
+    "providersLabel": "Proveedores monitoreados",
+    "cat": {
+      "NEWS": "Noticias",
+      "ANON": "Anonimización",
+      "COMM": "Comercio",
+      "POLR": "Política",
+      "HUMR": "DDHH",
+      "GRP": "Redes sociales",
+      "PORN": "Adultos",
+      "ECON": "Economía",
+      "MMED": "Multimedia",
+      "COMT": "Comunicación",
+      "PUBH": "Salud",
+      "HATE": "Odio"
+    },
+    "blockType": {
+      "DNS": "Envenenamiento DNS",
+      "TCP IP": "Bloqueo TCP/IP",
+      "HTTP/HTTPS": "Filtrado HTTP/HTTPS",
+      "ok": "Accesible"
+    },
+    "admin": {
+      "title": "Gestión de bloqueo de dominios",
+      "uploadTitle": "Subir nuevo CSV",
+      "uploadDesc": "El CSV debe tener encabezados: site, domain, category, CANTV, Movistar, Digitel, Inter, Netuno, Airtek, G-Network",
+      "batchLabel": "Etiqueta del lote (opcional)",
+      "chooseFile": "Seleccionar archivo CSV...",
+      "upload": "Subir",
+      "uploading": "Subiendo...",
+      "batchHistory": "Historial de lotes",
+      "noBatches": "No se han subido lotes aún.",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "delete": "Eliminar",
+      "preview": "Vista previa (primeras 10 filas)"
+    }
+  },
   "gdelt": {
     "title": "PANEL DE SEÑALES GDELT",
     "subtitle": "Señales mediáticas en tiempo real del Proyecto GDELT monitoreando la cobertura sobre Venezuela",

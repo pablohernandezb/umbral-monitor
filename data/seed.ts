@@ -27,6 +27,7 @@ import {
   mockDEEDEvents,
   mockReadingRoom,
   mockHistoricalEpisodes,
+  mockBlockedDomains,
 } from './mock'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -287,7 +288,111 @@ async function seed() {
     console.log('  ✅ Public submissions seeded successfully')
   }
 
+  // Seed blocked domains
+  await seedBlockedDomains(supabase)
+
   console.log('\n✨ Database seeding complete!')
+}
+
+async function seedBlockedDomains(supabase: any) {
+  console.log('🔒 Seeding blocked domains...')
+
+  const fs = await import('fs')
+  const path = await import('path')
+
+  const csvPath = path.join(process.cwd(), 'data', 'blocking-data.csv')
+  if (!fs.existsSync(csvPath)) {
+    console.warn('  ⚠️  blocking-data.csv not found in data/ — using mock data instead')
+
+    // Fall back to mock data
+    await supabase.from('blocked_domains').delete().neq('id', 0)
+    await supabase.from('blocked_domains_batches').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+
+    const { data: batch, error: batchError } = await supabase
+      .from('blocked_domains_batches')
+      .insert({
+        label: 'Mock seed data',
+        source_file: 'mock',
+        row_count: mockBlockedDomains.length,
+        is_active: true,
+      })
+      .select('id')
+      .single()
+
+    if (batchError || !batch) {
+      console.error('  ❌ Error creating batch:', batchError?.message)
+      return
+    }
+
+    const chunk = mockBlockedDomains.map((d) => ({ ...d, batch_id: batch.id }))
+    const { error } = await supabase.from('blocked_domains').insert(chunk)
+    if (error) {
+      console.error('  ❌ Error inserting mock domains:', error.message)
+    } else {
+      console.log(`  ✅ ${mockBlockedDomains.length} mock blocked domains seeded`)
+    }
+    return
+  }
+
+  const csvText = fs.readFileSync(csvPath, 'utf-8')
+  const lines = csvText.trim().split('\n')
+  const headers = lines[0].split(',').map((h: string) => h.trim())
+
+  const rows = lines.slice(1).map((line: string) => {
+    const vals = line.split(',')
+    const row: Record<string, string> = {}
+    headers.forEach((h: string, i: number) => {
+      row[h] = vals[i]?.trim() || 'ok'
+    })
+    return row
+  })
+
+  await supabase.from('blocked_domains').delete().neq('id', 0)
+  await supabase.from('blocked_domains_batches').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+
+  const { data: batch, error: batchError } = await supabase
+    .from('blocked_domains_batches')
+    .insert({
+      label: 'Initial seed data',
+      source_file: 'blocking-data.csv',
+      row_count: rows.length,
+      is_active: true,
+    })
+    .select('id')
+    .single()
+
+  if (batchError || !batch) {
+    console.error('  ❌ Error creating batch:', batchError?.message)
+    return
+  }
+
+  const CHUNK_SIZE = 50
+  let inserted = 0
+
+  for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
+    const chunk = rows.slice(i, i + CHUNK_SIZE).map((r: Record<string, string>) => ({
+      batch_id: batch.id,
+      site: r.site,
+      domain: r.domain,
+      category: r.category,
+      cantv: r.CANTV || 'ok',
+      movistar: r.Movistar || 'ok',
+      digitel: r.Digitel || 'ok',
+      inter: r.Inter || 'ok',
+      netuno: r.Netuno || 'ok',
+      airtek: r.Airtek || 'ok',
+      g_network: r['G-Network'] || 'ok',
+    }))
+
+    const { error } = await supabase.from('blocked_domains').insert(chunk)
+    if (error) {
+      console.error(`  ❌ Chunk error at ${i}:`, error.message)
+    } else {
+      inserted += chunk.length
+    }
+  }
+
+  console.log(`  ✅ ${inserted}/${rows.length} blocked domains seeded`)
 }
 
 seed().catch(console.error)
