@@ -14,6 +14,8 @@ import type {
   ExpertSubmission,
   PublicSubmission,
   ApiResponse,
+  BlockedDomain,
+  BlockedDomainBatch,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 
@@ -30,6 +32,7 @@ import {
   mockHistoricalEpisodes,
   mockFactCheckTweets,
   mockGdeltEvents,
+  mockBlockedDomains,
 } from '@/data/mock'
 
 // ============================================================
@@ -1010,5 +1013,116 @@ export async function deleteGdeltEvent(id: string): Promise<ApiResponse<null>> {
   return {
     data: null,
     error: error?.message || null,
+  }
+}
+
+// ============================================================
+// DOMAIN BLOCKING
+// ============================================================
+
+/**
+ * Fetch all blocked domains from the currently active batch.
+ * Falls back to mock data when IS_MOCK_MODE is true.
+ */
+export async function getBlockedDomains(): Promise<ApiResponse<BlockedDomain[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: mockBlockedDomains as BlockedDomain[], error: null }
+  }
+
+  try {
+    // Get the currently active batch
+    const { data: batch, error: batchError } = await supabase
+      .from('blocked_domains_batches')
+      .select('id')
+      .eq('is_active', true)
+      .order('uploaded_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (batchError || !batch) {
+      return { data: [], error: null }
+    }
+
+    // Fetch all rows for the active batch
+    const { data, error } = await supabase
+      .from('blocked_domains')
+      .select('*')
+      .eq('batch_id', batch.id)
+      .order('category')
+      .order('site')
+
+    return { data: (data as BlockedDomain[]) ?? [], error: error?.message || null }
+  } catch (err: any) {
+    return { data: [], error: err.message }
+  }
+}
+
+/**
+ * Get all batch metadata (for admin page).
+ */
+export async function getBlockedDomainBatches(): Promise<ApiResponse<BlockedDomainBatch[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return {
+      data: [
+        {
+          id: 'mock-batch',
+          label: 'Mock data',
+          source_file: 'blocking-data.csv',
+          row_count: mockBlockedDomains.length,
+          is_active: true,
+          uploaded_at: '2026-03-01T00:00:00Z',
+        },
+      ] as BlockedDomainBatch[],
+      error: null,
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('blocked_domains_batches')
+    .select('*')
+    .order('uploaded_at', { ascending: false })
+
+  return { data: (data as BlockedDomainBatch[]) ?? [], error: error?.message || null }
+}
+
+/**
+ * Get blocking summary metrics for the active batch.
+ */
+export async function getBlockingSummary(): Promise<
+  ApiResponse<{
+    totalDomains: number
+    blockedDomains: number
+    blockingRate: number
+    categoryCounts: Record<string, number>
+  }>
+> {
+  const { data: domains, error } = await getBlockedDomains()
+
+  if (error || !domains) {
+    return {
+      data: { totalDomains: 0, blockedDomains: 0, blockingRate: 0, categoryCounts: {} },
+      error,
+    }
+  }
+
+  const providers = ['cantv', 'movistar', 'digitel', 'inter', 'netuno', 'airtek', 'g_network']
+
+  const blocked = domains.filter((d) =>
+    providers.some((p) => (d as any)[p] !== 'ok')
+  ).length
+
+  const categoryCounts: Record<string, number> = {}
+  domains.forEach((d) => {
+    categoryCounts[d.category] = (categoryCounts[d.category] || 0) + 1
+  })
+
+  return {
+    data: {
+      totalDomains: domains.length,
+      blockedDomains: blocked,
+      blockingRate: domains.length > 0 ? Math.round((blocked / domains.length) * 100) : 0,
+      categoryCounts,
+    },
+    error: null,
   }
 }
