@@ -36,20 +36,17 @@ export default function BlockTypeDonut({
     filtered.forEach((d) => {
       PROVIDERS.forEach((p) => {
         const value = getProviderValue(d, p);
-        if (value === 'ok') {
-          counts['ok'] = (counts['ok'] || 0) + 1;
-          return;
-        }
+        if (value === 'ok') return;
         normalizeBlockTypes(value).forEach((bt) => {
-          counts[bt] = (counts[bt] || 0) + 1;
+          if (bt !== 'ok') counts[bt] = (counts[bt] || 0) + 1;
         });
       });
     });
 
-    return BLOCK_TYPES.filter((bt) => counts[bt])
+    return BLOCK_TYPES.filter((bt) => bt !== 'ok' && counts[bt])
       .map((bt) => ({
         name: bt,
-        label: bt === 'ok' ? t('blocking.accessible') : bt,
+        label: bt,
         value: counts[bt] || 0,
       }));
   }, [data, activeCategory, t]);
