@@ -878,7 +878,9 @@ export default function LandingPage() {
                     value: Math.abs(prisonerStats.total_count - prevPrisonerStats.total_count),
                     direction: prisonerStats.total_count < prevPrisonerStats.total_count ? 'down' : prisonerStats.total_count > prevPrisonerStats.total_count ? 'up' : 'neutral',
                     label: (() => {
-                      const [, month, day] = prevPrisonerStats.date.split('-').map(Number)
+                      const dateStr = prevPrisonerStats.date ?? (prevPrisonerStats as unknown as Record<string, string>)['data_date']
+                      if (!dateStr) return ''
+                      const [, month, day] = dateStr.split('-').map(Number)
                       const d = new Date(Date.UTC(2000, month - 1, day))
                       if (locale === 'es') {
                         return `(Desde el ${day} de ${d.toLocaleString('es', { month: 'long', timeZone: 'UTC' })})`
