@@ -134,7 +134,8 @@
       "academic": "Fuentes Académicas",
       "media": "Medios",
       "humanRights": "Derechos Humanos",
-      "factChecking": "Verificadores de datos"
+      "factChecking": "Verificadores de datos",
+      "government": "Fuentes gubernamentales"
     },
     "allies": {
       "title": "Aliados",
@@ -794,6 +795,8 @@
     "details": "Detalles de dominio",
     "accessible": "Accesible",
     "clearFilters": "Limpiar filtros",
+    "pause": "Pausar",
+    "resume": "Reanudar",
     "viewPage": "Ver página",
     "filtered": "Filtrado",
     "showingAll": "Mostrando {count} dominios",

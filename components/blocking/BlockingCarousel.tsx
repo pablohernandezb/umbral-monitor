@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Pause, Play, BrushCleaning } from 'lucide-react';
 import { useTranslation } from '@/i18n';
 import {
   PROVIDERS,
@@ -29,7 +30,6 @@ function statusColorClass(value: string): string {
 function DomainCard({ d, t }: { d: Record<string, string>; t: (k: string) => string }) {
   return (
     <div className="rounded-md border border-white/5 bg-[#0a0a0b] p-2.5 hover:border-teal-500/30 transition-colors relative flex-shrink-0 w-full">
-      {/* View page button */}
       <a
         href={`https://${d.domain}`}
         target="_blank"
@@ -42,18 +42,8 @@ function DomainCard({ d, t }: { d: Record<string, string>; t: (k: string) => str
         </svg>
         {t('blocking.viewPage')}
       </a>
-
-      {/* Site name */}
-      <div className="font-display text-[13px] font-medium text-zinc-200 pr-20">
-        {d.site}
-      </div>
-
-      {/* Domain */}
-      <div className="font-mono text-[11px] text-teal-400 mt-0.5 mb-2 break-all">
-        {d.domain}
-      </div>
-
-      {/* Category pill */}
+      <div className="font-display text-[13px] font-medium text-zinc-200 pr-20">{d.site}</div>
+      <div className="font-mono text-[11px] text-teal-400 mt-0.5 mb-2 break-all">{d.domain}</div>
       <span
         className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded mb-2"
         style={{
@@ -63,8 +53,6 @@ function DomainCard({ d, t }: { d: Record<string, string>; t: (k: string) => str
       >
         {t(`blocking.cat.${d.category}`)}
       </span>
-
-      {/* Provider grid */}
       <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px]">
         {PROVIDERS.map((p) => {
           const val = getProviderValue(d, p);
@@ -82,6 +70,7 @@ function DomainCard({ d, t }: { d: Record<string, string>; t: (k: string) => str
 
 export default function BlockingCarousel({ data, filterLabel, hasFilters, onClearFilters }: Props) {
   const { t } = useTranslation();
+  const [isPaused, setIsPaused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   if (data.length === 0) {
@@ -94,9 +83,10 @@ export default function BlockingCarousel({ data, filterLabel, hasFilters, onClea
           {hasFilters && (
             <button
               onClick={onClearFilters}
-              className="px-2.5 py-0.5 rounded-full font-display text-[10px] font-medium tracking-wide border border-zinc-600/50 text-zinc-400 hover:border-teal-500/50 hover:text-teal-300 hover:bg-teal-500/10 transition-all"
+              title={t('blocking.clearFilters')}
+              className="flex items-center px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 hover:border-teal-500/50 hover:text-teal-300 hover:bg-teal-500/10 transition-colors"
             >
-              {t('blocking.clearFilters')}
+              <BrushCleaning className="w-3 h-3" />
             </button>
           )}
         </div>
@@ -108,9 +98,7 @@ export default function BlockingCarousel({ data, filterLabel, hasFilters, onClea
     );
   }
 
-  // Duplicate for seamless infinite loop (same as FactCheckingFeed)
   const doubled = [...data, ...data];
-  // 2s per card matches FactCheckingFeed's effective scroll speed (60s / 30 cards)
   const duration = data.length * 2;
 
   return (
@@ -119,21 +107,36 @@ export default function BlockingCarousel({ data, filterLabel, hasFilters, onClea
         <h3 className="font-display text-xs font-medium uppercase tracking-widest text-teal-400">
           {t('blocking.details')}
         </h3>
-        {hasFilters && (
+        <div className="flex items-center gap-1.5">
           <button
-            onClick={onClearFilters}
-            title="Clear filters"
-            className="px-2.5 py-0.5 rounded-full font-display text-[10px] font-medium tracking-wide border border-zinc-700 text-zinc-400 hover:border-teal-500/50 hover:text-teal-300 hover:bg-teal-500/10 transition-all"
+            onClick={() => setIsPaused(v => !v)}
+            className={[
+              'flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-mono font-medium transition-colors',
+              isPaused
+                ? 'border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                : isHovered
+                ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                : 'border-teal-500/30 bg-teal-500/10 text-teal-400 hover:bg-teal-500/20',
+            ].join(' ')}
           >
-            {t('blocking.clearFilters')}
+            {isPaused ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
+            {isPaused ? t('blocking.resume') : t('blocking.pause')}
           </button>
-        )}
+          {hasFilters && (
+            <button
+              onClick={onClearFilters}
+              title={t('blocking.clearFilters')}
+              className="flex items-center px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 hover:border-teal-500/50 hover:text-teal-300 hover:bg-teal-500/10 transition-colors"
+            >
+              <BrushCleaning className="w-3 h-3" />
+            </button>
+          )}
+        </div>
       </div>
       <p className="text-[11px] text-zinc-500 mb-3 min-h-[16px] flex-shrink-0">
         {filterLabel}
       </p>
 
-      {/* Scrolling feed — overflow hidden so cards disappear at edges */}
       <div
         className="flex-1 overflow-hidden relative"
         onMouseEnter={() => setIsHovered(true)}
@@ -151,7 +154,7 @@ export default function BlockingCarousel({ data, filterLabel, hasFilters, onClea
             animationDuration: `${duration}s`,
             animationTimingFunction: 'linear',
             animationIterationCount: 'infinite',
-            animationPlayState: isHovered ? 'paused' : 'running',
+            animationPlayState: isPaused || isHovered ? 'paused' : 'running',
           }}
         >
           {doubled.map((d, i) => (

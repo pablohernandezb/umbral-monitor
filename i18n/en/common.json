@@ -134,7 +134,8 @@
       "academic": "Academic Sources",
       "media": "Media",
       "humanRights": "Human Rights",
-      "factChecking": "Fact-Checking"
+      "factChecking": "Fact-Checking",
+      "government": "Government Sources"
     },
     "allies": {
       "title": "Allies",
@@ -794,6 +795,8 @@
     "details": "Domain details",
     "accessible": "Accessible",
     "clearFilters": "Clear filters",
+    "pause": "Pause",
+    "resume": "Resume",
     "viewPage": "View page",
     "filtered": "Filtered",
     "showingAll": "Showing {count} domains",

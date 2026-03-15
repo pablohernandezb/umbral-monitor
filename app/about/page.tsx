@@ -15,7 +15,8 @@ import {
   Brain,
   Mail,
   Globe as Website,
-  SearchCheck
+  SearchCheck,
+  Landmark
 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from '@/i18n'
@@ -112,7 +113,7 @@ const humanRightsSources = [
   { name: 'Realidad Helicoide', url: 'https://vocesdelamemoriainc.org/' },
   { name: 'Transparencia Venezuela', url: 'https://transparenciave.org/' },
   { name: 'UN Fact-Finding Mission', url: 'https://www.ohchr.org/en/hr-bodies/hrc/ffmv/index' },
-  { name: 'VE sin Filtro', url: 'https://vesinfiltro.org/' },
+  { name: 'VE Sin Filtro', url: 'https://vesinfiltro.org/' },
   { name: 'WOLA (Washington Office on Latin America)', url: 'https://www.wola.org/region/venezuela/' }
 ]
 
@@ -120,6 +121,10 @@ const factcheckingSources = [
   { name: 'Cazadores de Fake News', url: 'https://cazadoresdefakenews.info' },
   { name: 'Cotejo.info', url: 'https://cotejo.info' },
   { name: 'Factchequeado', url: 'https://factchequeado.com' }
+]
+
+const govtSources = [
+  { name: 'Imprenta Nacional', nameEn: 'National Printing Office', url: 'https://gacetaoficial.gob.ve/' }
 ]
 
 export default function AboutPage() {
@@ -488,6 +493,31 @@ export default function AboutPage() {
                   </div>
                 </div>
               </motion.div>
+
+              {/* Government Sources */}
+              <motion.div variants={fadeInUp}>
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Landmark className="w-5 h-5 text-signal-blue" />
+                  {t('about.sources.government')}
+                </h3>
+                <div className="card p-5">
+                  <div className="flex flex-wrap gap-3">
+                    {govtSources.map((source) => (
+                      <a
+                        key={source.name}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-umbral-ash rounded-md text-sm text-umbral-light hover:text-signal-teal hover:bg-umbral-slate transition-colors"
+                      >
+                        {locale === 'en' ? source.nameEn : source.name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
             </div>
           </motion.div>
         </div>

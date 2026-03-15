@@ -73,8 +73,8 @@ export function GdeltDashboard() {
       ? ((recentAvg - baselineAvg) / baselineAvg) * 100
       : null
 
-    const latestPoint = data[data.length - 1]
-    const currentTone = latestPoint?.tone ?? null
+    const lastWithTone = [...data].reverse().find(d => d.tone !== null)
+    const currentTone = lastWithTone?.tone ?? null
 
     // Composite phase from recent data (last 14 points)
     // Normalize each signal to 0–1 pressure scale, then average
