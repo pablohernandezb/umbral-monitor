@@ -63,6 +63,7 @@ import {
   getSubmissionAverages,
   getLatestStarSnapshot,
   getBlockedDomains,
+  getPreviousPrisonerStats,
 } from '@/lib/data'
 import type { SubmissionAverages, StarVotingResults } from '@/lib/data'
 import type { BlockedDomain } from '@/types'
@@ -109,6 +110,7 @@ export default function LandingPage() {
   const [historicalEpisodes, setHistoricalEpisodes] = useState<HistoricalEpisode[]>([])
   const [news, setNews] = useState<NewsItem[]>([])
   const [prisonerStats, setPrisonerStats] = useState<PoliticalPrisoner | null>(null)
+  const [prevPrisonerStats, setPrevPrisonerStats] = useState<PoliticalPrisoner | null>(null)
   const [prisonersByOrg, setPrisonersByOrg] = useState<PrisonerByOrganization[]>([])
   const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
   const [starResults, setStarResults] = useState<StarVotingResults | null>(null)
@@ -132,6 +134,7 @@ export default function LandingPage() {
           episodesRes,
           newsRes,
           prisonersRes,
+          prevPrisonersRes,
           prisonersByOrgRes,
           submissionAvgsRes,
           starRes,
@@ -142,6 +145,7 @@ export default function LandingPage() {
           getHistoricalEpisodes(),
           getNewsFeed(500),
           getLatestPrisonerStats(),
+          getPreviousPrisonerStats(),
           getPrisonersByOrganization(),
           getSubmissionAverages(),
           getLatestStarSnapshot(),
@@ -168,6 +172,7 @@ export default function LandingPage() {
           setNews(Array.from(latestBySource.values()))
         }
         if (prisonersRes.status === 'fulfilled' && prisonersRes.value.data) setPrisonerStats(prisonersRes.value.data)
+        if (prevPrisonersRes.status === 'fulfilled' && prevPrisonersRes.value.data) setPrevPrisonerStats(prevPrisonersRes.value.data)
         if (prisonersByOrgRes.status === 'fulfilled' && prisonersByOrgRes.value.data) setPrisonersByOrg(prisonersByOrgRes.value.data)
         if (submissionAvgsRes.status === 'fulfilled' && submissionAvgsRes.value.data) setSubmissionAvgs(submissionAvgsRes.value.data)
         if (starRes.status === 'fulfilled' && starRes.value.data) setStarResults(starRes.value.data)
@@ -869,7 +874,18 @@ export default function LandingPage() {
                 <MetricCard
                   label={t('landing.prisoners.total')}
                   value={prisonerStats?.total_count || 526}
-                  trend={{ value: 42, direction: 'down', label: t('landing.prisoners.excarcelation_date') }}
+                  trend={prisonerStats && prevPrisonerStats ? {
+                    value: Math.abs(prisonerStats.total_count - prevPrisonerStats.total_count),
+                    direction: prisonerStats.total_count < prevPrisonerStats.total_count ? 'down' : prisonerStats.total_count > prevPrisonerStats.total_count ? 'up' : 'neutral',
+                    label: (() => {
+                      const [, month, day] = prevPrisonerStats.date.split('-').map(Number)
+                      const d = new Date(Date.UTC(2000, month - 1, day))
+                      if (locale === 'es') {
+                        return `(Desde el ${day} de ${d.toLocaleString('es', { month: 'long', timeZone: 'UTC' })})`
+                      }
+                      return `(Since ${d.toLocaleString('en', { month: 'long', timeZone: 'UTC' })}, ${day})`
+                    })(),
+                  } : undefined}
                   size="large"
                 />
               </motion.div>

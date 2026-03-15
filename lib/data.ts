@@ -161,6 +161,24 @@ export async function getLatestPrisonerStats(): Promise<ApiResponse<PoliticalPri
   }
 }
 
+export async function getPreviousPrisonerStats(): Promise<ApiResponse<PoliticalPrisoner>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: null, error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('political_prisoners')
+    .select('*')
+    .order('data_date', { ascending: false })
+    .range(1, 1)
+    .single()
+
+  return {
+    data: data as PoliticalPrisoner | null,
+    error: error?.message || null,
+  }
+}
+
 export async function getPrisonersByOrganization(): Promise<ApiResponse<PrisonerByOrganization[]>> {
   if (IS_MOCK_MODE || !supabase) {
     return { data: mockPrisonersByOrg, error: null }
