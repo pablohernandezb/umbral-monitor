@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { CookieConsentProvider } from '@/lib/cookie-consent'
 import CookieBanner from '@/components/CookieBanner'
+import ScrollToTop from '@/components/ui/ScrollToTop'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -100,6 +101,7 @@ export default function RootLayout({
                 </main>
                 <Footer />
               </div>
+              <ScrollToTop />
             </I18nProvider>
           </Suspense>
         </CookieConsentProvider>

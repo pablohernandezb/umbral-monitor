@@ -151,18 +151,22 @@ export default function BlockingDashboard({
             onBlockTypeClick={(bt) => toggleFilter('blockType', bt)}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3" style={{ height: '360px' }}>
-            <CategoryDonut
-              data={data as any[]}
-              activeCategory={filters.category}
-              onCategoryClick={(c) => toggleFilter('category', c)}
-            />
-            <BlockTypeDonut
-              data={data as any[]}
-              activeBlockType={filters.blockType}
-              activeCategory={filters.category}
-              onBlockTypeClick={(bt) => toggleFilter('blockType', bt)}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="h-[380px] md:h-[360px]">
+              <CategoryDonut
+                data={data as any[]}
+                activeCategory={filters.category}
+                onCategoryClick={(c) => toggleFilter('category', c)}
+              />
+            </div>
+            <div className="h-[320px] md:h-[360px]">
+              <BlockTypeDonut
+                data={data as any[]}
+                activeBlockType={filters.blockType}
+                activeCategory={filters.category}
+                onBlockTypeClick={(bt) => toggleFilter('blockType', bt)}
+              />
+            </div>
           </div>
         </div>
 
@@ -181,7 +185,7 @@ export default function BlockingDashboard({
         </div>
 
         {/* Mobile-only carousel (normal flow) */}
-        <div className="lg:hidden">
+        <div className="lg:hidden h-[420px]">
           <BlockingCarousel
             data={filteredData as any[]}
             filterLabel={
