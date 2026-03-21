@@ -269,3 +269,56 @@ export type BlockingCategory =
   | 'NEWS' | 'ANON' | 'COMM' | 'POLR' | 'HUMR'
   | 'GRP'  | 'PORN' | 'ECON' | 'MMED' | 'COMT'
   | 'PUBH' | 'HATE';
+
+// ─── Gaceta Oficial ────────────────────────────────────────────
+
+export type GacetaChangeLabel =
+  | 'Designación'
+  | 'Jubilación'
+  | 'Traslado'
+  | 'Supresión'
+  | 'Reorganización'
+  | 'Revocación'
+  | 'Ley'
+  | 'Autorización'
+  | 'Otro'
+
+export interface GacetaRecord {
+  id: number
+  batch_id: string
+  gazette_number: number
+  gazette_type: string
+  gazette_date: string              // 'YYYY-MM-DD'
+  decree_number: string | null
+  change_type: string
+  change_label: GacetaChangeLabel
+  person_name: string | null
+  post_or_position: string | null
+  institution: string | null
+  organism: string | null
+  is_military_person: boolean
+  military_rank: string | null
+  is_military_post: boolean
+  summary: string | null
+  uploaded_at: string
+}
+
+export interface GacetaBatch {
+  id: string
+  label: string | null
+  source_file: string | null
+  row_count: number
+  is_active: boolean
+  uploaded_at: string
+}
+
+export interface GacetaSummary {
+  totalChanges: number
+  designations: number
+  militaryPersons: number
+  militaryPosts: number
+  militaryPct: number
+  changesByLabel: Record<GacetaChangeLabel, number>
+  byOrganism: { organism: string; count: number }[]
+  byWeek: { week: string; label: string; count: number }[]
+}

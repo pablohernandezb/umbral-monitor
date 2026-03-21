@@ -28,7 +28,9 @@ import {
   mockReadingRoom,
   mockHistoricalEpisodes,
   mockBlockedDomains,
+  mockGacetaRecords,
 } from './mock'
+import { getLabelForChangeType } from '../components/gaceta/gaceta-utils'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -291,6 +293,9 @@ async function seed() {
   // Seed blocked domains
   await seedBlockedDomains(supabase)
 
+  // Seed gazette records
+  await seedGaceta(supabase)
+
   console.log('\n✨ Database seeding complete!')
 }
 
@@ -393,6 +398,153 @@ async function seedBlockedDomains(supabase: any) {
   }
 
   console.log(`  ✅ ${inserted}/${rows.length} blocked domains seeded`)
+}
+
+async function seedGaceta(supabase: any) {
+  console.log('📜 Seeding Gaceta Oficial records...')
+
+  const fs = await import('fs')
+  const path = await import('path')
+
+  const csvPath = path.join(process.cwd(), 'others', 'new_features', 'gacetadashboard', 'cambios_gobierno_2026.csv')
+  if (!fs.existsSync(csvPath)) {
+    console.warn('  ⚠️  cambios_gobierno_2026.csv not found — using mock data instead')
+
+    const { data: batch, error: batchError } = await supabase
+      .from('gazette_batches')
+      .insert({ label: 'Mock seed data', source_file: 'mock', row_count: mockGacetaRecords.length, is_active: true })
+      .select('id')
+      .single()
+
+    if (batchError || !batch) {
+      console.error('  ❌ Error creating batch:', batchError?.message)
+      return
+    }
+
+    const rows = mockGacetaRecords.map((r) => ({ ...r, id: undefined, batch_id: batch.id }))
+    const { error } = await supabase.from('gazette_records').insert(rows)
+    if (error) {
+      console.error('  ❌ Error inserting mock records:', error.message)
+    } else {
+      console.log(`  ✅ ${rows.length} mock gazette records seeded`)
+    }
+    return
+  }
+
+  // RFC 4180 CSV parser — handles quoted fields with embedded commas
+  function parseCSV(text: string): Record<string, string>[] {
+    // Strip UTF-8 BOM
+    const cleaned = text.replace(/^\uFEFF/, '')
+    const lines: string[] = []
+    let current = ''
+    let inQuotes = false
+
+    for (let i = 0; i < cleaned.length; i++) {
+      const ch = cleaned[i]
+      if (ch === '"') {
+        if (inQuotes && cleaned[i + 1] === '"') {
+          current += '"'
+          i++
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (ch === '\n' && !inQuotes) {
+        lines.push(current)
+        current = ''
+      } else if (ch === '\r' && !inQuotes) {
+        // skip CR
+      } else {
+        current += ch
+      }
+    }
+    if (current) lines.push(current)
+
+    if (lines.length < 2) return []
+
+    function splitLine(line: string): string[] {
+      const fields: string[] = []
+      let field = ''
+      let inQ = false
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i]
+        if (ch === '"') {
+          if (inQ && line[i + 1] === '"') {
+            field += '"'
+            i++
+          } else {
+            inQ = !inQ
+          }
+        } else if (ch === ',' && !inQ) {
+          fields.push(field)
+          field = ''
+        } else {
+          field += ch
+        }
+      }
+      fields.push(field)
+      return fields
+    }
+
+    const headers = splitLine(lines[0])
+    return lines.slice(1).filter((l) => l.trim()).map((line) => {
+      const vals = splitLine(line)
+      const row: Record<string, string> = {}
+      headers.forEach((h, i) => { row[h.trim()] = vals[i]?.trim() ?? '' })
+      return row
+    })
+  }
+
+  const csvText = fs.readFileSync(csvPath, 'utf-8')
+  const rows = parseCSV(csvText)
+
+  // Create batch
+  const { data: batch, error: batchError } = await supabase
+    .from('gazette_batches')
+    .insert({
+      label: 'Enero–Marzo 2026',
+      source_file: 'cambios_gobierno_2026.csv',
+      row_count: rows.length,
+      is_active: true,
+    })
+    .select('id')
+    .single()
+
+  if (batchError || !batch) {
+    console.error('  ❌ Error creating gazette batch:', batchError?.message)
+    return
+  }
+
+  const CHUNK_SIZE = 100
+  let inserted = 0
+
+  for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
+    const chunk = rows.slice(i, i + CHUNK_SIZE).map((r) => ({
+      batch_id: batch.id,
+      gazette_number: parseInt(r.gazette_number) || 0,
+      gazette_type: r.gazette_type || 'Ordinaria',
+      gazette_date: r.gazette_date,
+      decree_number: r.decree_number || null,
+      change_type: r.change_type,
+      change_label: getLabelForChangeType(r.change_type),
+      person_name: r.person_name || null,
+      post_or_position: r.post_or_position || null,
+      institution: r.institution || null,
+      organism: r.organism || null,
+      is_military_person: r.is_military_person?.toUpperCase() === 'SI',
+      military_rank: r.military_rank || null,
+      is_military_post: r.is_military_post?.toUpperCase() === 'SI',
+      summary: r.summary || null,
+    }))
+
+    const { error } = await supabase.from('gazette_records').insert(chunk)
+    if (error) {
+      console.error(`  ❌ Chunk error at ${i}:`, error.message)
+    } else {
+      inserted += chunk.length
+    }
+  }
+
+  console.log(`  ✅ ${inserted}/${rows.length} gazette records seeded`)
 }
 
 seed().catch(console.error)

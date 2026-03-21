@@ -51,6 +51,7 @@ import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
 import { StarVotingConsensus } from '@/components/ui/StarVotingConsensus'
 import ConnectivitySection from '@/components/connectivity/ConnectivitySection'
+import GacetaDashboard from '@/components/gaceta/GacetaDashboard'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
 import { getScenarioTimeline } from '@/data/scenario-phases'
 import {
@@ -64,9 +65,10 @@ import {
   getLatestStarSnapshot,
   getBlockedDomains,
   getPreviousPrisonerStats,
+  getGacetaRecords,
 } from '@/lib/data'
 import type { SubmissionAverages, StarVotingResults } from '@/lib/data'
-import type { BlockedDomain } from '@/types'
+import type { BlockedDomain, GacetaRecord } from '@/types'
 import { voteForScenario } from '@/app/actions/news-votes'
 import { daysSince, cn } from '@/lib/utils'
 import type { 
@@ -115,6 +117,7 @@ export default function LandingPage() {
   const [submissionAvgs, setSubmissionAvgs] = useState<SubmissionAverages | null>(null)
   const [starResults, setStarResults] = useState<StarVotingResults | null>(null)
   const [blockingData, setBlockingData] = useState<BlockedDomain[]>([])
+  const [gacetaRecords, setGacetaRecords] = useState<GacetaRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
   const [showTrajectoryPanel, setShowTrajectoryPanel] = useState(false)
@@ -139,6 +142,7 @@ export default function LandingPage() {
           submissionAvgsRes,
           starRes,
           blockingRes,
+          gacetaRes,
         ] = await Promise.allSettled([
           getScenarios(),
           getRegimeHistory(),
@@ -150,6 +154,7 @@ export default function LandingPage() {
           getSubmissionAverages(),
           getLatestStarSnapshot(),
           getBlockedDomains(),
+          getGacetaRecords(),
         ])
 
         if (scenariosRes.status === 'fulfilled' && scenariosRes.value.data) {
@@ -177,6 +182,7 @@ export default function LandingPage() {
         if (submissionAvgsRes.status === 'fulfilled' && submissionAvgsRes.value.data) setSubmissionAvgs(submissionAvgsRes.value.data)
         if (starRes.status === 'fulfilled' && starRes.value.data) setStarResults(starRes.value.data)
         if (blockingRes.status === 'fulfilled' && blockingRes.value.data) setBlockingData(blockingRes.value.data)
+        if (gacetaRes.status === 'fulfilled' && gacetaRes.value.data) setGacetaRecords(gacetaRes.value.data)
       } catch (error) {
         console.error('Failed to load data:', error)
       } finally {
@@ -656,6 +662,26 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+          </motion.div>
+
+          {/* Gaceta Oficial */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeInUp}
+            className="mt-16"
+          >
+            <div className="text-center mb-8">
+              <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-signal-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {t('gaceta.sectionTitle')}
+              </h2>
+              <p className="section-subtitle mx-auto">{t('gaceta.sectionSubtitle')}</p>
+            </div>
+            <GacetaDashboard records={gacetaRecords} />
           </motion.div>
 
           {/* Historical episodes */}

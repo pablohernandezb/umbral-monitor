@@ -10,6 +10,8 @@ import type {
   HistoricalEpisode,
   FactCheckTweet,
   BlockedDomain,
+  GacetaRecord,
+  GacetaBatch,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 
@@ -3967,4 +3969,48 @@ export const mockBlockedDomains: BlockedDomain[] = [
   // ECON — Economy / finance
   { id: 23, batch_id: 'mock-batch', site: 'Monitor Dolar Venezuela', domain: 'monitordolarvenezuela.com', category: 'ECON', cantv: 'DNS+TCP IP', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'DNS+TCP IP', g_network: 'DNS+TCP IP', uploaded_at: '2026-03-01T00:00:00Z' },
   { id: 24, batch_id: 'mock-batch', site: 'Yadio', domain: 'yadio.io', category: 'ECON', cantv: 'DNS+HTTPS', movistar: 'DNS+HTTP/HTTPS', digitel: 'DNS', inter: 'DNS', netuno: 'DNS', airtek: 'HTTP/HTTPS', g_network: 'ok', uploaded_at: '2026-03-01T00:00:00Z' },
+]
+
+// ============================================================
+// GACETA OFICIAL MOCK DATA
+// ============================================================
+export const mockGacetaBatches: GacetaBatch[] = [
+  {
+    id: 'mock-gaceta-batch',
+    label: 'Enero–Marzo 2026',
+    source_file: 'cambios_gobierno_2026.csv',
+    row_count: 780,
+    is_active: true,
+    uploaded_at: '2026-03-15T00:00:00Z',
+  },
+]
+
+export const mockGacetaRecords: GacetaRecord[] = [
+  // Designaciones — militares
+  { id: 1, batch_id: 'mock-gaceta-batch', gazette_number: 43287, gazette_type: 'Ordinaria', gazette_date: '2026-01-03', decree_number: 'D-001', change_type: 'DESIGNACION_MINISTERIO', change_label: 'Designación', person_name: 'Gen. Remigio Ceballos', post_or_position: 'Ministro de Defensa', institution: null, organism: 'Ministerio del Poder Popular para la Defensa', is_military_person: true, military_rank: 'General en Jefe', is_military_post: true, summary: 'Designación como Ministro de Defensa', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 2, batch_id: 'mock-gaceta-batch', gazette_number: 43287, gazette_type: 'Ordinaria', gazette_date: '2026-01-03', decree_number: 'D-002', change_type: 'DESIGNACION_VICEPRESIDENCIA', change_label: 'Designación', person_name: 'Almte. Freddy Bernal', post_or_position: 'Director del CLAP', institution: null, organism: 'Comités Locales de Abastecimiento y Producción', is_military_person: true, military_rank: 'Almirante', is_military_post: false, summary: 'Designado como Director Nacional del CLAP', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 3, batch_id: 'mock-gaceta-batch', gazette_number: 43301, gazette_type: 'Ordinaria', gazette_date: '2026-01-10', decree_number: null, change_type: 'DESIGNACION_GOBERNACION', change_label: 'Designación', person_name: 'Gral. Brig. José Pirela', post_or_position: 'Gobernador del estado Zulia', institution: null, organism: 'Gobernación del estado Zulia', is_military_person: true, military_rank: 'General de Brigada', is_military_post: true, summary: 'Designado gobernador del estado Zulia', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 4, batch_id: 'mock-gaceta-batch', gazette_number: 43301, gazette_type: 'Ordinaria', gazette_date: '2026-01-10', decree_number: null, change_type: 'DESIGNACION_FISCAL', change_label: 'Designación', person_name: 'Gral. Div. Carlos Rodríguez', post_or_position: 'Fiscal Superior del Área Metropolitana', institution: null, organism: 'Ministerio Público', is_military_person: true, military_rank: 'General de División', is_military_post: false, summary: 'Designado fiscal superior del Área Metropolitana de Caracas', uploaded_at: '2026-03-15T00:00:00Z' },
+  // Designaciones — civiles
+  { id: 5, batch_id: 'mock-gaceta-batch', gazette_number: 43301, gazette_type: 'Ordinaria', gazette_date: '2026-01-10', decree_number: 'D-010', change_type: 'DESIGNACION_MINISTERIO', change_label: 'Designación', person_name: 'Delcy Rodríguez', post_or_position: 'Vicepresidenta Ejecutiva', institution: null, organism: 'Presidencia de la República', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Ratificada como Vicepresidenta Ejecutiva', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 6, batch_id: 'mock-gaceta-batch', gazette_number: 43301, gazette_type: 'Ordinaria', gazette_date: '2026-01-10', decree_number: 'D-011', change_type: 'DESIGNACION_MINISTERIO', change_label: 'Designación', person_name: 'Jorge Rodríguez', post_or_position: 'Presidente de la Asamblea Nacional', institution: null, organism: 'Asamblea Nacional', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Electo presidente de la Asamblea Nacional para el período 2026-2027', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 7, batch_id: 'mock-gaceta-batch', gazette_number: 43320, gazette_type: 'Ordinaria', gazette_date: '2026-01-20', decree_number: 'D-025', change_type: 'DESIGNACION_FISCAL', change_label: 'Designación', person_name: 'Tarek William Saab', post_or_position: 'Fiscal General de la República', institution: null, organism: 'Ministerio Público', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Ratificado como Fiscal General de la República', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 8, batch_id: 'mock-gaceta-batch', gazette_number: 43320, gazette_type: 'Ordinaria', gazette_date: '2026-01-20', decree_number: null, change_type: 'DESIGNACION_TRIBUNAL', change_label: 'Designación', person_name: 'Gladys Gutiérrez', post_or_position: 'Presidenta del Tribunal Supremo de Justicia', institution: null, organism: 'Tribunal Supremo de Justicia', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Ratificada presidenta del TSJ', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 9, batch_id: 'mock-gaceta-batch', gazette_number: 43335, gazette_type: 'Ordinaria', gazette_date: '2026-02-03', decree_number: 'D-040', change_type: 'DESIGNACION_EMBAJADOR', change_label: 'Designación', person_name: 'Jesús Faría', post_or_position: 'Embajador en Cuba', institution: null, organism: 'Ministerio del Poder Popular para Relaciones Exteriores', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Designado embajador plenipotenciario ante la República de Cuba', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 10, batch_id: 'mock-gaceta-batch', gazette_number: 43335, gazette_type: 'Ordinaria', gazette_date: '2026-02-03', decree_number: 'D-041', change_type: 'DESIGNACION_MINISTERIO', change_label: 'Designación', person_name: 'Héctor Obregón', post_or_position: 'Presidente de PDVSA', institution: null, organism: 'Petróleos de Venezuela S.A.', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Designado presidente de PDVSA', uploaded_at: '2026-03-15T00:00:00Z' },
+  // Traslados
+  { id: 11, batch_id: 'mock-gaceta-batch', gazette_number: 43350, gazette_type: 'Ordinaria', gazette_date: '2026-02-10', decree_number: null, change_type: 'TRASLADO_MINISTERIO', change_label: 'Traslado', person_name: 'María Molina', post_or_position: 'Directora de Educación', institution: null, organism: 'Ministerio del Poder Popular para la Educación', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Traslado de Dirección de Básica a Dirección de Educación Media', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 12, batch_id: 'mock-gaceta-batch', gazette_number: 43350, gazette_type: 'Ordinaria', gazette_date: '2026-02-10', decree_number: null, change_type: 'TRASLADO_INSTITUTO', change_label: 'Traslado', person_name: 'Carlos Vargas', post_or_position: 'Coordinador Regional', institution: null, organism: 'SENCAMER', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Traslado de la Dirección de Caracas a la Dirección Regional del Zulia', uploaded_at: '2026-03-15T00:00:00Z'
+  },
+  // Jubilaciones
+  { id: 14, batch_id: 'mock-gaceta-batch', gazette_number: 43370, gazette_type: 'Ordinaria', gazette_date: '2026-02-20', decree_number: null, change_type: 'JUBILACION', change_label: 'Jubilación', person_name: 'Roberto Méndez', post_or_position: 'Director General', institution: null, organism: 'Ministerio del Poder Popular para la Educación Universitaria', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Jubilación aprobada con 35 años de servicio', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 15, batch_id: 'mock-gaceta-batch', gazette_number: 43390, gazette_type: 'Ordinaria', gazette_date: '2026-03-03', decree_number: null, change_type: 'JUBILACION', change_label: 'Jubilación', person_name: 'Elena Pérez', post_or_position: 'Magistrada Suplente', institution: null, organism: 'Tribunal Supremo de Justicia', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Jubilación aprobada con 30 años de servicio en la judicatura', uploaded_at: '2026-03-15T00:00:00Z' },
+  // Autorizaciones
+  { id: 16, batch_id: 'mock-gaceta-batch', gazette_number: 43287, gazette_type: 'Ordinaria', gazette_date: '2026-01-02', decree_number: null, change_type: 'AUTORIZACION_UNIVERSITARIA', change_label: 'Autorización', person_name: null, post_or_position: null, institution: 'Instituto Universitario Superior de Oriente (IUTSO)', organism: 'Ministerio del Poder Popular para la Educación Universitaria', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Autorización de funcionamiento de extensión en Maturín', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 17, batch_id: 'mock-gaceta-batch', gazette_number: 43400, gazette_type: 'Ordinaria', gazette_date: '2026-03-10', decree_number: null, change_type: 'AUTORIZACION_CONTRATO', change_label: 'Autorización', person_name: null, post_or_position: null, institution: null, organism: 'Ministerio del Poder Popular de Economía y Finanzas', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Autorización para contratación de empréstito externo', uploaded_at: '2026-03-15T00:00:00Z' },
+  // Reorganización
+  { id: 18, batch_id: 'mock-gaceta-batch', gazette_number: 43350, gazette_type: 'Extraordinaria', gazette_date: '2026-02-12', decree_number: 'D-060', change_type: 'REORGANIZACION_MINISTERIO', change_label: 'Reorganización', person_name: null, post_or_position: null, institution: null, organism: 'Ministerio del Poder Popular para la Agricultura y Tierras', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Decreto de reorganización administrativa del ministerio', uploaded_at: '2026-03-15T00:00:00Z' },
+  // Otro
+  { id: 19, batch_id: 'mock-gaceta-batch', gazette_number: 43390, gazette_type: 'Ordinaria', gazette_date: '2026-03-05', decree_number: null, change_type: 'RESOLUCION_INTERNA', change_label: 'Otro', person_name: null, post_or_position: null, institution: null, organism: 'Contraloría General de la República', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Resolución sobre normas de control interno', uploaded_at: '2026-03-15T00:00:00Z' },
+  { id: 20, batch_id: 'mock-gaceta-batch', gazette_number: 43400, gazette_type: 'Ordinaria', gazette_date: '2026-03-12', decree_number: null, change_type: 'RESOLUCION_PRESUPUESTARIA', change_label: 'Otro', person_name: null, post_or_position: null, institution: null, organism: 'Ministerio del Poder Popular de Economía y Finanzas', is_military_person: false, military_rank: null, is_military_post: false, summary: 'Resolución de ajuste presupuestario para el ejercicio fiscal 2026', uploaded_at: '2026-03-15T00:00:00Z' },
 ]

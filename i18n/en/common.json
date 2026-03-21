@@ -842,6 +842,76 @@
       "preview": "Preview (first 10 rows)"
     }
   },
+  "gaceta": {
+    "sectionTitle": "Official Gazette",
+    "sectionSubtitle": "Record of institutional changes published in Venezuela's Official Gazette, January–March 2026.",
+    "source": "Official Gazette of Venezuela",
+    "viewGazette": "View Gazette",
+    "tabs": {
+      "resumen": "Summary",
+      "designaciones": "Appointments",
+      "militares": "Military",
+      "instituciones": "Institutions",
+      "buscador": "Search"
+    },
+    "kpi": {
+      "totalChanges": "Total changes",
+      "designations": "Appointments",
+      "militaryPersons": "Military persons",
+      "militaryPosts": "Military posts",
+      "militaryPct": "of appointments are military"
+    },
+    "charts": {
+      "weeklyActivity": "Weekly activity",
+      "changeTypes": "Change types",
+      "topOrganisms": "Most active organisms",
+      "designationTypes": "Appointment types",
+      "ministriesBreakdown": "Ministry breakdown",
+      "militaryVsCivilian": "Military vs. civilian"
+    },
+    "labels": {
+      "Designación": "Appointment",
+      "Jubilación": "Retirement",
+      "Traslado": "Transfer",
+      "Supresión": "Suppression",
+      "Reorganización": "Reorganization",
+      "Revocación": "Revocation",
+      "Ley": "Law",
+      "Autorización": "Authorization",
+      "Otro": "Other"
+    },
+    "military": {
+      "person": "Military person",
+      "post": "Military post",
+      "rank": "Rank",
+      "banner": "{pct}% of appointments correspond to military persons",
+      "civilianLabel": "Civilians",
+      "militaryLabel": "Military"
+    },
+    "table": {
+      "gazette": "Gazette",
+      "date": "Date",
+      "type": "Type",
+      "person": "Person",
+      "position": "Position",
+      "organism": "Organism",
+      "summary": "Summary",
+      "noResults": "No results found.",
+      "searchPlaceholder": "Search by person, position or organism...",
+      "filterByType": "Filter by type",
+      "filterByOrganism": "Filter by organism",
+      "allTypes": "All types",
+      "allOrganisms": "All organisms",
+      "page": "Page",
+      "of": "of"
+    },
+    "structural": {
+      "title": "Structural changes",
+      "suppressions": "Suppressions",
+      "reorganizations": "Reorganizations",
+      "creations": "Creations"
+    }
+  },
   "gdelt": {
     "title": "GDELT SIGNAL DASHBOARD",
     "subtitle": "Real-time media signals from the GDELT Project monitoring Venezuela coverage",

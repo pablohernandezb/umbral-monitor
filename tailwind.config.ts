@@ -34,6 +34,11 @@ const config: Config = {
           purple: '#a855f7',
           'purple-muted': '#6b21a8',
         },
+        // Military/danger palette (Gaceta dashboard)
+        'military-amber': '#EF9F27',
+        'military-amber-bg': '#FAEEDA',
+        'danger-red': '#C04828',
+        'warning-amber': '#BA7517',
         // Status indicators
         status: {
           critical: '#ef4444',

@@ -842,6 +842,76 @@
       "preview": "Vista previa (primeras 10 filas)"
     }
   },
+  "gaceta": {
+    "sectionTitle": "Gaceta Oficial",
+    "sectionSubtitle": "Registro de cambios institucionales publicados en la Gaceta Oficial de Venezuela, enero–marzo 2026.",
+    "source": "Gaceta Oficial de Venezuela",
+    "viewGazette": "Ver Gaceta",
+    "tabs": {
+      "resumen": "Resumen",
+      "designaciones": "Designaciones",
+      "militares": "Militares",
+      "instituciones": "Instituciones",
+      "buscador": "Buscador"
+    },
+    "kpi": {
+      "totalChanges": "Total de cambios",
+      "designations": "Designaciones",
+      "militaryPersons": "Personas militares",
+      "militaryPosts": "Cargos militares",
+      "militaryPct": "de designaciones son militares"
+    },
+    "charts": {
+      "weeklyActivity": "Actividad semanal",
+      "changeTypes": "Tipos de cambio",
+      "topOrganisms": "Organismos con más cambios",
+      "designationTypes": "Tipos de designación",
+      "ministriesBreakdown": "Desglose por ministerio",
+      "militaryVsCivilian": "Militares vs. civiles"
+    },
+    "labels": {
+      "Designación": "Designación",
+      "Jubilación": "Jubilación",
+      "Traslado": "Traslado",
+      "Supresión": "Supresión",
+      "Reorganización": "Reorganización",
+      "Revocación": "Revocación",
+      "Ley": "Ley",
+      "Autorización": "Autorización",
+      "Otro": "Otro"
+    },
+    "military": {
+      "person": "Persona militar",
+      "post": "Cargo militar",
+      "rank": "Rango",
+      "banner": "{pct}% de las designaciones corresponden a personas militares",
+      "civilianLabel": "Civiles",
+      "militaryLabel": "Militares"
+    },
+    "table": {
+      "gazette": "Gaceta",
+      "date": "Fecha",
+      "type": "Tipo",
+      "person": "Persona",
+      "position": "Cargo",
+      "organism": "Organismo",
+      "summary": "Resumen",
+      "noResults": "No se encontraron resultados.",
+      "searchPlaceholder": "Buscar por persona, cargo u organismo...",
+      "filterByType": "Filtrar por tipo",
+      "filterByOrganism": "Filtrar por organismo",
+      "allTypes": "Todos los tipos",
+      "allOrganisms": "Todos los organismos",
+      "page": "Página",
+      "of": "de"
+    },
+    "structural": {
+      "title": "Cambios estructurales",
+      "suppressions": "Supresiones",
+      "reorganizations": "Reorganizaciones",
+      "creations": "Creaciones"
+    }
+  },
   "gdelt": {
     "title": "PANEL DE SEÑALES GDELT",
     "subtitle": "Señales mediáticas en tiempo real del Proyecto GDELT monitoreando la cobertura sobre Venezuela",

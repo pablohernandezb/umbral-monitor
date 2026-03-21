@@ -625,6 +625,55 @@ ALTER TABLE submission_averages_snapshots ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "submission_averages_snapshots_public_read"
   ON submission_averages_snapshots FOR SELECT USING (true);
+
+-- ============================================================
+-- GAZETTE_BATCHES TABLE
+-- Metadata for each Gaceta Oficial CSV upload
+-- ============================================================
+CREATE TABLE IF NOT EXISTS gazette_batches (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  label TEXT,
+  source_file TEXT,
+  row_count INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE gazette_batches ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "gazette_batches_public_read" ON gazette_batches FOR SELECT USING (true);
+CREATE POLICY "Authenticated insert gazette_batches" ON gazette_batches FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated update gazette_batches" ON gazette_batches FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Authenticated delete gazette_batches" ON gazette_batches FOR DELETE TO authenticated USING (true);
+
+-- ============================================================
+-- GAZETTE_RECORDS TABLE
+-- Individual change records from the Official Gazette
+-- ============================================================
+CREATE TABLE IF NOT EXISTS gazette_records (
+  id BIGSERIAL PRIMARY KEY,
+  batch_id UUID NOT NULL REFERENCES gazette_batches(id) ON DELETE CASCADE,
+  gazette_number INTEGER NOT NULL,
+  gazette_type TEXT NOT NULL DEFAULT 'Ordinaria',
+  gazette_date DATE NOT NULL,
+  decree_number TEXT,
+  change_type TEXT NOT NULL,
+  change_label TEXT NOT NULL,
+  person_name TEXT,
+  post_or_position TEXT,
+  institution TEXT,
+  organism TEXT,
+  is_military_person BOOLEAN NOT NULL DEFAULT false,
+  military_rank TEXT,
+  is_military_post BOOLEAN NOT NULL DEFAULT false,
+  summary TEXT,
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_gazette_records_batch ON gazette_records(batch_id);
+CREATE INDEX IF NOT EXISTS idx_gazette_records_date ON gazette_records(gazette_date);
+CREATE INDEX IF NOT EXISTS idx_gazette_records_label ON gazette_records(change_label);
+ALTER TABLE gazette_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "gazette_records_public_read" ON gazette_records FOR SELECT USING (true);
+CREATE POLICY "Authenticated insert gazette_records" ON gazette_records FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Authenticated delete gazette_records" ON gazette_records FOR DELETE TO authenticated USING (true);
 `
 
 // Export for reference

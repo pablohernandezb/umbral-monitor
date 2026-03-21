@@ -16,6 +16,9 @@ import type {
   ApiResponse,
   BlockedDomain,
   BlockedDomainBatch,
+  GacetaRecord,
+  GacetaBatch,
+  GacetaSummary,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 
@@ -33,7 +36,10 @@ import {
   mockFactCheckTweets,
   mockGdeltEvents,
   mockBlockedDomains,
+  mockGacetaRecords,
+  mockGacetaBatches,
 } from '@/data/mock'
+import { computeGacetaSummary } from '@/components/gaceta/gaceta-utils'
 
 // ============================================================
 // SCENARIOS
@@ -1143,4 +1149,69 @@ export async function getBlockingSummary(): Promise<
     },
     error: null,
   }
+}
+
+// ============================================================
+// GACETA OFICIAL
+// ============================================================
+
+/**
+ * Fetch all gazette records from the currently active batch.
+ */
+export async function getGacetaRecords(): Promise<ApiResponse<GacetaRecord[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: mockGacetaRecords as GacetaRecord[], error: null }
+  }
+
+  try {
+    const { data: batch, error: batchError } = await supabase
+      .from('gazette_batches')
+      .select('id')
+      .eq('is_active', true)
+      .order('uploaded_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (batchError || !batch) {
+      return { data: [], error: null }
+    }
+
+    const { data, error } = await supabase
+      .from('gazette_records')
+      .select('*')
+      .eq('batch_id', batch.id)
+      .order('gazette_date', { ascending: true })
+      .order('id', { ascending: true })
+
+    return { data: (data as GacetaRecord[]) ?? [], error: error?.message || null }
+  } catch (err: any) {
+    return { data: [], error: err.message }
+  }
+}
+
+/**
+ * Get all gazette batch metadata.
+ */
+export async function getGacetaBatches(): Promise<ApiResponse<GacetaBatch[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: mockGacetaBatches as GacetaBatch[], error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('gazette_batches')
+    .select('*')
+    .order('uploaded_at', { ascending: false })
+
+  return { data: (data as GacetaBatch[]) ?? [], error: error?.message || null }
+}
+
+/**
+ * Compute summary metrics from the active gazette batch.
+ */
+export async function getGacetaSummary(): Promise<ApiResponse<GacetaSummary>> {
+  const { data: records, error } = await getGacetaRecords()
+  if (error || !records) {
+    return { data: null, error }
+  }
+  return { data: computeGacetaSummary(records), error: null }
 }
