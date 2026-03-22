@@ -843,8 +843,10 @@
     }
   },
   "gaceta": {
-    "sectionTitle": "Official Gazette",
-    "sectionSubtitle": "Record of institutional changes published in Venezuela's Official Gazette, January–March 2026.",
+    "sectionTitle": "What is Delcy Rodríguez doing?",
+    "sectionSubtitle": "Record of institutional changes and government actions published in Venezuela's Official Gazette",
+    "panelTitle": "Official Gazette Monitor",
+    "panelSubtitle": "Analyzing institutional changes and appointments in the Venezuelan public administration",
     "source": "Official Gazette of Venezuela",
     "viewGazette": "View Gazette",
     "tabs": {

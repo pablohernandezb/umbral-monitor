@@ -40,10 +40,10 @@ export default function GacetaDashboard({ records }: Props) {
           <ScrollText className="w-4 h-4 text-signal-teal" />
           <div>
             <h3 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
-              {t('gaceta.sectionTitle')}
+              {t('gaceta.panelTitle')}
             </h3>
             <p className="text-[10px] text-umbral-muted mt-0.5">
-              {t('gaceta.sectionSubtitle')}
+              {t('gaceta.panelSubtitle')}
             </p>
           </div>
         </div>

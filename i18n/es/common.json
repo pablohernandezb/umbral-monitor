@@ -843,8 +843,10 @@
     }
   },
   "gaceta": {
-    "sectionTitle": "Gaceta Oficial",
-    "sectionSubtitle": "Registro de cambios institucionales publicados en la Gaceta Oficial de Venezuela, enero–marzo 2026.",
+    "sectionTitle": "¿Qué está haciendo Delcy Rodríguez?",
+    "sectionSubtitle": "Registro de cambios institucionales y acciones de gobierno publicados en la Gaceta Oficial de Venezuela",
+    "panelTitle": "Monitor de Gacetas Oficiales",
+    "panelSubtitle": "Analizando cambios institucionales y designaciones en la administración pública venezolana",
     "source": "Gaceta Oficial de Venezuela",
     "viewGazette": "Ver Gaceta",
     "tabs": {

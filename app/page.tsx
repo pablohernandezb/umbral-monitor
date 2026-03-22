@@ -584,6 +584,33 @@ export default function LandingPage() {
       </section>
 
       {/* ============================================================
+          OFFICIAL GAZETTE SECTION
+          ============================================================ */}
+      <section id="gazette" className="section bg-umbral-charcoal/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">    
+          {/* Official Gazette */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={fadeInUp}
+            className="mt-16"
+          >
+            <div className="text-center mb-8">
+              <h2 className="section-title mb-4 flex items-center justify-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-signal-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {t('gaceta.sectionTitle')}
+              </h2>
+              <p className="section-subtitle mx-auto">{t('gaceta.sectionSubtitle')}</p>
+            </div>
+            <GacetaDashboard records={gacetaRecords} />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================
           REGIME TRAJECTORY SECTION
           ============================================================ */}
       <section id="trajectory" className="section bg-umbral-charcoal/30">
@@ -662,26 +689,6 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-          </motion.div>
-
-          {/* Gaceta Oficial */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            variants={fadeInUp}
-            className="mt-16"
-          >
-            <div className="text-center mb-8">
-              <h2 className="section-title mb-4 flex items-center justify-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-signal-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                {t('gaceta.sectionTitle')}
-              </h2>
-              <p className="section-subtitle mx-auto">{t('gaceta.sectionSubtitle')}</p>
-            </div>
-            <GacetaDashboard records={gacetaRecords} />
           </motion.div>
 
           {/* Historical episodes */}
