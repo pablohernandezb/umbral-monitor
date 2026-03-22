@@ -107,7 +107,7 @@ export default function DesignacionesTab({ records }: Props) {
       <div className="rounded-lg border border-white/5 bg-[#111113] overflow-hidden">
         <div className="px-3 py-2 border-b border-white/5">
           <h4 className="font-display text-xs font-medium uppercase tracking-widest text-teal-400">
-            {t('gaceta.tabs.designaciones')}
+            {t('gaceta.lastAppointments')}
           </h4>
         </div>
         <div className="overflow-x-auto">

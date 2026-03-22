@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Umbral** is a Next.js-based analytical platform monitoring regime transformation dynamics in Venezuela. It provides real-time data visualization, historical analysis, and curated resources related to democratic erosion.
 
-**Tech Stack**: Next.js 15 (App Router), TypeScript, Tailwind CSS, Supabase (PostgreSQL), Recharts, Framer Motion, Leaflet/react-leaflet
+**Tech Stack**: Next.js 16 (App Router, Turbopack), TypeScript, Tailwind CSS, Supabase (PostgreSQL), Recharts, Framer Motion, Leaflet/react-leaflet
 
 **Key Concept**: The platform operates in two modes:
 - **Mock Mode** (default): Uses local mock data from `data/mock.ts`
@@ -53,6 +53,8 @@ curl.exe "http://localhost:3000/api/analytics/snapshot?secret=umbral-cron-a7f3e9
 - `getStarVotingResults()`: Computes STAR voting live from the DB (used by the analytics cron to write snapshots)
 - `getLatestStarSnapshot()`: Reads the most recent row from `star_voting_snapshots` — used by the landing page instead of live computation
 - `getPlatformCounts()`: Returns row counts for `news_feed`, `expert_submissions + public_submissions`, and `reading_room` (used by the About page methodology section)
+- `getGacetaRecords()`: Returns all gazette records from `gazette_records` table, ordered by date desc
+- `getBlockedDomains()`: Returns blocked domain data for the internet censorship dashboard
 
 **`lib/ioda.ts`**: IODA Internet connectivity utilities
 - `getSignals()`, `getOutageEvents()`, `getOutageAlerts()`, `getVenezuelaRegions()`: Live IODA API calls proxied through `/api/ioda`
@@ -83,7 +85,7 @@ curl.exe "http://localhost:3000/api/analytics/snapshot?secret=umbral-cron-a7f3e9
 - Checks `NEXT_PUBLIC_GA_ID` to determine if consent is needed
 - Exports: `useCookieConsent()` hook, `acceptCookies()`, `rejectCookies()`, `resetConsent()`
 
-### Database Schema (16 Tables)
+### Database Schema (18 Tables)
 
 1. **`scenarios`**: 5 regime transformation scenarios with probability/status tracking
 2. **`regime_history`**: Historical democracy indices (1900-2024) with V-Dem style metrics
@@ -101,6 +103,8 @@ curl.exe "http://localhost:3000/api/analytics/snapshot?secret=umbral-cron-a7f3e9
 14. **`ioda_signals`** + **`ioda_events`**: National IODA connectivity signals and outage events; populated by daily cron at 06:00 UTC
 15. **`star_voting_snapshots`**: Daily STAR voting consensus results — one row per date, expert + public winner/finalists/votes/scores; upserted by analytics cron at 14:00 UTC
 16. **`submission_averages_snapshots`**: Daily per-scenario average ratings — one row per date, expert + public means and participant counts; upserted by analytics cron at 14:00 UTC
+17. **`gazette_batches`**: Upload batches for Official Gazette records — `id` (UUID), `label`, `source_file`, `row_count`, `is_active`, `uploaded_at`
+18. **`gazette_records`**: Individual gazette entries — `gazette_number`, `gazette_type` (Ordinaria/Extraordinaria), `gazette_date`, `decree_number`, `change_type`, `change_label` (GacetaChangeLabel enum), `person_name`, `post_or_position`, `institution`, `organism`, `is_military_person`, `military_rank`, `is_military_post`, `summary`; linked to `gazette_batches` via `batch_id`
 
 **Scenario key-to-number mapping** (used in `scenario_probabilities` JSONB):
 - 1 = `regressedAutocracy`, 2 = `revertedLiberalization`, 3 = `stabilizedElectoralAutocracy`, 4 = `preemptedDemocraticTransition`, 5 = `democraticTransition`
@@ -142,7 +146,7 @@ All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization. **Vercel
 
 ```
 app/
-├── page.tsx                    # Landing page (Command Center)
+├── page.tsx                    # Landing page (Command Center) — sections: hero, scenarios, gazette, trajectory, news, prisoners, connectivity, markets, faq
 ├── layout.tsx                  # Root layout with I18nProvider, GoogleAnalytics, CookieBanner
 ├── about/                      # About page
 ├── how-did-we-get-here/        # Interactive timeline with DEED events
@@ -158,9 +162,10 @@ app/
 │   ├── news/                   # News CRUD
 │   ├── prisoners/              # Political prisoners CRUD
 │   ├── reading-room/           # Reading room CRUD
-│   └── participate/            # Expert/public submission management
-│       ├── page.tsx            # Review, approve/reject/delete expert; delete public submissions
-│       └── actions.ts          # Admin server actions for submissions
+│   ├── participate/            # Expert/public submission management
+│   │   ├── page.tsx            # Review, approve/reject/delete expert; delete public submissions
+│   │   └── actions.ts          # Admin server actions for submissions
+│   └── gazette/                # Gazette batch upload and record management
 └── api/
     ├── fact-check/refresh/     # Cron: fetch tweets from 3 X fact-checking accounts
     ├── gdelt/                  # Cron + on-demand: GDELT media signals with DB archive
@@ -170,7 +175,11 @@ app/
     │   ├── regions/            # Batch signals for all 25 VE regions (for subnational heatmap)
     │   └── outages/            # Batch outage scores for all 25 VE regions (for map + list)
     ├── news/scrape/            # Cron: news scraping endpoint
-    └── analytics/snapshot/     # Cron: compute & store daily STAR voting + averages snapshots
+    ├── analytics/snapshot/     # Cron: compute & store daily STAR voting + averages snapshots
+    └── gazette/
+        ├── upload/             # CSV batch upload for gazette records
+        ├── records/            # CRUD for gazette records
+        └── batches/            # Batch management
 ```
 
 ### Components
@@ -202,6 +211,16 @@ app/
 - `SignalChart.tsx`: Single-signal AreaChart card with auto-scaled Y-axis and gradient fill
 - `StatusBadge.tsx`: Connectivity status pill (`normal|degraded|outage|no-data`), fully i18n
 - `RegionSelector.tsx`: Region dropdown (national only for now — subnational regions deferred)
+
+**Gaceta Components** (`components/gaceta/`):
+- `GacetaDashboard.tsx`: 5-tab container (resumen, designaciones, militares, instituciones, buscador). Receives `records: GacetaRecord[]` and computes summary via `computeGacetaSummary()`
+- `ResumenTab.tsx`: Summary tab — 6 KPIs (total changes, ordinary/extraordinary gazettes, designations, military persons/posts), daily activity AreaChart (TrajectoryChart aesthetic: teal gradient fill, CartesianGrid, JetBrains Mono axis labels, locale-aware date formatting), change-type donut, top organisms horizontal bar chart
+- `DesignacionesTab.tsx`: Appointments tab — KPIs, designation subtype bar chart (`DESIGNACION_` prefix stripped, title-cased), recent appointments table with gazette links
+- `MilitaresTab.tsx`: Military tab — KPIs, military vs civilian comparison bars, ministry breakdown chart (multiline Y-axis labels), full military records table with search
+- `InstitucionesTab.tsx`: Institutional tab — KPIs, top 15 organisms bar chart (wide Y-axis labels with tooltip), structural events panel (suppressions, reorganizations, creations) with gazette number links
+- `BuscadorTab.tsx`: Search tab — full-text search, label filter, organism filter (dark-styled dropdowns), paginated table with gazette links
+- `gaceta-utils.ts`: `computeGacetaSummary()`, `topOrganisms()` (applies MPP abbreviation + article removal), `getLabelForChangeType()`, `gazetteUrl()`, `LABEL_COLORS`
+- `gaceta-i18n.ts`: Field-level ES→EN translation system — `createGacetaTranslator(locale)` returns a `tg(field, value)` function. Translates `organism`, `post_or_position`, `military_rank`, `gazette_type`, `summary` via exact-match dictionaries + regex pattern fallbacks. Returns original Spanish when no translation found or locale is `'es'`
 
 **Charts** (`components/charts/`):
 - `TrajectoryChart.tsx`: V-Dem index timeline with Recharts
@@ -329,3 +348,5 @@ The participate page (`app/participate/`) is a multi-screen wizard (10+ screens)
 - **About page live counts**: `getPlatformCounts()` uses Supabase `{ count: 'exact', head: true }` queries — returns zeros in mock mode.
 - **framer-motion + locale key bug**: never use locale-dependent strings as React `key` props on `motion.*` elements inside `whileInView` + `once: true` containers — locale change will unmount/remount them and they'll stay invisible. Use stable index or ID keys instead.
 - **PowerShell curl**: Windows PowerShell's `curl` is an alias for `Invoke-WebRequest`. Use `curl.exe` to invoke real curl for cron testing.
+- **Gaceta field translation**: `gaceta-i18n.ts` provides ES→EN translation for DB fields (organisms, positions, military ranks, summaries) via `createGacetaTranslator(locale)`. Dictionaries are exact-match with regex pattern fallbacks. New organisms/positions from production data may need dictionary entries added.
+- **Gaceta label formatting**: `topOrganisms()` in `gaceta-utils.ts` applies MPP abbreviation (`Ministerio del Poder Popular` → `MPP`) and removes articles (`para la/el/las/los`). `DesignacionesTab` strips `DESIGNACION_` prefix and title-cases the remainder.

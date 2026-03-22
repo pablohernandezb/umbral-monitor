@@ -19,6 +19,8 @@ An open-source analytical platform monitoring regime transformation dynamics in 
 - **GDELT Media Signals** — Daily-archived instability index, media tone, and article volume from GDELT, with annotated key events timeline
 - **Internet Connectivity Monitor (National)** — IODA-powered BGP, Active Probing, and Network Telescope signal charts for Venezuela as a whole; daily cron archives data to Supabase
 - **Internet Connectivity Monitor (Subnational)** — State-level IODA dashboard with a horizon heatmap, Leaflet choropleth map (25 states + Guayana Esequiba), and ranked outage score list
+- **Official Gazette Dashboard** — Analytical dashboard for Venezuela's Gaceta Oficial with 5 tabs: summary (KPIs, daily activity chart, change-type donut, top organisms), appointments, military analysis, institutional breakdown with structural events, and a searchable full-record table. Includes bilingual field-level translation for organisms, positions, military ranks, and summaries
+- **Internet Censorship Monitor** — Blocked domains dashboard tracking ISP-level censorship by CANTV, Movistar, and Digitel
 - **Prediction Markets** — Polymarket contract dashboard for Venezuela-related markets
 - **Participate** — Multi-step survey for experts and the public to submit scenario probability assessments
 - **Bilingual** — Full Spanish/English internationalization throughout
@@ -30,7 +32,7 @@ An open-source analytical platform monitoring regime transformation dynamics in 
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript |
 | Styling | Tailwind CSS, Framer Motion |
 | Database | Supabase (PostgreSQL) with Row Level Security |
@@ -120,7 +122,7 @@ If you want to connect a real Supabase database:
 npm run seed
 ```
 
-The schema creates 16 tables with RLS policies. Real-time subscriptions are enabled for `news_feed`, `political_prisoners`, and `scenarios`.
+The schema creates 18 tables with RLS policies. Real-time subscriptions are enabled for `news_feed`, `political_prisoners`, and `scenarios`.
 
 ---
 
@@ -174,7 +176,11 @@ umbral-project/
 │       │   ├── regions/        # Batch signals for all 25 VE regions
 │       │   └── outages/        # Batch outage scores for all 25 VE regions
 │       ├── news/scrape/        # Cron: news scraping
-│       └── analytics/snapshot/ # Cron: STAR voting + averages snapshots
+│       ├── analytics/snapshot/ # Cron: STAR voting + averages snapshots
+│       └── gazette/            # Gazette batch upload + record management
+│           ├── upload/         # CSV batch upload for gazette records
+│           ├── records/        # CRUD for gazette records
+│           └── batches/        # Batch management
 ├── components/
 │   ├── layout/                 # Header (with share menu), Footer
 │   ├── ui/                     # ScenarioCard, NewsCard, GdeltDashboard, PolymarketDashboard, etc.
@@ -188,6 +194,16 @@ umbral-project/
 │   │   ├── SignalChart.tsx     # Single-signal AreaChart card
 │   │   ├── StatusBadge.tsx     # Connectivity status pill
 │   │   └── RegionSelector.tsx  # Region dropdown
+│   ├── gaceta/                 # Official Gazette dashboard
+│   │   ├── GacetaDashboard.tsx # 5-tab container (resumen, designaciones, militares, instituciones, buscador)
+│   │   ├── ResumenTab.tsx      # Summary: KPIs, daily activity area chart, change-type donut, organisms bar
+│   │   ├── DesignacionesTab.tsx# Appointments analysis: subtypes bar chart + recent table
+│   │   ├── MilitaresTab.tsx    # Military analysis: comparison bars, ministry breakdown, full table
+│   │   ├── InstitucionesTab.tsx# Institutional analysis: top organisms chart + structural events
+│   │   ├── BuscadorTab.tsx     # Searchable/filterable full-record table with pagination
+│   │   ├── gaceta-utils.ts     # Summary computation, label classification, organism helpers
+│   │   └── gaceta-i18n.ts      # Field-level ES→EN translation dictionaries (organisms, positions, ranks)
+│   ├── connectivity/           # Internet censorship/blocking dashboard
 │   ├── charts/                 # TrajectoryChart, GdeltSignalChart
 │   ├── GoogleAnalytics.tsx
 │   ├── CookieBanner.tsx
