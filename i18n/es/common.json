@@ -849,6 +849,8 @@
     "panelSubtitle": "Analizando cambios institucionales y designaciones en la administración pública venezolana",
     "source": "Gaceta Oficial de Venezuela",
     "viewGazette": "Ver Gaceta",
+    "organismsunique": "Organismos únicos",
+    "ministerios": "Cambios en ministerios",
     "tabs": {
       "resumen": "Resumen",
       "designaciones": "Designaciones",
@@ -909,6 +911,7 @@
     },
     "structural": {
       "title": "Cambios estructurales",
+
       "suppressions": "Supresiones",
       "reorganizations": "Reorganizaciones",
       "creations": "Creaciones"

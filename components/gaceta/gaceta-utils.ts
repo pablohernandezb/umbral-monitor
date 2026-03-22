@@ -87,7 +87,10 @@ export function topOrganisms(records: GacetaRecord[], n = 8): { organism: string
   return Object.entries(counts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, n)
-    .map(([organism, count]) => ({ organism, count }));
+    .map(([organism, count]) => ({
+      organism: organism.replace(/Ministerio del Poder Popular/gi, 'MPP').replace(/\s+para\s+(la|el|las|los)\s+/gi, ' '),
+      count,
+    }));
 }
 
 // ── Summary computation ──────────────────────────────────────────

@@ -10,6 +10,35 @@ import {
 import type { GacetaRecord, GacetaSummary } from '@/types';
 import { LABEL_COLORS, topOrganisms } from './gaceta-utils';
 
+function YAxisTickWithTooltip({ x, y, payload }: any) {
+  const label: string = payload?.value ?? '';
+  const maxChars = 28;
+  if (label.length <= maxChars) {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <title>{label}</title>
+        <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+          {label}
+        </text>
+      </g>
+    );
+  }
+  // Split into two lines at the nearest space
+  const mid = label.lastIndexOf(' ', maxChars);
+  const splitAt = mid > 0 ? mid : maxChars;
+  const line1 = label.slice(0, splitAt);
+  const line2 = label.slice(splitAt).trimStart();
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <title>{label}</title>
+      <text x={0} y={0} textAnchor="end" fontSize={9} fill="#71717a">
+        <tspan x={0} dy={-4}>{line1}</tspan>
+        <tspan x={0} dy={11}>{line2}</tspan>
+      </text>
+    </g>
+  );
+}
+
 interface Props {
   records: GacetaRecord[];
   summary: GacetaSummary;
@@ -56,7 +85,7 @@ export default function ResumenTab({ records, summary }: Props) {
     .map(([label, value]) => ({ name: label, value }));
 
   const orgData = topOrganisms(records, 8).map((o) => ({
-    name: o.organism.length > 28 ? o.organism.slice(0, 28) + '…' : o.organism,
+    name: o.organism,
     fullName: o.organism,
     count: o.count,
   }));
@@ -140,8 +169,8 @@ export default function ResumenTab({ records, summary }: Props) {
               <YAxis
                 type="category"
                 dataKey="name"
-                width={140}
-                tick={{ fontSize: 9, fill: '#71717a' }}
+                width={220}
+                tick={<YAxisTickWithTooltip />}
                 tickLine={false}
                 axisLine={false}
               />

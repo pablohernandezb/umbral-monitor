@@ -39,11 +39,17 @@ export default function DesignacionesTab({ records }: Props) {
     return Object.entries(counts)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 8)
-      .map(([type, count]) => ({
-        name: type.length > 24 ? type.slice(0, 24) + '…' : type,
-        fullName: type,
-        count,
-      }));
+      .map(([type, count]) => {
+        const label = type.replace(/^DESIGNACION_/i, '')
+          .split('_')
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ');
+        return {
+          name: label.length > 24 ? label.slice(0, 24) + '…' : label,
+          fullName: label,
+          count,
+        };
+      });
   }, [designaciones]);
 
   const recent = useMemo(

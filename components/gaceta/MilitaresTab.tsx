@@ -8,6 +8,34 @@ import {
 } from 'recharts';
 import type { GacetaRecord } from '@/types';
 
+function YAxisTickMultiline({ x, y, payload }: any) {
+  const label: string = payload?.value ?? '';
+  const maxChars = 28;
+  if (label.length <= maxChars) {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <title>{label}</title>
+        <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+          {label}
+        </text>
+      </g>
+    );
+  }
+  const mid = label.lastIndexOf(' ', maxChars);
+  const splitAt = mid > 0 ? mid : maxChars;
+  const line1 = label.slice(0, splitAt);
+  const line2 = label.slice(splitAt).trimStart();
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <title>{label}</title>
+      <text x={0} y={0} textAnchor="end" fontSize={9} fill="#71717a">
+        <tspan x={0} dy={-4}>{line1}</tspan>
+        <tspan x={0} dy={11}>{line2}</tspan>
+      </text>
+    </g>
+  );
+}
+
 interface Props {
   records: GacetaRecord[];
 }
@@ -31,7 +59,9 @@ export default function MilitaresTab({ records }: Props) {
     const counts: Record<string, number> = {};
     military.forEach((r) => {
       if (!r.organism) return;
-      const short = r.organism.length > 30 ? r.organism.slice(0, 30) + '…' : r.organism;
+      const short = r.organism
+        .replace(/Ministerio del Poder Popular/gi, 'MPP')
+        .replace(/\s+para\s+(la|el|las|los)\s+/gi, ' ');
       counts[short] = (counts[short] || 0) + 1;
     });
     return Object.entries(counts)
@@ -106,8 +136,8 @@ export default function MilitaresTab({ records }: Props) {
             <YAxis
               type="category"
               dataKey="name"
-              width={150}
-              tick={{ fontSize: 9, fill: '#71717a' }}
+              width={220}
+              tick={<YAxisTickMultiline />}
               tickLine={false}
               axisLine={false}
             />

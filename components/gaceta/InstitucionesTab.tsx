@@ -3,10 +3,24 @@
 
 import { useMemo } from 'react';
 import { useTranslation } from '@/i18n';
+import { ExternalLink } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import type { GacetaRecord } from '@/types';
+import { gazetteUrl } from './gaceta-utils';
+
+function YAxisTickWithTooltip({ x, y, payload }: any) {
+  const label: string = payload?.value ?? '';
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <title>{label}</title>
+      <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+        {label}
+      </text>
+    </g>
+  );
+}
 
 interface Props {
   records: GacetaRecord[];
@@ -45,11 +59,16 @@ export default function InstitucionesTab({ records }: Props) {
     return Object.entries(counts)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 15)
-      .map(([name, count]) => ({
-        name: name.length > 30 ? name.slice(0, 30) + '…' : name,
-        fullName: name,
-        count,
-      }));
+      .map(([name, count]) => {
+        const short = name
+          .replace(/Ministerio del Poder Popular/gi, 'MPP')
+          .replace(/\s+para\s+(la|el|las|los)\s+/gi, ' ');
+        return {
+          name: short.length > 80 ? short.slice(0, 80) + '…' : short,
+          fullName: short,
+          count,
+        };
+      });
   }, [records]);
 
   return (
@@ -58,11 +77,11 @@ export default function InstitucionesTab({ records }: Props) {
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-lg border border-white/5 bg-[#111113] p-3 text-center">
           <div className="font-display text-xl font-medium text-teal-400">{uniqueOrganisms}</div>
-          <div className="mt-1 text-[10px] text-zinc-500 uppercase tracking-wide">Organismos únicos</div>
+          <div className="mt-1 text-[10px] text-zinc-500 uppercase tracking-wide">{t('gaceta.organismsunique')}</div>
         </div>
         <div className="rounded-lg border border-white/5 bg-[#111113] p-3 text-center">
           <div className="font-display text-xl font-medium text-teal-400">{ministries}</div>
-          <div className="mt-1 text-[10px] text-zinc-500 uppercase tracking-wide">Ministerios</div>
+          <div className="mt-1 text-[10px] text-zinc-500 uppercase tracking-wide">{t('gaceta.ministerios')}</div>
         </div>
         <div className="rounded-lg border border-white/5 bg-[#111113] p-3 text-center">
           <div className="font-display text-xl font-medium text-teal-400">
@@ -83,8 +102,8 @@ export default function InstitucionesTab({ records }: Props) {
             <YAxis
               type="category"
               dataKey="name"
-              width={160}
-              tick={{ fontSize: 9, fill: '#71717a' }}
+              width={340}
+              tick={<YAxisTickWithTooltip />}
               tickLine={false}
               axisLine={false}
             />
@@ -116,7 +135,18 @@ export default function InstitucionesTab({ records }: Props) {
               ) : (
                 items.map((r) => (
                   <div key={r.id} className="text-[10px] border-b border-white/5 pb-1.5">
-                    <div className="text-zinc-400">{r.gazette_date}</div>
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span>{r.gazette_date}</span>
+                      <a
+                        href={gazetteUrl(r.gazette_number)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-0.5 text-teal-400 hover:underline"
+                      >
+                        #{r.gazette_number}
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    </div>
                     <div className="text-zinc-300 truncate">{r.organism || r.institution || '—'}</div>
                     {r.summary && (
                       <div className="text-zinc-500 line-clamp-2 mt-0.5">{r.summary}</div>

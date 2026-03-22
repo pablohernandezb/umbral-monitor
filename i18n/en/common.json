@@ -849,6 +849,8 @@
     "panelSubtitle": "Analyzing institutional changes and appointments in the Venezuelan public administration",
     "source": "Official Gazette of Venezuela",
     "viewGazette": "View Gazette",
+    "organismsunique": "Unique organisms",
+    "ministerios": "Changes in Ministries",
     "tabs": {
       "resumen": "Summary",
       "designaciones": "Appointments",
