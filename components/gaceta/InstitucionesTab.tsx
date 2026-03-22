@@ -9,13 +9,14 @@ import {
 } from 'recharts';
 import type { GacetaRecord } from '@/types';
 import { gazetteUrl } from './gaceta-utils';
+import { createGacetaTranslator } from './gaceta-i18n';
 
 function YAxisTickWithTooltip({ x, y, payload }: any) {
   const label: string = payload?.value ?? '';
   return (
     <g transform={`translate(${x},${y})`}>
       <title>{label}</title>
-      <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+      <text x={0} y={0} dy={3} textAnchor="end" fontSize={11} fill="#a1a1aa">
         {label}
       </text>
     </g>
@@ -27,7 +28,8 @@ interface Props {
 }
 
 export default function InstitucionesTab({ records }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const tg = createGacetaTranslator(locale);
 
   const uniqueOrganisms = useMemo(() => {
     const set = new Set(records.map((r) => r.organism).filter(Boolean));
@@ -147,9 +149,9 @@ export default function InstitucionesTab({ records }: Props) {
                         <ExternalLink className="w-2.5 h-2.5" />
                       </a>
                     </div>
-                    <div className="text-zinc-300 truncate">{r.organism || r.institution || '—'}</div>
+                    <div className="text-zinc-300 truncate">{tg('organism', r.organism) || r.institution || '—'}</div>
                     {r.summary && (
-                      <div className="text-zinc-500 line-clamp-2 mt-0.5">{r.summary}</div>
+                      <div className="text-zinc-500 line-clamp-2 mt-0.5">{tg('summary', r.summary)}</div>
                     )}
                   </div>
                 ))

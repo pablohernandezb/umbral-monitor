@@ -859,14 +859,18 @@
       "buscador": "Buscador"
     },
     "kpi": {
-      "totalChanges": "Total de cambios",
+      "totalChanges": "Cambios Totales",
       "designations": "Designaciones",
       "militaryPersons": "Personas militares",
       "militaryPosts": "Cargos militares",
+      "ordinaryGazettes": "Gacetas Ordinarias",
+      "extraordinaryGazettes": "Gacetas Extraordinarias",
       "militaryPct": "de designaciones son militares"
     },
     "charts": {
       "weeklyActivity": "Actividad semanal",
+      "dailyActivity": "Actividad diaria",
+      "dailyGazettes": "Gacetas por día",
       "changeTypes": "Tipos de cambio",
       "topOrganisms": "Organismos con más cambios",
       "designationTypes": "Tipos de designación",

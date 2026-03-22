@@ -1,14 +1,16 @@
 // components/gaceta/ResumenTab.tsx
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslation } from '@/i18n';
 import { Shield } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from 'recharts';
 import type { GacetaRecord, GacetaSummary } from '@/types';
 import { LABEL_COLORS, topOrganisms } from './gaceta-utils';
+import { createGacetaTranslator } from './gaceta-i18n';
 
 function YAxisTickWithTooltip({ x, y, payload }: any) {
   const label: string = payload?.value ?? '';
@@ -17,7 +19,7 @@ function YAxisTickWithTooltip({ x, y, payload }: any) {
     return (
       <g transform={`translate(${x},${y})`}>
         <title>{label}</title>
-        <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+        <text x={0} y={0} dy={3} textAnchor="end" fontSize={11} fill="#a1a1aa">
           {label}
         </text>
       </g>
@@ -31,7 +33,7 @@ function YAxisTickWithTooltip({ x, y, payload }: any) {
   return (
     <g transform={`translate(${x},${y})`}>
       <title>{label}</title>
-      <text x={0} y={0} textAnchor="end" fontSize={9} fill="#71717a">
+      <text x={0} y={0} textAnchor="end" fontSize={11} fill="#a1a1aa">
         <tspan x={0} dy={-4}>{line1}</tspan>
         <tspan x={0} dy={11}>{line2}</tspan>
       </text>
@@ -76,25 +78,50 @@ function MetricCard({
 }
 
 export default function ResumenTab({ records, summary }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const tg = createGacetaTranslator(locale);
 
-  const weeklyData = summary.byWeek.map((w) => ({ name: w.label, count: w.count }));
+  const { ordinary, extraordinary } = useMemo(() => {
+    const seen = new Set<string>();
+    let ord = 0;
+    let ext = 0;
+    records.forEach((r) => {
+      const key = `${r.gazette_number}-${r.gazette_type}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      if (r.gazette_type === 'Extraordinaria') ext++;
+      else ord++;
+    });
+    return { ordinary: ord, extraordinary: ext };
+  }, [records]);
+
+  const dailyData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    records.forEach((r) => {
+      counts[r.gazette_date] = (counts[r.gazette_date] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, count]) => ({ date, count }));
+  }, [records]);
 
   const pieData = Object.entries(summary.changesByLabel)
     .filter(([, v]) => v > 0)
     .map(([label, value]) => ({ name: label, value }));
 
   const orgData = topOrganisms(records, 8).map((o) => ({
-    name: o.organism,
-    fullName: o.organism,
+    name: tg('organism', o.organism) || o.organism,
+    fullName: tg('organism', o.organism) || o.organism,
     count: o.count,
   }));
 
   return (
     <div className="space-y-4">
       {/* KPI grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <MetricCard value={summary.totalChanges} label={t('gaceta.kpi.totalChanges')} />
+        <MetricCard value={ordinary} label={t('gaceta.kpi.ordinaryGazettes')} />
+        <MetricCard value={extraordinary} label={t('gaceta.kpi.extraordinaryGazettes')} />
         <MetricCard value={summary.designations} label={t('gaceta.kpi.designations')} />
         <MetricCard value={summary.militaryPersons} label={t('gaceta.kpi.militaryPersons')} variant="military" />
         <MetricCard value={summary.militaryPosts} label={t('gaceta.kpi.militaryPosts')} variant="warning" />
@@ -110,21 +137,59 @@ export default function ResumenTab({ records, summary }: Props) {
         </div>
       )}
 
-      {/* Weekly activity bar chart */}
+      {/* Daily activity area chart */}
       <div className="rounded-lg border border-white/5 bg-[#111113] p-3">
         <h4 className="font-display text-xs font-medium uppercase tracking-widest text-teal-400 mb-3">
-          {t('gaceta.charts.weeklyActivity')}
+          {t('gaceta.charts.dailyActivity')}
         </h4>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={weeklyData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-            <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#71717a' }} tickLine={false} axisLine={false} />
-            <YAxis tick={{ fontSize: 10, fill: '#71717a' }} tickLine={false} axisLine={false} />
-            <Tooltip
-              contentStyle={{ background: '#1a1a1c', border: '1px solid #333', borderRadius: '6px', fontSize: '12px' }}
-              cursor={{ fill: 'rgba(20,184,166,0.05)' }}
+          <AreaChart data={dailyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="dailyGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <XAxis
+              dataKey="date"
+              stroke="#6b6b76"
+              fontSize={10}
+              tickLine={false}
+              axisLine={{ stroke: '#3a3a42' }}
+              tick={{ fill: '#6b6b76', fontFamily: 'JetBrains Mono' }}
+              interval={Math.max(0, Math.floor(dailyData.length / 8) - 1)}
+              tickFormatter={(v: string) => {
+                const d = new Date(v + 'T00:00:00');
+                const m = d.toLocaleString(locale, { month: 'short' });
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${m}-${dd}`;
+              }}
             />
-            <Bar dataKey="count" fill="#14b8a6" radius={[2, 2, 0, 0]} />
-          </BarChart>
+            <YAxis
+              stroke="#6b6b76"
+              fontSize={10}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: '#6b6b76', fontFamily: 'JetBrains Mono' }}
+              allowDecimals={false}
+            />
+            <Tooltip
+              contentStyle={{ background: '#1a1a1c', border: '1px solid #3a3a42', borderRadius: '6px', fontSize: '12px' }}
+              labelStyle={{ color: '#fff', fontFamily: 'JetBrains Mono', marginBottom: 4 }}
+              itemStyle={{ color: '#14b8a6' }}
+              cursor={{ stroke: '#14b8a6', strokeOpacity: 0.3 }}
+            />
+            <Area
+              type="monotone"
+              dataKey="count"
+              stroke="#14b8a6"
+              strokeWidth={2}
+              fill="url(#dailyGradient)"
+              dot={false}
+              activeDot={{ r: 5, fill: '#14b8a6', stroke: '#0a0a0b', strokeWidth: 2 }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
 

@@ -6,6 +6,7 @@ import { useTranslation } from '@/i18n';
 import { ExternalLink } from 'lucide-react';
 import type { GacetaRecord, GacetaChangeLabel } from '@/types';
 import { LABEL_COLORS, gazetteUrl } from './gaceta-utils';
+import { createGacetaTranslator } from './gaceta-i18n';
 
 interface Props {
   records: GacetaRecord[];
@@ -19,7 +20,8 @@ const ALL_LABELS: GacetaChangeLabel[] = [
 const PAGE_SIZE = 20;
 
 export default function BuscadorTab({ records }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const tg = createGacetaTranslator(locale);
   const [search, setSearch] = useState('');
   const [labelFilter, setLabelFilter] = useState('');
   const [organismFilter, setOrganismFilter] = useState('');
@@ -65,7 +67,7 @@ export default function BuscadorTab({ records }: Props) {
         <select
           value={labelFilter}
           onChange={(e) => setLabelFilter(e.target.value)}
-          className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-teal-500/50"
+          className="text-[11px] bg-[#1a1a1c] border border-white/10 rounded px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-teal-500/50 [&>option]:bg-[#1a1a1c] [&>option]:text-zinc-300"
         >
           <option value="">{t('gaceta.table.allTypes')}</option>
           {ALL_LABELS.map((l) => (
@@ -75,7 +77,7 @@ export default function BuscadorTab({ records }: Props) {
         <select
           value={organismFilter}
           onChange={(e) => setOrganismFilter(e.target.value)}
-          className="text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-teal-500/50 max-w-[220px]"
+          className="text-[11px] bg-[#1a1a1c] border border-white/10 rounded px-2 py-1.5 text-zinc-300 focus:outline-none focus:border-teal-500/50 max-w-[220px] [&>option]:bg-[#1a1a1c] [&>option]:text-zinc-300"
         >
           <option value="">{t('gaceta.table.allOrganisms')}</option>
           {organisms.map((o) => (
@@ -136,13 +138,13 @@ export default function BuscadorTab({ records }: Props) {
                         <span className="max-w-[120px] truncate">{r.person_name || '—'}</span>
                         {r.is_military_person && (
                           <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-[#EF9F27]/20 text-[#EF9F27] uppercase flex-shrink-0">
-                            MILITAR
+                            {locale === 'es' ? 'MILITAR' : 'MILITARY'}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-zinc-400 max-w-[140px] truncate">{r.post_or_position || '—'}</td>
-                    <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{r.organism || '—'}</td>
+                    <td className="px-3 py-2 text-zinc-400 max-w-[140px] truncate">{tg('post_or_position', r.post_or_position) || '—'}</td>
+                    <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{tg('organism', r.organism) || '—'}</td>
                   </tr>
                 ))
               )}
@@ -153,7 +155,7 @@ export default function BuscadorTab({ records }: Props) {
 
       {/* Pagination */}
       <div className="flex items-center justify-between text-[11px] text-zinc-500">
-        <span>{filtered.length} resultados</span>
+        <span>{filtered.length} {locale === 'es' ? 'resultados' : 'results'}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}

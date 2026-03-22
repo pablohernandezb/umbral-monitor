@@ -9,13 +9,15 @@ import {
 } from 'recharts';
 import type { GacetaRecord } from '@/types';
 import { gazetteUrl } from './gaceta-utils';
+import { createGacetaTranslator } from './gaceta-i18n';
 
 interface Props {
   records: GacetaRecord[];
 }
 
 export default function DesignacionesTab({ records }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const tg = createGacetaTranslator(locale);
 
   const designaciones = useMemo(
     () => records.filter((r) => r.change_label === 'Designación'),
@@ -144,8 +146,8 @@ export default function DesignacionesTab({ records }: Props) {
                       )}
                     </div>
                   </td>
-                  <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{r.post_or_position || '—'}</td>
-                  <td className="px-3 py-2 text-zinc-400 max-w-[180px] truncate">{r.organism || '—'}</td>
+                  <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{tg('post_or_position', r.post_or_position) || '—'}</td>
+                  <td className="px-3 py-2 text-zinc-400 max-w-[180px] truncate">{tg('organism', r.organism) || '—'}</td>
                 </tr>
               ))}
             </tbody>

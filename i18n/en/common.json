@@ -863,10 +863,14 @@
       "designations": "Appointments",
       "militaryPersons": "Military persons",
       "militaryPosts": "Military posts",
+      "ordinaryGazettes": "Ordinary Gazettes",
+      "extraordinaryGazettes": "Extraordinary Gazettes",
       "militaryPct": "of appointments are military"
     },
     "charts": {
       "weeklyActivity": "Weekly activity",
+      "dailyActivity": "Daily activity",
+      "dailyGazettes": "Gazettes per day",
       "changeTypes": "Change types",
       "topOrganisms": "Most active organisms",
       "designationTypes": "Appointment types",

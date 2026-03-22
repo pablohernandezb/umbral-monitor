@@ -7,6 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import type { GacetaRecord } from '@/types';
+import { createGacetaTranslator } from './gaceta-i18n';
 
 function YAxisTickMultiline({ x, y, payload }: any) {
   const label: string = payload?.value ?? '';
@@ -15,7 +16,7 @@ function YAxisTickMultiline({ x, y, payload }: any) {
     return (
       <g transform={`translate(${x},${y})`}>
         <title>{label}</title>
-        <text x={0} y={0} dy={3} textAnchor="end" fontSize={9} fill="#71717a">
+        <text x={0} y={0} dy={3} textAnchor="end" fontSize={11} fill="#a1a1aa">
           {label}
         </text>
       </g>
@@ -28,7 +29,7 @@ function YAxisTickMultiline({ x, y, payload }: any) {
   return (
     <g transform={`translate(${x},${y})`}>
       <title>{label}</title>
-      <text x={0} y={0} textAnchor="end" fontSize={9} fill="#71717a">
+      <text x={0} y={0} textAnchor="end" fontSize={11} fill="#a1a1aa">
         <tspan x={0} dy={-4}>{line1}</tspan>
         <tspan x={0} dy={11}>{line2}</tspan>
       </text>
@@ -41,7 +42,8 @@ interface Props {
 }
 
 export default function MilitaresTab({ records }: Props) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const tg = createGacetaTranslator(locale);
   const [search, setSearch] = useState('');
 
   const military = useMemo(
@@ -190,14 +192,14 @@ export default function MilitaresTab({ records }: Props) {
                     <td className="px-3 py-2">
                       {r.military_rank ? (
                         <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[#EF9F27]/20 text-[#EF9F27]">
-                          {r.military_rank}
+                          {tg('military_rank', r.military_rank)}
                         </span>
                       ) : '—'}
                     </td>
                     <td className="px-3 py-2 text-zinc-200">{r.person_name || '—'}</td>
-                    <td className="px-3 py-2 text-zinc-400 max-w-[140px] truncate">{r.post_or_position || '—'}</td>
-                    <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{r.organism || '—'}</td>
-                    <td className="px-3 py-2 text-zinc-500">{r.change_label}</td>
+                    <td className="px-3 py-2 text-zinc-400 max-w-[140px] truncate">{tg('post_or_position', r.post_or_position) || '—'}</td>
+                    <td className="px-3 py-2 text-zinc-400 max-w-[160px] truncate">{tg('organism', r.organism) || '—'}</td>
+                    <td className="px-3 py-2 text-zinc-500">{t(`gaceta.labels.${r.change_label}`)}</td>
                   </tr>
                 ))
               )}
