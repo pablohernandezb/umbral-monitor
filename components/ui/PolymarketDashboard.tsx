@@ -59,7 +59,7 @@ function MarketEmbed({ slug, title }: { slug: string; title: string }) {
   }, [])
 
   const embedUrl = width > 0
-    ? `https://embed.polymarket.com/market.html?market=${slug}&theme=dark&features=volume,chart,filters&width=${width}`
+    ? `https://embed.polymarket.com/market?market=${slug}&theme=dark&buttons=false&features=volume,chart,filters&width=${width}`
     : null
 
   return (
