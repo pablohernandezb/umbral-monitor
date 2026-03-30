@@ -12,7 +12,7 @@ const MARKETS = [
     key: 'venezuelaBecomes51stState',
   },
   {
-    slug: 'will-mara-corina-machado-enter-venezuela-by-march-31-426-698-771',
+    slug: 'will-mara-corina-machado-enter-venezuela-by-april-30',
     key: 'mcmEnters',
   },
   {
@@ -20,8 +20,8 @@ const MARKETS = [
     key: 'delcyLeader',
   },
   {
-    slug: 'will-the-us-embassy-in-venezuela-reopen-by-march-31',
-    key: 'embassyReopens',
+    slug: 'venezuela-election-scheduled-by-december-31-2026',
+    key: 'electionsBy',
   },
 ]
 
