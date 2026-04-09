@@ -343,12 +343,6 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
-              <Link
-                href="/how-did-we-get-here"
-                className="btn btn-secondary text-base px-8 py-3 group"
-              >
-                {t('common.howDidWeGetHere')}
-              </Link>
             </motion.div>
           </motion.div>
 

@@ -26,7 +26,7 @@
     "filter": "Filter",
     "share": "Share",
     "download": "Download",
-    "participate": "Participate",
+    "participate": "Add your analysis",
     "howDidWeGetHere": "How did we get here?",
     "donateToTheProject": "Donate to the Project",
     "watchDemo": "Watch Demo",
@@ -35,9 +35,9 @@
   "landing": {
     "hero": {
       "badge": "Live monitoring",
-      "title": "Path to",
-      "titleHighlight": "transition",
-      "subtitle": "Analyzing historical data and current events to inform about potential regime change."
+      "title": "Democracy at the",
+      "titleHighlight": "threshold",
+      "subtitle": "Five scenarios. Live data. Your analysis matters."
     },
     "scenarios": {
       "title": "Transformation Scenarios",

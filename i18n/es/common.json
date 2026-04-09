@@ -26,7 +26,7 @@
     "filter": "Filtrar",
     "share": "Compartir",
     "download": "Descargar",
-    "participate": "Participa",
+    "participate": "Suma tu análisis",
     "howDidWeGetHere": "¿Cómo llegamos aquí?",
     "donateToTheProject": "Dona al proyecto",
     "watchDemo": "Ver demo",
@@ -35,9 +35,9 @@
   "landing": {
     "hero": {
       "badge": "Monitoreo en vivo",
-      "title": "Camino a la",
-      "titleHighlight": "transición",
-      "subtitle": "Analizando los datos históricos y hechos actuales para informar sobre un eventual cambio de régimen."
+      "title": "Democracia en el",
+      "titleHighlight": "umbral",
+      "subtitle": "Cinco escenarios. Datos en vivo. Tu análisis cuenta."
     },
     "scenarios": {
       "title": "Escenarios de Transformación",
