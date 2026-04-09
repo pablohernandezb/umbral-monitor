@@ -323,7 +323,7 @@ export default function LandingPage() {
             {/* Subtitle */}
             <motion.p 
               variants={fadeInUp}
-              className="text-lg md:text-xl text-umbral-muted max-w-2xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-umbral-muted max-w-3xl mx-auto leading-relaxed"
             >
               {t('landing.hero.subtitle')}
             </motion.p>
