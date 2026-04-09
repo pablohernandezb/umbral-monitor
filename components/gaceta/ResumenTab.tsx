@@ -1,7 +1,7 @@
 // components/gaceta/ResumenTab.tsx
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from '@/i18n';
 import { Shield } from 'lucide-react';
 import {
@@ -81,6 +81,15 @@ export default function ResumenTab({ records, summary }: Props) {
   const { t, locale } = useTranslation();
   const tg = createGacetaTranslator(locale);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const { ordinary, extraordinary } = useMemo(() => {
     const seen = new Set<string>();
     let ord = 0;
@@ -158,7 +167,7 @@ export default function ResumenTab({ records, summary }: Props) {
               tickLine={false}
               axisLine={{ stroke: '#3a3a42' }}
               tick={{ fill: '#6b6b76', fontFamily: 'JetBrains Mono' }}
-              interval={Math.max(0, Math.floor(dailyData.length / 8) - 1)}
+              interval={Math.max(0, Math.floor(dailyData.length / (isMobile ? 4 : 8)) - 1)}
               tickFormatter={(v: string) => {
                 const d = new Date(v + 'T00:00:00');
                 const m = d.toLocaleString(locale, { month: 'short' });
