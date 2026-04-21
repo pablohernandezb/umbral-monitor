@@ -897,7 +897,7 @@ export async function getLatestStarSnapshot(): Promise<ApiResponse<StarVotingRes
   const { data, error } = await supabase
     .from('star_voting_snapshots')
     .select('*')
-    .order('data_date', { ascending: false })
+    .order('date', { ascending: false })
     .limit(1)
     .maybeSingle()
 
