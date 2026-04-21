@@ -482,7 +482,7 @@ export async function getAllPrisonersByOrg(): Promise<ApiResponse<PrisonersByOrg
   const { data, error } = await supabase
     .from('prisoners_by_organization')
     .select('*')
-    .order('date', { ascending: false })
+    .order('data_date', { ascending: false })
 
   return { data: data as PrisonersByOrganization[] | null, error: error?.message || null }
 }
@@ -897,7 +897,7 @@ export async function getLatestStarSnapshot(): Promise<ApiResponse<StarVotingRes
   const { data, error } = await supabase
     .from('star_voting_snapshots')
     .select('*')
-    .order('date', { ascending: false })
+    .order('data_date', { ascending: false })
     .limit(1)
     .maybeSingle()
 

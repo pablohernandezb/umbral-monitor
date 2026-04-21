@@ -188,6 +188,12 @@ export default function ResumenTab({ records, summary }: Props) {
               labelStyle={{ color: '#fff', fontFamily: 'JetBrains Mono', marginBottom: 4 }}
               itemStyle={{ color: '#14b8a6' }}
               cursor={{ stroke: '#14b8a6', strokeOpacity: 0.3 }}
+              formatter={(value: number) => {
+                const word = locale === 'es'
+                  ? (value === 1 ? 'cambio' : 'cambios')
+                  : (value === 1 ? 'change' : 'changes');
+                return [`${value} ${word}`, ''];
+              }}
             />
             <Area
               type="monotone"
