@@ -1021,7 +1021,7 @@ export default function LandingPage() {
               <div className="mt-4 pt-4 border-t border-umbral-ash flex items-center justify-between">
                 <p className="text-xs text-umbral-muted flex items-center gap-2">
                   <Clock className="w-3 h-3" />
-                  {t('common.lastUpdated')}: {prisonerStats?.date || '2026-04-13'}
+                  {t('common.lastUpdated')}: {prisonerStats?.date || '2026-04-20'}
                 </p>
                 <p className="text-xs text-umbral-muted">
                   {t('common.sources')}: {prisonerStats?.source || 'Foro Penal, CLIPPVE'}
