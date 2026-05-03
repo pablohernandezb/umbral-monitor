@@ -12,7 +12,7 @@ const MARKETS = [
     key: 'venezuelaBecomes51stState',
   },
   {
-    slug: 'will-mara-corina-machado-enter-venezuela-by-april-30',
+    slug: 'will-mara-corina-machado-enter-venezuela-by-june-30',
     key: 'mcmEnters',
   },
   {
