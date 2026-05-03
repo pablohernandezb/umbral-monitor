@@ -68,7 +68,7 @@ export function OutageEventList({ events, loading, className }: OutageEventListP
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-umbral-ash/20">
+      <div className="flex-1 max-h-[300px] overflow-y-auto divide-y divide-umbral-ash/20">
         {loading ? (
           <SkeletonRows />
         ) : events.length === 0 ? (
