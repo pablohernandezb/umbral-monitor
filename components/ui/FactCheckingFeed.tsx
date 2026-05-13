@@ -11,6 +11,7 @@ const LOCAL_AVATARS: Record<string, string> = {
   'cazamosfakenews': '/images/avatars/cazamosfakenews.jpg',
   'cotejoinfo':      '/images/avatars/cotejoinfo.jpg',
   'factchequeado':   '/images/avatars/factchequeando.png',
+  'efectococuyo':    '/images/avatars/efectococuyo.jpg',
 }
 
 const ALERT_TAG_I18N: Record<string, { es: string; en: string }> = {
@@ -158,7 +159,7 @@ export function FactCheckingFeed() {
     ? 'bg-signal-amber'
     : 'bg-signal-teal'
 
-  const accountCount = new Set(tweets.map(tw => tw.username)).size || 3
+  const accountCount = new Set(tweets.map(tw => tw.username)).size || 4
   const totalReports = tweets.length
   const totalAlerts = tweets.filter(tw => tw.alert_tags.length > 0).length
 

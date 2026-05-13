@@ -12,6 +12,7 @@ const KNOWN_ACCOUNTS: { username: string; displayName: string; avatarPath: strin
   { username: 'cazamosfakenews', displayName: 'Cazamos Fake News', avatarPath: '/images/avatars/cazamosfakenews.jpg' },
   { username: 'cotejoinfo',      displayName: 'Cotejo.info',       avatarPath: '/images/avatars/cotejoinfo.jpg' },
   { username: 'factchequeado',   displayName: 'Factchequeado',     avatarPath: '/images/avatars/factchequeando.png' },
+  { username: 'efectococuyo',    displayName: 'Efecto Cocuyo',     avatarPath: '/images/avatars/efectococuyo.jpg' },
 ]
 
 const ALERT_TAG_OPTIONS = ['FALSO', 'ENGAÑOSO', 'DESMENTIDO', 'FALSE', 'MISLEADING', 'DEBUNKED']
@@ -171,7 +172,7 @@ export default function FactCheckAdminPage() {
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Fact-Check Feed</h1>
-          <p className="text-gray-400">Manually curate fact-checking entries from @cazamosfakenews, @cotejoinfo, and @factchequeado</p>
+          <p className="text-gray-400">Manually curate fact-checking entries from @cazamosfakenews, @cotejoinfo, @factchequeado, and @efectococuyo</p>
         </div>
         <button
           onClick={() => setShowForm(v => !v)}
