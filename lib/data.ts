@@ -130,20 +130,38 @@ export async function getNewsFeed(
     return { data: data.slice(0, limit), error: null }
   }
 
-  let query = supabase
-    .from('news_feed')
-    .select('*')
-    .order('published_at', { ascending: false })
-    .limit(limit)
+  // PostgREST caps a single response (default 1000 rows), so page through
+  // in chunks with .range() until we hit `limit` or run out of rows.
+  const CHUNK_SIZE = 1000
+  const rows: NewsItem[] = []
 
-  if (category) query = query.eq('category_en', category)
+  while (rows.length < limit) {
+    const start = rows.length
+    const end = Math.min(start + CHUNK_SIZE, limit) - 1
+    const expected = end - start + 1
 
-  const { data, error } = await query
+    let query = supabase
+      .from('news_feed')
+      .select('*')
+      .order('published_at', { ascending: false })
+      .range(start, end)
 
-  return {
-    data: data as NewsItem[] | null,
-    error: error?.message || null,
+    if (category) query = query.eq('category_en', category)
+
+    const { data, error } = await query
+
+    if (error) {
+      return { data: rows.length ? rows : null, error: error.message }
+    }
+
+    const chunk = (data ?? []) as NewsItem[]
+    rows.push(...chunk)
+
+    // Short chunk means we reached the end of the table.
+    if (chunk.length < expected) break
   }
+
+  return { data: rows, error: null }
 }
 
 // ============================================================

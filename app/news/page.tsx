@@ -43,6 +43,36 @@ const categoryIcons = {
   international: Globe,
 }
 
+// Upper bound on articles pulled into the client for filtering/search.
+// getNewsFeed() pages through PostgREST's 1000-row response cap internally.
+const NEWS_FETCH_LIMIT = 5000
+
+// Max numbered page buttons rendered at once (excluding first/last + ellipses).
+const PAGE_WINDOW = 5
+
+/** Page numbers to render, with `null` marking an ellipsis gap. */
+function buildPageList(current: number, total: number): (number | null)[] {
+  if (total <= PAGE_WINDOW + 2) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+
+  const half = Math.floor(PAGE_WINDOW / 2)
+  let start = Math.max(2, current - half)
+  let end = Math.min(total - 1, current + half)
+
+  // Keep the window a constant width when clamped at either edge.
+  if (current - half < 2) end = Math.min(total - 1, PAGE_WINDOW)
+  if (current + half > total - 1) start = Math.max(2, total - PAGE_WINDOW + 1)
+
+  const pages: (number | null)[] = [1]
+  if (start > 2) pages.push(null)
+  for (let p = start; p <= end; p++) pages.push(p)
+  if (end < total - 1) pages.push(null)
+  pages.push(total)
+
+  return pages
+}
+
 const categoryColors: Record<string, string> = {
   political: 'bg-signal-red/10 text-signal-red border-signal-red/30',
   economic: 'bg-signal-amber/10 text-signal-amber border-signal-amber/30',
@@ -71,7 +101,7 @@ export default function NewsRoomPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await getNewsFeed(500)
+        const res = await getNewsFeed(NEWS_FETCH_LIMIT)
         if (res.data) setItems(res.data)
       } catch (error) {
         console.error('Failed to load news:', error)
@@ -397,19 +427,28 @@ export default function NewsRoomPage() {
               </button>
 
               <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={cn(
-                      'w-9 h-9 text-sm rounded-lg transition-colors',
-                      page === currentPage
-                        ? 'bg-signal-teal text-umbral-black font-semibold'
-                        : 'border border-umbral-ash bg-umbral-charcoal text-umbral-muted hover:text-white hover:border-umbral-steel'
-                    )}
-                  >
-                    {page}
-                  </button>
+                {buildPageList(currentPage, totalPages).map((page, i) => (
+                  page === null ? (
+                    <span
+                      key={`gap-${i}`}
+                      className="w-6 h-9 flex items-center justify-center text-sm text-umbral-muted select-none"
+                    >
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={cn(
+                        'w-9 h-9 text-sm rounded-lg transition-colors',
+                        page === currentPage
+                          ? 'bg-signal-teal text-umbral-black font-semibold'
+                          : 'border border-umbral-ash bg-umbral-charcoal text-umbral-muted hover:text-white hover:border-umbral-steel'
+                      )}
+                    >
+                      {page}
+                    </button>
+                  )
                 ))}
               </div>
 
