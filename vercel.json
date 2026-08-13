@@ -5,7 +5,7 @@
       "schedule": "0 10 * * *"
     },
     {
-      "path": "/api/gdelt?force=true",
+      "path": "/api/gdelt?force=true&secret=umbral-cron-a7f3e9b1c2d4",
       "schedule": "59 4 * * *"
     },
     {

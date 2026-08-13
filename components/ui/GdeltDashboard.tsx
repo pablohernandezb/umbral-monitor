@@ -8,7 +8,10 @@ import { GdeltSignalChart } from '@/components/charts/GdeltSignalChart'
 import { TIER_COLORS } from '@/data/gdelt-annotations'
 import { mockGdeltData } from '@/data/gdelt-mock'
 import { getGdeltEvents } from '@/lib/data'
-import type { GdeltDataPoint, GdeltApiResponse, GdeltEvent } from '@/types/gdelt'
+import type { GdeltDataPoint, GdeltApiResponse, GdeltEvent, GdeltSignalKey } from '@/types/gdelt'
+
+// Signals refresh daily; anything older than this is not "live".
+const STALE_AFTER_DAYS = 2
 
 export function GdeltDashboard() {
   const { t, locale } = useTranslation()
@@ -17,6 +20,11 @@ export function GdeltDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [fetchedAt, setFetchedAt] = useState<string | null>(null)
+  const [latestDataDate, setLatestDataDate] = useState<string | null>(null)
+  const [stalenessDays, setStalenessDays] = useState<number | null>(null)
+  const [stalestSignal, setStalestSignal] = useState<GdeltSignalKey | null>(null)
+  const [signalLastDates, setSignalLastDates] =
+    useState<Record<GdeltSignalKey, string | null> | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -35,6 +43,10 @@ export function GdeltDashboard() {
           if (json.data && json.data.length > 0) {
             setData(json.data)
             setFetchedAt(json.fetchedAt)
+            setLatestDataDate(json.latestDataDate ?? null)
+            setStalenessDays(json.stalenessDays ?? null)
+            setStalestSignal(json.stalestSignal ?? null)
+            setSignalLastDates(json.signalLastDates ?? null)
             if (json.error) setError(json.error)
           } else {
             setData(mockGdeltData)
@@ -93,6 +105,10 @@ export function GdeltDashboard() {
     return { instabilityDelta, currentTone, phase }
   }, [data])
 
+  // Only meaningful for real data — mock mode has its own badge.
+  const isStale =
+    error !== 'mock' && stalenessDays !== null && stalenessDays > STALE_AFTER_DAYS
+
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr + 'T00:00:00')
     return d.toLocaleDateString(locale === 'es' ? 'es-VE' : 'en-US', {
@@ -101,6 +117,26 @@ export function GdeltDashboard() {
       year: 'numeric',
     })
   }
+
+  // Names the lagging signal and lists every signal's end date, so a partly
+  // frozen chart is diagnosable from the UI instead of only from the API.
+  const staleTooltip = (() => {
+    if (stalenessDays === null) return undefined
+    const worst = stalestSignal
+      ? `${t(`gdelt.signals.${stalestSignal}`)} — ${stalenessDays}d`
+      : `${stalenessDays}d`
+    const perSignal = signalLastDates
+      ? (Object.keys(signalLastDates) as GdeltSignalKey[])
+          .map(k => {
+            const d = signalLastDates[k]
+            return `${t(`gdelt.signals.${k}`)}: ${d ? formatDate(d) : '—'}`
+          })
+          .join('\n')
+      : ''
+    return [t('gdelt.staleTooltip').replace('{signal}', worst), perSignal]
+      .filter(Boolean)
+      .join('\n\n')
+  })()
 
   return (
     <div className="rounded-lg border border-umbral-ash bg-umbral-black/90 overflow-hidden">
@@ -122,8 +158,21 @@ export function GdeltDashboard() {
             <span className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber">
               {t('gdelt.mockData')}
             </span>
+          ) : isStale ? (
+            /* Staleness is judged from the newest row, not from whether this
+               request succeeded — a cache hit over months-old data is not live. */
+            <span
+              title={staleTooltip}
+              className="px-2 py-0.5 bg-signal-red/10 border border-signal-red/30 rounded text-[10px] font-mono text-signal-red cursor-help"
+            >
+              {t('gdelt.staleBadge')}
+              {stalenessDays !== null && ` · ${stalenessDays}d`}
+            </span>
           ) : error ? (
-            <span className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber">
+            <span
+              title={error}
+              className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber cursor-help"
+            >
               {t('gdelt.dataDelayed')}
             </span>
           ) : (
@@ -269,14 +318,24 @@ export function GdeltDashboard() {
                 <Radio className="w-3 h-3" />
                 {t('gdelt.source')}
               </span>
-              {fetchedAt && (
-                <span className="font-mono">
-                  {t('gdelt.footer.lastUpdated')}
-                  {new Date(fetchedAt).toLocaleString(locale === 'es' ? 'es-VE' : 'en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                  })}
-                </span>
-              )}
+              <span className="flex items-center gap-3 font-mono">
+                {/* Coverage end date — the number that actually tells you
+                    whether the chart is current. */}
+                {latestDataDate && (
+                  <span className={cn(isStale && 'text-signal-red')}>
+                    {t('gdelt.footer.dataThrough')}
+                    {formatDate(latestDataDate)}
+                  </span>
+                )}
+                {fetchedAt && (
+                  <span>
+                    {t('gdelt.footer.lastUpdated')}
+                    {new Date(fetchedAt).toLocaleString(locale === 'es' ? 'es-VE' : 'en-US', {
+                      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                    })}
+                  </span>
+                )}
+              </span>
             </div>
           </>
         )}

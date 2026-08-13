@@ -27,7 +27,8 @@ npm run lint     # ESLint validation
 npm run seed     # Seed Supabase database (requires .env.local with SUPABASE_SERVICE_ROLE_KEY)
 
 # Manual cron triggers (dev) — use curl.exe on Windows PowerShell
-curl.exe "http://localhost:3000/api/gdelt?force=true"
+curl.exe "http://localhost:3000/api/gdelt?force=true&secret=umbral-cron-a7f3e9b1c2d4"           # rotates 1 signal (~20s)
+curl.exe "http://localhost:3000/api/gdelt?force=true&all=true&secret=umbral-cron-a7f3e9b1c2d4"  # all 3 signals (~60s)
 curl.exe "http://localhost:3000/api/ioda/sync?force=true&secret=umbral-cron-a7f3e9b1c2d4"
 curl.exe "http://localhost:3000/api/fact-check/refresh?secret=umbral-cron-a7f3e9b1c2d4"
 curl.exe "http://localhost:3000/api/news/scrape?secret=umbral-cron-a7f3e9b1c2d4"
@@ -113,11 +114,18 @@ All tables have Row Level Security (RLS) enabled with public read-only access.
 
 ### Cron Jobs (`vercel.json`)
 
-All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization. **Vercel Hobby hard cap is 10s** — all cron handlers must complete within that limit (exception: `/api/analytics/snapshot` has `maxDuration=60`).
+All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization.
+
+**Function duration — the "10s hard cap" note previously here was wrong.** Production evidence
+(2026-08-12): `/api/news/scrape` declares `maxDuration = 300` and writes `news_feed` rows ~10
+minutes after its 12:00 UTC trigger, so long-running handlers do complete. Set `maxDuration` to
+what a handler actually needs. The stale 10s figure is what motivated the `Promise.all` fan-out
+in `/api/gdelt`, which then broke that cron for three months by tripping GDELT's rate limiter —
+parallelize for genuine speed requirements, not for an imagined ceiling.
 
 | Schedule (UTC) | Endpoint | Purpose |
 |---|---|---|
-| `59 4 * * *` | `/api/gdelt?force=true` | Fetch & archive GDELT media signals (120-day window) |
+| `59 4 * * *` | `/api/gdelt?force=true&secret=…` | Refresh one GDELT media signal (rotating; 120-day window) |
 | `0 6 * * *` | `/api/ioda/sync` | Fetch & archive national IODA signals + events |
 | `0 8 * * *` | `/api/ioda/sync-subnational` | Fetch & archive subnational IODA region signals + outages |
 | `0 10 * * *` | `/api/fact-check/refresh` | Fetch tweets from 3 X fact-checking accounts |
@@ -126,7 +134,14 @@ All crons use `CRON_SECRET=umbral-cron-a7f3e9b1c2d4` for authorization. **Vercel
 
 **Scheduling rule**: cron jobs must be spaced at least 90 minutes apart (Vercel Hobby cold-start safety margin).
 
-**Parallel fetch pattern** (critical for Hobby 10s cap): all external HTTP calls within a single cron handler must use `Promise.all` / `Promise.allSettled`. Sequential fetches with delays will time out.
+`/api/gdelt` requires `CRON_SECRET` (Bearer header or `?secret=`) **only when `force=true`** —
+plain reads stay public because the dashboard fetches this route from the browser. Vercel Cron
+also sends `Authorization: Bearer $CRON_SECRET` automatically.
+
+**Parallel fetch pattern**: external HTTP calls within a cron handler generally use `Promise.all` /
+`Promise.allSettled` to keep runtime down. **Check the provider's rate limit before applying this** —
+`/api/gdelt` must stay serialized (see the GDELT section); parallelizing it silently froze two of its
+three signals for three months.
 
 ### Internationalization (`i18n/`)
 
@@ -261,11 +276,40 @@ app/
 
 ### GDELT Dashboard — Data Flow
 
-- Daily cron (`59 4 * * *`) calls `/api/gdelt?force=true` → fetches 3 GDELT signals in parallel → upserts to `gdelt_data` table
-- All 3 fetches use `AbortSignal.timeout(6_000)` to stay within Hobby's 10s cap
+- Daily GitHub Actions run (`59 4 * * *`) calls `/api/gdelt?force=true` → refreshes **one** signal → upserts to `gdelt_data`
 - On-demand reads: if `force=false` and DB has data, returns DB rows without hitting GDELT
 - Signals: `instability` (conflict volume), `tone` (media sentiment), `artvolnorm` (article attention)
 - `TIMESPAN=120d` — 120-day rolling window, so missed days are backfilled on next successful run
+
+**GDELT rate limit — do NOT parallelize this cron.** GDELT DOC 2.0 enforces roughly
+"one request every 5 seconds" (and throttles harder once tripped), answering violations with
+HTTP 429 plus a plaintext advisory body. Fetching the 3 signals via `Promise.all` — the general
+pattern used by the other crons — caused exactly one request to be served and the other two
+rejected on every run, silently freezing `tone` and `artvolnorm` at April 2026 while
+`instability` advanced alone. This is the one cron that must stay serialized.
+
+- Requests are serialized with a 5.5s gap; a 429 or transient network fault triggers one retry
+  after a 15s backoff
+- Measured GDELT latency is **14–17s per call** — `AbortSignal.timeout` is 25s
+- When GDELT throttles hard it stops returning 429 and tarpits the connection instead, surfacing
+  as `UND_ERR_CONNECT_TIMEOUT` at 10s. That 10s is **undici's default connect timeout**, which
+  `AbortSignal.timeout` does not govern — it bounds the whole request, not the TCP connect phase.
+  Raising it would require a custom undici dispatcher; not currently done, since connects succeed
+  normally when the IP is not throttled
+- `describeError()` unwraps `err.cause`, because undici collapses every network fault into a bare
+  `TypeError: fetch failed` that hides the actual code
+- Default run **rotates one signal per day** (`signalForToday()`, UTC day number mod 3). Since each
+  request returns a full 120-day window, refreshing a signal every 3 days still yields complete
+  daily coverage at a third of the request volume
+- `?all=true` fetches all 3 serialized (~55–65s) for manual backfills
+- **`maxDuration = 60`** covers a rotating run (~15–40s) with headroom. If the platform ever does
+  kill the handler, that is safe: the upsert runs only after all fetches resolve, so a truncated
+  run writes nothing rather than half-stale rows
+- Only rows whose values actually changed are upserted, so `updated_at` (surfaced as `fetchedAt`)
+  means "when the archive last changed", not "when it was last polled"
+- The API returns `latestDataDate`, `stalenessDays`, and per-signal `signalLastDates` on **every**
+  path including cache hits; `GdeltDashboard` shows a red STALE badge past 2 days rather than
+  a green LIVE badge over months-old rows
 
 ### Share Button (`components/layout/Header.tsx`)
 
@@ -341,7 +385,7 @@ The participate page (`app/participate/`) is a multi-screen wizard (10+ screens)
 - **Scenario ordering**: Cards display ordered by scenario number 1→5 (left to right)
 - **GA exclusion**: `GoogleAnalytics.tsx` skips tracking for any route starting with `/admin`
 - **Vote integrity**: `news_vote_log` enforces one vote per IP hash per scenario per article server-side; `NewsCard` enforces the same client-side via localStorage
-- **Vercel Hobby 10s limit**: All cron handlers must complete within 10s. Use `Promise.all`/`Promise.allSettled` for parallel external fetches. Sequential fetches with delays will time out and silently skip remaining items.
+- **Cron handler duration**: set `maxDuration` to what the handler needs — the previously documented "Hobby 10s hard cap" is contradicted by production (`/api/news/scrape` runs with `maxDuration=300` and completes). Parallelize external fetches for speed where the provider allows it, but check rate limits first: `/api/gdelt` must remain serialized.
 - **IODA API v2 quirks**: `signals/raw` returns `{ data: [[sig1, sig2, ...]] }` — double-nested array, requires `.flat()`. Events/alerts use query params (`?entityType=&entityCode=`), not path segments. Telescope datasource is `merit-nt` (replaced `ucsd-nt`).
 - **react-leaflet version**: Must stay at `^4.2.1` — v5 requires React 19; project is on React 18.
 - **STAR voting snapshots**: Landing page reads from `star_voting_snapshots` (populated daily at 14:00 UTC by `/api/analytics/snapshot`). The first run must be triggered manually after table creation. `computeStarVoting()` is exported so the cron route can import it without circular deps.

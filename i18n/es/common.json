@@ -945,8 +945,11 @@
       "title": "LÍNEA DE TIEMPO DE EVENTOS"
     },
     "footer": {
-      "lastUpdated": "Última actualización: "
+      "lastUpdated": "Última actualización: ",
+      "dataThrough": "Datos hasta: "
     },
+    "staleBadge": "DESACTUALIZADO",
+    "staleTooltip": "Las señales no están actualizadas. La más rezagada: {signal}.",
     "dataDelayed": "DATOS RETRASADOS",
     "source": "Fuente: Proyecto GDELT",
     "noData": "Datos de señales no disponibles actualmente",

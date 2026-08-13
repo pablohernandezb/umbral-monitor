@@ -944,8 +944,11 @@
       "title": "EVENT TIMELINE"
     },
     "footer": {
-      "lastUpdated": "Last updated: "
+      "lastUpdated": "Last updated: ",
+      "dataThrough": "Data through: "
     },
+    "staleBadge": "STALE",
+    "staleTooltip": "Signals are not up to date. Furthest behind: {signal}.",
     "dataDelayed": "DATA DELAYED",
     "source": "Source: GDELT Project",
     "noData": "Signal data currently unavailable",
