@@ -50,6 +50,7 @@ import { FactCheckingFeed } from '@/components/ui/FactCheckingFeed'
 import { GdeltDashboard } from '@/components/ui/GdeltDashboard'
 import { PolymarketDashboard } from '@/components/ui/PolymarketDashboard'
 import { StarVotingConsensus } from '@/components/ui/StarVotingConsensus'
+import { InstallingDemocracyHero } from '@/components/installing-democracy/InstallingDemocracyHero'
 import ConnectivitySection from '@/components/connectivity/ConnectivitySection'
 import GacetaDashboard from '@/components/gaceta/GacetaDashboard'
 import { TrajectoryChart } from '@/components/charts/TrajectoryChart'
@@ -285,80 +286,9 @@ export default function LandingPage() {
   return (
     <div className="relative">
       {/* ============================================================
-          HERO SECTION
+          HERO SECTION — Installing Democracy
           ============================================================ */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-signal-teal/5 via-transparent to-transparent" />
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="space-y-8"
-          >
-            {/* Live badge */}
-            <motion.div variants={fadeInUp}>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-umbral-ash/30 border border-signal-teal/30 text-signal-teal text-sm font-medium">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-signal-teal opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-signal-teal" />
-                </span>
-                {t('landing.hero.badge')}
-              </span>
-            </motion.div>
-
-            {/* Main heading */}
-            <motion.h1 
-              variants={fadeInUp}
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight"
-            >
-              <span className="text-white">{t('landing.hero.title')}</span>
-              <br />
-              <span className="text-gradient">{t('landing.hero.titleHighlight')}</span>
-              <span className="text-signal-teal">.</span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p 
-              variants={fadeInUp}
-              className="text-lg md:text-xl text-umbral-muted max-w-3xl mx-auto leading-relaxed"
-            >
-              {t('landing.hero.subtitle')}
-            </motion.p>
-
-            {/* CTA buttons */}
-            <motion.div 
-              variants={fadeInUp}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-            >
-              <div className="relative inline-flex">
-                <span className="absolute inset-0 rounded-lg animate-ping-sm bg-signal-teal/25 pointer-events-none" />
-                <Link
-                  href="/participate"
-                  className="btn btn-primary text-base px-8 py-3 group relative"
-                >
-                  {t('common.participate')}
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          >
-            <div className="w-6 h-10 border-2 border-umbral-steel rounded-full p-1">
-              <div className="w-1.5 h-2 bg-signal-teal rounded-full animate-bounce mx-auto" />
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <InstallingDemocracyHero />
 
       {/* ============================================================
           SCENARIOS SECTION

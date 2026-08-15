@@ -289,6 +289,18 @@ ALTER PUBLICATION supabase_realtime ADD TABLE news_feed;
 ALTER PUBLICATION supabase_realtime ADD TABLE political_prisoners;
 ALTER PUBLICATION supabase_realtime ADD TABLE scenarios;
 
+-- ADD TABLE is not idempotent (errors if already published), so this one is
+-- guarded to make SCHEMA_SQL safely re-runnable.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'transition_checklist'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE transition_checklist;
+  END IF;
+END $$;
+
 -- ============================================================
 -- FUNCTIONS & TRIGGERS
 -- Auto-update timestamps
@@ -674,6 +686,37 @@ ALTER TABLE gazette_records ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "gazette_records_public_read" ON gazette_records FOR SELECT USING (true);
 CREATE POLICY "Authenticated insert gazette_records" ON gazette_records FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "Authenticated delete gazette_records" ON gazette_records FOR DELETE TO authenticated USING (true);
+
+-- ============================================================
+-- TRANSITION_CHECKLIST TABLE
+-- "Installing Democracy" 62-action, 18-month transition roadmap
+-- ============================================================
+CREATE TABLE IF NOT EXISTS transition_checklist (
+  id             TEXT PRIMARY KEY,
+  pillar         TEXT NOT NULL,
+  month          INTEGER NOT NULL CHECK (month BETWEEN 1 AND 18),
+  sort_order     INTEGER NOT NULL,
+  action_es      TEXT NOT NULL,
+  action_en      TEXT NOT NULL,
+  indicator_es   TEXT NOT NULL,
+  indicator_en   TEXT NOT NULL,
+  responsible_es TEXT NOT NULL,
+  responsible_en TEXT NOT NULL,
+  actors         JSONB NOT NULL DEFAULT '[]'::jsonb,
+  status         TEXT NOT NULL DEFAULT 'pending'
+                 CHECK (status IN ('pending','in_progress','completed','stalled')),
+  evidence_es    TEXT,
+  evidence_en    TEXT,
+  sources        JSONB NOT NULL DEFAULT '[]'::jsonb,
+  completed_date DATE,
+  created_at     TIMESTAMPTZ DEFAULT NOW(),
+  updated_at     TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_transition_checklist_sort ON transition_checklist(sort_order);
+CREATE INDEX IF NOT EXISTS idx_transition_checklist_pillar ON transition_checklist(pillar);
+CREATE INDEX IF NOT EXISTS idx_transition_checklist_status ON transition_checklist(status);
+ALTER TABLE transition_checklist ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public read transition_checklist" ON transition_checklist FOR SELECT USING (true);
 `
 
 // Export for reference

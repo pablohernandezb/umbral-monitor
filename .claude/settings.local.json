@@ -36,7 +36,20 @@
       "Bash(curl.exe -s --max-time 20 -o /dev/null -w 'force w/o secret: http=%{http_code}\\\\n' \"http://localhost:3000/api/gdelt?force=true\")",
       "Bash(curl.exe -s --max-time 20 -o /dev/null -w 'plain read:      http=%{http_code}\\\\n' \"http://localhost:3000/api/gdelt\")",
       "Bash(curl.exe -s -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 Chrome/126 Safari/537.36' --max-time 60 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/a.csv -w 'http=%{http_code} bytes=%{size_download} time=%{time_total}\\\\n' 'https://api.gdeltproject.org/api/v2/doc/doc?query=venezuela&mode=timelinevol&timespan=120d&format=csv')",
-      "Bash(curl.exe -s --max-time 60 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/b.csv -w 'http=%{http_code} bytes=%{size_download} time=%{time_total}\\\\n' 'https://api.gdeltproject.org/api/v2/doc/doc?query=venezuela&mode=timelinevol&timespan=120d&format=csv')"
+      "Bash(curl.exe -s --max-time 60 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/b.csv -w 'http=%{http_code} bytes=%{size_download} time=%{time_total}\\\\n' 'https://api.gdeltproject.org/api/v2/doc/doc?query=venezuela&mode=timelinevol&timespan=120d&format=csv')",
+      "Bash(sort -u -t: -k3)",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/prod.json https://umbral-monitor.vercel.app/api/gdelt)",
+      "Bash(curl.exe -s --max-time 30 -w '\\\\nhttp=%{http_code}\\\\n' \"https://umbral-monitor.vercel.app/api/gdelt?signal=bogus\")",
+      "Bash(curl.exe -s --max-time 180 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/pb.json -w 'http=%{http_code} time=%{time_total}\\\\n' -H 'Authorization: Bearer umbral-cron-a7f3e9b1c2d4' 'https://umbral-monitor.vercel.app/api/gdelt?force=true&secret=umbral-cron-a7f3e9b1c2d4')",
+      "Bash(curl.exe -s --max-time 60 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/t1.csv -w 'http=%{http_code} bytes=%{size_download} time=%{time_total}\\\\n' 'https://api.gdeltproject.org/api/v2/doc/doc?query=venezuela&mode=timelinetone&timespan=120d&format=csv')",
+      "Bash(curl.exe -s --max-time 60 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/t2.csv -w 'http=%{http_code} bytes=%{size_download} time=%{time_total}\\\\n' 'https://api.gdeltproject.org/api/v2/doc/doc?query=venezuela&mode=timelinevol&timespan=120d&format=csv')",
+      "Bash(curl.exe -s --max-time 40 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/now.json https://umbral-monitor.vercel.app/api/gdelt?cb=__CMDSUB_OUTPUT__)",
+      "Bash(curl.exe -s --max-time 180 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/bf.json -w 'http=%{http_code} time=%{time_total}\\\\n' -H 'Authorization: Bearer umbral-cron-a7f3e9b1c2d4' 'https://umbral-monitor.vercel.app/api/gdelt?force=true&secret=umbral-cron-a7f3e9b1c2d4')",
+      "Bash(node -e ' *)",
+      "Bash(grep -n \"gazette_records\\\\|SCHEMA_SQL\\\\|^\\\\`;\" lib/supabase.ts)",
+      "Bash(grep -n \"console.log\\('\\\\\\\\\\\\\\\\n✅\\\\\\\\|Seed complete\\\\\\\\|process.exit\\\\\\\\|^}\" data/seed.ts)",
+      "Bash(npx supabase *)",
+      "Bash(npx tsx *)"
     ]
   }
 }

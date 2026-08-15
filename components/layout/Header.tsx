@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Globe, Coffee, HelpCircle, BookOpen, Newspaper, Share2, Check, Link2, Mail } from 'lucide-react'
+import { Menu, X, Globe, Coffee, HelpCircle, Info, BookOpen, Newspaper, Share2, Check, Link2, Mail } from 'lucide-react'
 import { useI18n, useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
 
@@ -197,11 +197,10 @@ export function Header() {
   const pathname = usePathname()
 
   const navigation = [
+    { name: t('installingDemocracy.nav'), href: '/installing-democracy' },
     { name: locale === 'es' ? 'Monitor' : 'Monitor', href: '/#scenarios' },
-    { name: locale === 'es' ? 'Episodios' : 'Episodes', href: '/#trajectory' },
     { name: locale === 'es' ? 'Señales' : 'Signals', href: '/#news' },
     { name: locale === 'es' ? 'Presos Políticos' : 'Political Prisoners', href: '/#prisoners' },
-    { name: locale === 'es' ? 'Acerca' : 'About', href: '/about' },
   ]
 
   const toggleLocale = () => {
@@ -254,6 +253,13 @@ export function Header() {
             ))}
 
             {/* Icon buttons */}
+            <Link
+              href="/about"
+              className="p-2 text-umbral-light hover:text-white hover:bg-umbral-ash rounded-md transition-colors"
+              title={locale === 'es' ? 'Acerca' : 'About'}
+            >
+              <Info className="w-4 h-4" />
+            </Link>
             <Link
               href="/#faq"
               className="p-2 text-umbral-light hover:text-white hover:bg-umbral-ash rounded-md transition-colors"
@@ -349,6 +355,14 @@ export function Header() {
               ))}
 
               {/* Icon links */}
+              <Link
+                href="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors text-umbral-light hover:text-white hover:bg-umbral-ash"
+              >
+                <Info className="w-4 h-4" />
+                {locale === 'es' ? 'Acerca' : 'About'}
+              </Link>
               <Link
                 href="/#faq"
                 onClick={() => setMobileMenuOpen(false)}

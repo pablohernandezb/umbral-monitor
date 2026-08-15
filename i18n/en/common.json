@@ -954,5 +954,157 @@
     "noData": "Signal data currently unavailable",
     "mockData": "MOCK DATA",
     "live": "LIVE"
+  },
+  "installingDemocracy": {
+    "nav": "Installing Democracy",
+    "title": "Installing Democracy",
+    "titleHighlight": "Installing",
+    "titleRest": "Democracy",
+    "tagline": "Tracking Venezuela's 18-month democratic transition, action by action.",
+    "summary": "A verifiable, source-backed tracker of the 62 actions across 19 pillars that a democratic transition in Venezuela would require — grounded in an 18-month roadmap starting August 1, 2026. Each action is marked complete only against a public, verifiable indicator.",
+    "cta": "View the tracker",
+    "bar": {
+      "overallLabel": "Overall transition progress",
+      "completedOf": "{completed} of {total} actions completed",
+      "inProgress": "{count} in progress",
+      "complete": "Roadmap complete"
+    },
+    "stats": {
+      "totalActions": "Actions",
+      "pillars": "Pillars",
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "stalled": "Stalled",
+      "pending": "Pending"
+    },
+    "phases": {
+      "liberties": {
+        "title": "Freedoms",
+        "month": "Month 3",
+        "description": "Visible apparatus of political repression dismantled; civic space opened."
+      },
+      "electoralInstitutions": {
+        "title": "Electoral institutions",
+        "month": "Month 6",
+        "description": "New CNE, transitional electoral justice, Special Statute, and Electoral Registry under way."
+      },
+      "competition": {
+        "title": "Competition",
+        "month": "Month 7",
+        "description": "Parties and candidacies enabled; minimum conditions for competition in place."
+      },
+      "foundingElection": {
+        "title": "Founding election",
+        "month": "Months 10–11",
+        "description": "Competitive, verifiable presidential and National Assembly elections."
+      },
+      "transfer": {
+        "title": "Transfer",
+        "month": "Month 12",
+        "description": "Elected government and new Assembly take office."
+      },
+      "consolidation": {
+        "title": "Consolidation",
+        "month": "Month 18",
+        "description": "Institutions, rights, security, the economy, and accountability all functioning."
+      }
+    },
+    "pillars": {
+      "freedoms": "Civil Liberties",
+      "security": "Security",
+      "humanRights": "Human Rights",
+      "transitionalJustice": "Transitional Justice",
+      "justice": "Justice",
+      "institutions": "Institutions",
+      "governance": "Governance",
+      "civilSociety": "Civil Society",
+      "information": "Information",
+      "politicalCompetition": "Political Competition",
+      "elections": "Elections",
+      "electoralJustice": "Electoral Justice",
+      "observation": "Observation",
+      "economy": "Economy",
+      "antiCorruption": "Anti-Corruption",
+      "internationalRelations": "International Relations",
+      "humanitarian": "Humanitarian",
+      "powerTransfer": "Power Transfer",
+      "evaluation": "Evaluation"
+    },
+    "actors": {
+      "government": "Government",
+      "transitionalGovernment": "Transitional government",
+      "outgoingGovernment": "Outgoing government",
+      "incomingGovernment": "Incoming government",
+      "judiciary": "Judiciary",
+      "prosecutor": "Prosecutor's Office",
+      "comptroller": "Comptroller",
+      "armedForces": "Armed Forces (FAN)",
+      "securityForces": "Security forces",
+      "police": "Police",
+      "securityAgencies": "Security agencies",
+      "legislature": "Legislature",
+      "assembly": "National Assembly",
+      "cne": "CNE",
+      "electoralJusticeBody": "Electoral-justice body",
+      "parties": "Political parties",
+      "politicalActors": "Political actors",
+      "agreementParties": "Parties to the agreement",
+      "negotiatingParties": "Negotiating parties",
+      "opposition": "Opposition",
+      "civilSociety": "Civil society",
+      "victims": "Victims",
+      "hrBodies": "Human-rights bodies",
+      "media": "Media",
+      "telecomAuthority": "Telecommunications authority",
+      "foreignMinistry": "Foreign Ministry",
+      "centralBank": "Central Bank (BCV)",
+      "multilaterals": "Multilateral institutions",
+      "privateSector": "Private sector",
+      "specializedOrgs": "Specialized organizations",
+      "experts": "Experts",
+      "observers": "Observers",
+      "internationalObservation": "International observation",
+      "un": "UN",
+      "internationalOrgs": "UN/OAS/EU/others",
+      "internationalActors": "International actors",
+      "internationalBodies": "International bodies",
+      "internationalCommunity": "International community",
+      "internationalAssistance": "International assistance",
+      "independentCommission": "Independent commission"
+    },
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "stalled": "Stalled"
+    },
+    "milestones": {
+      "usMidterms": "US Midterm Elections",
+      "negotiationEnd": "End of the negotiation table",
+      "transitionEnd": "End of the 18-month roadmap",
+      "reached": "Reached",
+      "days": "days",
+      "daysSingular": "day",
+      "hours": "hours",
+      "minutes": "minutes",
+      "seconds": "seconds"
+    },
+    "action": {
+      "month": "Month {n}",
+      "indicator": "Verifiable indicator",
+      "responsible": "Who's responsible",
+      "evidence": "What happened",
+      "sources": "{count} sources"
+    },
+    "filters": {
+      "pillar": "Pillar",
+      "milestone": "Milestone",
+      "status": "Status",
+      "search": "Search actions...",
+      "all": "All",
+      "noResults": "No actions match your filters."
+    },
+    "showMore": "Show more",
+    "showLess": "Show less"
   }
 }

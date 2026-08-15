@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
-import { computeStarVoting } from '@/lib/data'
+import { computeStarVoting, computeSubmissionAverages } from '@/lib/data'
+import {
+  EXPERT_STAR_BASELINE,
+  PUBLIC_STAR_BASELINE,
+  EXPERT_AVERAGES_BASELINE,
+  PUBLIC_AVERAGES_BASELINE,
+} from '@/data/submission-baseline'
 
 /**
  * GET /api/analytics/snapshot
@@ -71,8 +77,11 @@ export async function GET(request: Request) {
     const publicRows = dedupeByEmail((publicRes.data || []) as SubmissionRow[])
 
     // ── 1. STAR voting snapshot ──────────────────────────────
-    const expertStar = computeStarVoting(expertRows)
-    const publicStar = computeStarVoting(publicRows)
+    // Both blend in the recovered pre-incident baseline (see
+    // data/submission-baseline.ts) so the daily snapshot never regresses
+    // back to only counting rows in the live tables.
+    const expertStar = computeStarVoting(expertRows, EXPERT_STAR_BASELINE)
+    const publicStar = computeStarVoting(publicRows, PUBLIC_STAR_BASELINE)
 
     const today = new Date().toISOString().slice(0, 10) // 'YYYY-MM-DD'
 
@@ -97,28 +106,14 @@ export async function GET(request: Request) {
     }
 
     // ── 2. Averages snapshot ─────────────────────────────────
-    function computeAverages(
-      rows: SubmissionRow[]
-    ): Record<number, number> {
-      const result: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-      if (rows.length === 0) return result
-      for (let s = 1; s <= 5; s++) {
-        const values = rows
-          .map(r => r.scenario_probabilities?.[s])
-          .filter((v): v is number => typeof v === 'number' && v > 0)
-        result[s] = values.length > 0
-          ? values.reduce((a, b) => a + b, 0) / values.length
-          : 0
-      }
-      return result
-    }
-
+    // Shares computeSubmissionAverages() with getSubmissionAverages() (lib/data.ts)
+    // rather than keeping a second copy of the same formula in sync by hand.
     const avgsRow = {
       date:            today,
-      expert_averages: computeAverages(expertRows),
-      public_averages: computeAverages(publicRows),
-      expert_count:    expertRows.length,
-      public_count:    publicRows.length,
+      expert_averages: computeSubmissionAverages(expertRows, EXPERT_AVERAGES_BASELINE),
+      public_averages: computeSubmissionAverages(publicRows, PUBLIC_AVERAGES_BASELINE),
+      expert_count:    EXPERT_AVERAGES_BASELINE.count + expertRows.length,
+      public_count:    PUBLIC_AVERAGES_BASELINE.count + publicRows.length,
     }
 
     // ── 3. Upsert both tables ────────────────────────────────
@@ -135,8 +130,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       date: today,
-      expertParticipants: expertRows.length,
-      publicParticipants:  publicRows.length,
+      expertParticipants: avgsRow.expert_count,
+      publicParticipants: avgsRow.public_count,
       expertWinner: expertStar.winner,
       publicWinner: publicStar.winner,
     })

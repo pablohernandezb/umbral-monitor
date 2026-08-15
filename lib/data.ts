@@ -19,8 +19,19 @@ import type {
   GacetaRecord,
   GacetaBatch,
   GacetaSummary,
+  TransitionAction,
+  TransitionProgress,
+  TransitionSource,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
+import { computeProgress } from '@/lib/transition'
+import type { StarVotingBaseline, AveragesBaseline } from '@/data/submission-baseline'
+import {
+  EXPERT_STAR_BASELINE,
+  PUBLIC_STAR_BASELINE,
+  EXPERT_AVERAGES_BASELINE,
+  PUBLIC_AVERAGES_BASELINE,
+} from '@/data/submission-baseline'
 
 // Import mock data
 import {
@@ -38,6 +49,7 @@ import {
   mockBlockedDomains,
   mockGacetaRecords,
   mockGacetaBatches,
+  MOCK_TRANSITION_CHECKLIST,
 } from '@/data/mock'
 import { computeGacetaSummary } from '@/components/gaceta/gaceta-utils'
 
@@ -702,6 +714,30 @@ export interface SubmissionAverages {
   publicCount: number
 }
 
+/**
+ * Per-scenario mean rating, with an optional historical baseline folded in as
+ * a weighted average: (baselineMean*baselineCount + newSum) / (baselineCount +
+ * newCount). Exported (like computeStarVoting) so the analytics cron can share
+ * this exact logic instead of keeping its own copy in sync by hand.
+ */
+export function computeSubmissionAverages(
+  rows: Array<{ scenario_probabilities: Record<number, number> | null }>,
+  baseline?: AveragesBaseline
+): Record<number, number> {
+  const means: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  for (let s = 1; s <= 5; s++) {
+    const values = rows
+      .map(r => r.scenario_probabilities?.[s])
+      .filter((v): v is number => typeof v === 'number' && v > 0)
+    const newSum = values.reduce((a, b) => a + b, 0)
+    const baseCount = baseline?.count ?? 0
+    const baseSum = baseline ? baseline.averages[s] * baseCount : 0
+    const totalCount = baseCount + values.length
+    means[s] = totalCount > 0 ? (baseSum + newSum) / totalCount : 0
+  }
+  return means
+}
+
 export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAverages>> {
   const empty: SubmissionAverages = {
     expert: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
@@ -743,22 +779,6 @@ export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAve
     return result
   }
 
-  // Compute mean per scenario (1-5)
-  function computeMeans(rows: Array<{ scenario_probabilities: Record<number, number> | null }>): Record<number, number> {
-    const means: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-    if (rows.length === 0) return means
-
-    for (let s = 1; s <= 5; s++) {
-      const values = rows
-        .map(r => r.scenario_probabilities?.[s])
-        .filter((v): v is number => typeof v === 'number' && v > 0)
-      means[s] = values.length > 0
-        ? values.reduce((a, b) => a + b, 0) / values.length
-        : 0
-    }
-    return means
-  }
-
   const expertRows = dedupeByEmail(
     (expertRes.data || []) as Array<{ email: string; scenario_probabilities: Record<number, number> | null; submitted_at: string }>
   )
@@ -768,10 +788,10 @@ export async function getSubmissionAverages(): Promise<ApiResponse<SubmissionAve
 
   return {
     data: {
-      expert: computeMeans(expertRows),
-      public: computeMeans(publicRows),
-      expertCount: expertRows.length,
-      publicCount: publicRows.length,
+      expert: computeSubmissionAverages(expertRows, EXPERT_AVERAGES_BASELINE),
+      public: computeSubmissionAverages(publicRows, PUBLIC_AVERAGES_BASELINE),
+      expertCount: EXPERT_AVERAGES_BASELINE.count + expertRows.length,
+      publicCount: PUBLIC_AVERAGES_BASELINE.count + publicRows.length,
     },
     error: expertRes.error?.message || publicRes.error?.message || null,
   }
@@ -797,19 +817,23 @@ export interface StarVotingResults {
   public: StarResult
 }
 
+/**
+ * Round 1 (scores) always blends the baseline in — that part is just addition.
+ * Round 2 (the finalist runoff) only folds in the baseline's own tally when its
+ * finalist pair still matches the current one: baseline voters' *individual*
+ * preferences weren't retained, only the pair they were choosing between and
+ * the outcome, so their runoff result can't be recombined against a different
+ * pair. In that case only the new rows' round-2 preferences are counted —
+ * round 1 (and therefore the winner-by-score logic) stays exact regardless.
+ */
 export function computeStarVoting(
-  rows: Array<{ scenario_probabilities: Record<number, number> | null }>
+  rows: Array<{ scenario_probabilities: Record<number, number> | null }>,
+  baseline?: StarVotingBaseline
 ): StarResult {
-  const emptyScores: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-  const empty: StarResult = {
-    winner: null, finalist1: null, finalist2: null,
-    finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
-    totalVoters: 0, scores: emptyScores,
-  }
-  if (rows.length === 0) return empty
-
-  // Round 1 — sum scores per scenario
-  const scores: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  // Round 1 — sum scores per scenario, seeded from the baseline if provided.
+  const scores: Record<number, number> = baseline
+    ? { ...baseline.scores }
+    : { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
   for (const row of rows) {
     if (!row.scenario_probabilities) continue
     for (let s = 1; s <= 5; s++) {
@@ -818,17 +842,32 @@ export function computeStarVoting(
     }
   }
 
+  const totalVoters = (baseline?.totalVoters ?? 0) + rows.length
+  if (totalVoters === 0) {
+    return {
+      winner: null, finalist1: null, finalist2: null,
+      finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
+      totalVoters: 0, scores,
+    }
+  }
+
   // Pick top-2 finalists by total score
   const ranked = (Object.entries(scores) as [string, number][])
     .map(([k, v]) => ({ scenario: Number(k), score: v }))
     .sort((a, b) => b.score - a.score)
 
-  if (ranked.length < 2) return { ...empty, scores, totalVoters: rows.length }
-
   const f1 = ranked[0].scenario
-  const f2 = ranked[1].scenario
+  const f2 = ranked[1]?.scenario ?? null
 
-  // Round 2 — runoff: count how many voters preferred each finalist
+  if (f2 === null) {
+    return {
+      winner: f1, finalist1: f1, finalist2: null,
+      finalist1Votes: 0, finalist2Votes: 0, noPreferenceVotes: 0,
+      totalVoters, scores,
+    }
+  }
+
+  // Round 2 — runoff among the new rows only
   let f1Votes = 0, f2Votes = 0, noPreference = 0
   for (const row of rows) {
     if (!row.scenario_probabilities) continue
@@ -839,6 +878,23 @@ export function computeStarVoting(
     else noPreference++
   }
 
+  const baselinePairMatches =
+    !!baseline &&
+    baseline.finalist1 !== null &&
+    baseline.finalist2 !== null &&
+    [baseline.finalist1, baseline.finalist2].sort().join(',') === [f1, f2].sort().join(',')
+
+  if (baselinePairMatches && baseline) {
+    if (f1 === baseline.finalist1) {
+      f1Votes += baseline.finalist1Votes
+      f2Votes += baseline.finalist2Votes
+    } else {
+      f1Votes += baseline.finalist2Votes
+      f2Votes += baseline.finalist1Votes
+    }
+    noPreference += baseline.noPreferenceVotes
+  }
+
   return {
     winner: f1Votes >= f2Votes ? f1 : f2,
     finalist1: f1,
@@ -846,7 +902,7 @@ export function computeStarVoting(
     finalist1Votes: f1Votes,
     finalist2Votes: f2Votes,
     noPreferenceVotes: noPreference,
-    totalVoters: rows.length,
+    totalVoters,
     scores,
   }
 }
@@ -891,8 +947,8 @@ export async function getStarVotingResults(): Promise<ApiResponse<StarVotingResu
 
   return {
     data: {
-      expert: computeStarVoting(expertRows),
-      public: computeStarVoting(publicRows),
+      expert: computeStarVoting(expertRows, EXPERT_STAR_BASELINE),
+      public: computeStarVoting(publicRows, PUBLIC_STAR_BASELINE),
     },
     error: expertRes.error?.message || publicRes.error?.message || null,
   }
@@ -961,10 +1017,17 @@ export async function getPlatformCounts(): Promise<ApiResponse<PlatformCounts>> 
     supabase.from('reading_room').select('*', { count: 'exact', head: true }),
   ])
 
+  // Baseline is expert_count/public_count from the recovered pre-incident
+  // averages snapshot — the closest available historical figure, though it
+  // only covers *approved* experts (this function's own raw count has no
+  // status filter, so any pending/rejected experts from before the incident
+  // aren't reflected and can't be, since no snapshot ever recorded that count).
   return {
     data: {
       newsCount: newsRes.count ?? 0,
-      submissionsCount: (expertRes.count ?? 0) + (publicRes.count ?? 0),
+      submissionsCount:
+        EXPERT_AVERAGES_BASELINE.count + PUBLIC_AVERAGES_BASELINE.count +
+        (expertRes.count ?? 0) + (publicRes.count ?? 0),
       readingRoomCount: readingRes.count ?? 0,
     },
     error: newsRes.error?.message || expertRes.error?.message || publicRes.error?.message || readingRes.error?.message || null,
@@ -1232,4 +1295,99 @@ export async function getGacetaSummary(): Promise<ApiResponse<GacetaSummary>> {
     return { data: null, error }
   }
   return { data: computeGacetaSummary(records), error: null }
+}
+
+// ============================================================
+// INSTALLING DEMOCRACY — transition checklist
+// ============================================================
+
+interface TransitionChecklistDbRow {
+  id: string
+  pillar: string
+  month: number
+  sort_order: number
+  action_es: string
+  action_en: string
+  indicator_es: string
+  indicator_en: string
+  responsible_es: string
+  responsible_en: string
+  actors: string[]
+  status: TransitionAction['status']
+  evidence_es: string | null
+  evidence_en: string | null
+  sources: TransitionSource[]
+  completed_date: string | null
+}
+
+function mapTransitionRow(row: TransitionChecklistDbRow): TransitionAction {
+  return {
+    id: row.id,
+    pillar: row.pillar,
+    month: row.month,
+    sortOrder: row.sort_order,
+    actionEs: row.action_es,
+    actionEn: row.action_en,
+    indicatorEs: row.indicator_es,
+    indicatorEn: row.indicator_en,
+    responsibleEs: row.responsible_es,
+    responsibleEn: row.responsible_en,
+    actors: row.actors ?? [],
+    status: row.status,
+    evidenceEs: row.evidence_es,
+    evidenceEn: row.evidence_en,
+    sources: row.sources ?? [],
+    completedDate: row.completed_date,
+  }
+}
+
+export async function getTransitionChecklist(): Promise<ApiResponse<TransitionAction[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    const sorted = [...MOCK_TRANSITION_CHECKLIST].sort((a, b) => a.sortOrder - b.sortOrder)
+    return { data: sorted, error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('transition_checklist')
+    .select('*')
+    .order('sort_order', { ascending: true })
+
+  return {
+    data: data ? (data as TransitionChecklistDbRow[]).map(mapTransitionRow) : null,
+    error: error?.message || null,
+  }
+}
+
+export async function getTransitionProgress(): Promise<ApiResponse<TransitionProgress>> {
+  const { data: actions, error } = await getTransitionChecklist()
+  if (error || !actions) {
+    return { data: null, error }
+  }
+  return { data: computeProgress(actions), error: null }
+}
+
+/**
+ * Subscribe to transition_checklist changes so the public page/hero reflect
+ * admin edits live. Mock mode returns a no-op unsubscribe (same as subscribeToNews).
+ */
+export function subscribeToTransitionChecklist(
+  callback: (payload: { new: TransitionAction }) => void
+): () => void {
+  if (IS_MOCK_MODE || !supabase) {
+    return () => {}
+  }
+
+  const client = supabase
+  const channel = client
+    .channel('transition_checklist_changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'transition_checklist' },
+      (payload) => callback({ new: mapTransitionRow(payload.new as TransitionChecklistDbRow) })
+    )
+    .subscribe()
+
+  return () => {
+    client.removeChannel(channel)
+  }
 }

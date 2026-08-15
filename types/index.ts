@@ -322,3 +322,66 @@ export interface GacetaSummary {
   byOrganism: { organism: string; count: number }[]
   byWeek: { week: string; label: string; count: number }[]
 }
+
+// ============================================================
+// INSTALLING DEMOCRACY — transition checklist
+// ============================================================
+
+export type TransitionStatus = 'pending' | 'in_progress' | 'completed' | 'stalled'
+
+export interface TransitionSource {
+  url: string
+  title?: string
+  date?: string // ISO date
+}
+
+export interface TransitionAction {
+  id: string
+  pillar: string          // pillar key, see PILLAR_ICONS in components/installing-democracy/icons.ts
+  month: number            // 1..18
+  sortOrder: number
+  actionEs: string
+  actionEn: string
+  indicatorEs: string
+  indicatorEn: string
+  responsibleEs: string
+  responsibleEn: string
+  actors: string[]         // actor keys — see ACTOR_ICONS
+  status: TransitionStatus
+  evidenceEs?: string | null
+  evidenceEn?: string | null
+  sources: TransitionSource[]
+  completedDate?: string | null // ISO date
+}
+
+export interface PhaseProgress {
+  phase: number             // 1..6 (milestone number)
+  total: number
+  completed: number
+  inProgress: number
+  stalled: number
+  pending: number
+  completedPct: number      // completed/total*100, rounded
+  momentumPct: number       // (completed + 0.5*inProgress)/total*100
+  isActive: boolean         // earliest phase not 100% complete
+}
+
+export interface PillarProgress {
+  pillar: string
+  total: number
+  completed: number
+  inProgress: number
+  completedPct: number
+}
+
+export interface TransitionProgress {
+  total: number             // 62
+  completed: number
+  inProgress: number
+  stalled: number
+  pending: number
+  completedPct: number
+  momentumPct: number
+  phases: PhaseProgress[]
+  pillars: PillarProgress[]
+}

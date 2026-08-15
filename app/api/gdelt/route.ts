@@ -154,17 +154,27 @@ async function fetchWithRetry(url: string, label: string): Promise<FetchOutcome>
     : { ...second, reason: `${second.reason} (after retry)` }
 }
 
+export type FetchMode = 'rotate' | 'all' | GdeltSignalKey
+
 /**
  * Fetch signals from GDELT.
  *
- * `mode: 'rotate'` (the cron default) refreshes a single signal per run. Each
- * request already returns a full 120-day window, so one signal every three days
- * still yields complete daily coverage — while issuing a third as many requests,
- * which is what keeps us under GDELT's rate limiter. `mode: 'all'` fetches all
- * three serialized, for manual backfills where the extra ~45s is acceptable.
+ * - `'rotate'` (the cron default) refreshes a single signal per run. Each request
+ *   already returns a full 120-day window, so one signal every three days still
+ *   yields complete daily coverage — at a third of the request volume, which is
+ *   what keeps us under GDELT's rate limiter.
+ * - A signal key refreshes just that signal. Preferred for manual backfills:
+ *   run them one at a time, minutes apart, instead of bursting.
+ * - `'all'` fetches all three serialized. Fastest to type, hardest on the rate
+ *   limiter — three requests inside ~45s is enough to trip it.
  */
-async function fetchGdeltSignals(mode: 'rotate' | 'all') {
-  const specs = mode === 'all' ? [...SIGNAL_SPECS] : [signalForToday()]
+async function fetchGdeltSignals(mode: FetchMode) {
+  const specs =
+    mode === 'all'
+      ? [...SIGNAL_SPECS]
+      : mode === 'rotate'
+        ? [signalForToday()]
+        : [SIGNAL_SPECS.find(s => s.key === mode)!]
   const outcomes: Partial<Record<string, FetchOutcome>> = {}
 
   for (let i = 0; i < specs.length; i++) {
@@ -278,7 +288,7 @@ function lastWriteIso(rows: GdeltDbRow[], fallback: string): string {
 // ── Supabase mode: persistent DB archive ──────────────────────
 async function handleSupabaseMode(
   forceRefresh = false,
-  mode: 'rotate' | 'all' = 'rotate'
+  mode: FetchMode = 'rotate'
 ): Promise<NextResponse> {
   const db = supabase!
 
@@ -474,9 +484,24 @@ export async function GET(request: Request) {
         }
       }
     }
-    // ?all=true fetches every signal in one run (slow; for manual backfills).
-    // The daily cron omits it and rotates one signal per run instead.
-    const mode = searchParams.get('all') === 'true' ? 'all' : 'rotate'
+    // Refresh scope, most specific first:
+    //   ?signal=<key>  one named signal — the gentlest way to backfill
+    //   ?all=true      all three serialized (bursty; can trip the rate limiter)
+    //   (default)      rotate one signal per run, which is what the cron uses
+    const requestedSignal = searchParams.get('signal')
+    let mode: FetchMode = 'rotate'
+
+    if (requestedSignal) {
+      if (!SIGNAL_KEYS.includes(requestedSignal as GdeltSignalKey)) {
+        return NextResponse.json(
+          { error: `Unknown signal '${requestedSignal}'. Expected one of: ${SIGNAL_KEYS.join(', ')}` },
+          { status: 400 }
+        )
+      }
+      mode = requestedSignal as GdeltSignalKey
+    } else if (searchParams.get('all') === 'true') {
+      mode = 'all'
+    }
 
     if (IS_MOCK_MODE || !supabase) {
       return await handleMockMode()

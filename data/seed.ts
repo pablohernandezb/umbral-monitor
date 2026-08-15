@@ -29,6 +29,7 @@ import {
   mockHistoricalEpisodes,
   mockBlockedDomains,
   mockGacetaRecords,
+  MOCK_TRANSITION_CHECKLIST,
 } from './mock'
 import { getLabelForChangeType } from '../components/gaceta/gaceta-utils'
 
@@ -296,6 +297,9 @@ async function seed() {
   // Seed gazette records
   await seedGaceta(supabase)
 
+  // Seed transition checklist ("Installing Democracy")
+  await seedTransitionChecklist(supabase)
+
   console.log('\n✨ Database seeding complete!')
 }
 
@@ -545,6 +549,42 @@ async function seedGaceta(supabase: any) {
   }
 
   console.log(`  ✅ ${inserted}/${rows.length} gazette records seeded`)
+}
+
+async function seedTransitionChecklist(supabase: any) {
+  console.log('🗳️  Seeding transition checklist ("Installing Democracy")...')
+
+  // The real database always starts empty of progress, regardless of the
+  // optional demo status touch applied to MOCK_TRANSITION_CHECKLIST for
+  // preview purposes — reset status/evidence/sources/completedDate here.
+  const rows = MOCK_TRANSITION_CHECKLIST.map(a => ({
+    id: a.id,
+    pillar: a.pillar,
+    month: a.month,
+    sort_order: a.sortOrder,
+    action_es: a.actionEs,
+    action_en: a.actionEn,
+    indicator_es: a.indicatorEs,
+    indicator_en: a.indicatorEn,
+    responsible_es: a.responsibleEs,
+    responsible_en: a.responsibleEn,
+    actors: a.actors,
+    status: 'pending',
+    evidence_es: null,
+    evidence_en: null,
+    sources: [],
+    completed_date: null,
+  }))
+
+  const { error } = await supabase
+    .from('transition_checklist')
+    .upsert(rows, { onConflict: 'id' })
+
+  if (error) {
+    console.error('  ❌ Error:', error.message)
+  } else {
+    console.log(`  ✅ ${rows.length}/${MOCK_TRANSITION_CHECKLIST.length} transition checklist actions seeded`)
+  }
 }
 
 seed().catch(console.error)

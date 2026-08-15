@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl.exe -s -o /dev/null -w 'http=%{http_code}\\\\n' --max-time 5 \"http://localhost:3000/\")",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/id_page.html -w 'http=%{http_code} bytes=%{size_download}\\\\n' http://localhost:3000/installing-democracy)",
+      "Bash(node --experimental-strip-types -e ' *)",
+      "Bash(grep -n \"^export const mockGacetaRecords\\\\|^]$\\\\|^export const MOCK_TRANSITION_CHECKLIST\\\\|^const RAW_TRANSITION_CHECKLIST\\\\|^type RawTransitionAction\" data/mock.ts)",
+      "Bash(npm run *)",
+      "Bash(npx tsc *)",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/landing.html -w 'http=%{http_code} bytes=%{size_download}\\\\n' http://localhost:3000/)",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/admin_id.html -w 'http=%{http_code} bytes=%{size_download}\\\\n' http://localhost:3000/admin/installing-democracy)",
+      "Bash(awk '/^-- TRANSITION_CHECKLIST TABLE/,/^ALTER PUBLICATION supabase_realtime ADD TABLE transition_checklist/' lib/supabase.ts)",
+      "Bash(node -e ' *)",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/prod_home.html https://umbral-monitor.vercel.app/)",
+      "Bash(curl.exe -s -I --max-time 20 \"https://umbral-monitor.vercel.app/\")",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
+      "Bash(curl.exe -s --max-time 30 -o C:/Users/astro/AppData/Local/Temp/claude/d--Projects-umbral-project/1398a2a6-c203-4b20-a651-6b39995a0e67/scratchpad/landing2.html http://localhost:3000/)",
+      "Bash(curl.exe -s --max-time 30 -o __TRACKED_VAR__/landing3.html http://localhost:3000/?cb=2)",
+      "Bash(grep -c text-gradient __TRACKED_VAR__/landing3.html)",
+      "Bash(grep -o 'Instalando</span>' __TRACKED_VAR__/landing3.html)",
+      "Bash(grep -o '.\\\\{20\\\\}Instalando.\\\\{40\\\\}' __TRACKED_VAR__/landing3.html)"
+    ]
+  }
+}
