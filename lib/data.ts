@@ -1257,14 +1257,33 @@ export async function getGacetaRecords(): Promise<ApiResponse<GacetaRecord[]>> {
       return { data: [], error: null }
     }
 
-    const { data, error } = await supabase
-      .from('gazette_records')
-      .select('*')
-      .eq('batch_id', batch.id)
-      .order('gazette_date', { ascending: true })
-      .order('id', { ascending: true })
+    // PostgREST caps a plain select at its `max-rows` setting (1000 on Supabase),
+    // and does so SILENTLY — no error, just a truncated array. A batch larger
+    // than that must be paged explicitly or the dashboard under-reports.
+    const PAGE_SIZE = 1000
+    const all: GacetaRecord[] = []
 
-    return { data: (data as GacetaRecord[]) ?? [], error: error?.message || null }
+    for (let from = 0; ; from += PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from('gazette_records')
+        .select('*')
+        .eq('batch_id', batch.id)
+        .order('gazette_date', { ascending: true })
+        .order('id', { ascending: true })
+        .range(from, from + PAGE_SIZE - 1)
+
+      if (error) {
+        // Return what we have rather than nothing — a partial dashboard beats
+        // an empty one — but surface the error so the caller can flag it.
+        return { data: all, error: error.message }
+      }
+      if (!data || data.length === 0) break
+
+      all.push(...(data as GacetaRecord[]))
+      if (data.length < PAGE_SIZE) break
+    }
+
+    return { data: all, error: null }
   } catch (err: any) {
     return { data: [], error: err.message }
   }
