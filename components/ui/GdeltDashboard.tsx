@@ -69,8 +69,45 @@ export function GdeltDashboard() {
     return () => { cancelled = true }
   }, [])
 
+  // The three signals advance independently — a refresh run touches one signal
+  // at a time, so they routinely end on different dates. Charting the raw series
+  // then draws a ragged edge where the lagging signals simply stop, which reads
+  // as "conflict spiked while tone and attention collapsed" rather than "we
+  // haven't fetched those yet". It also corrupts the stat cards: the averages
+  // below coerce missing values with `?? 0`, so trailing gaps drag tone and
+  // attention toward zero exactly when the data is least complete.
+  //
+  // So the display ends at the newest date where ALL THREE signals are present.
+  // The archive and the daily fetch are untouched — every signal keeps being
+  // collected in full; this only bounds what the panel draws.
+  const displayData = useMemo(() => {
+    if (data.length === 0) return data
+
+    let lastComplete = -1
+    for (let i = data.length - 1; i >= 0; i--) {
+      const d = data[i]
+      if (d.instability !== null && d.tone !== null && d.artvolnorm !== null) {
+        lastComplete = i
+        break
+      }
+    }
+
+    // No date has all three (e.g. a signal has never been fetched). Rendering
+    // nothing would hide the data we do have, so fall back to the full series —
+    // the stale badge already reports which signal is missing.
+    if (lastComplete === -1) return data
+
+    return data.slice(0, lastComplete + 1)
+  }, [data])
+
+  /** Coverage end actually drawn — what the footer should report. */
+  const displayThrough = displayData.length > 0
+    ? displayData[displayData.length - 1].date
+    : latestDataDate
+
   // Compute stat metrics
   const stats = useMemo(() => {
+    const data = displayData
     if (data.length === 0) return { instabilityDelta: null, currentTone: null, phase: null as 'CRISIS' | 'ELEVATED' | 'STABLE' | null }
 
     // Baseline: first 30 data points (~ Dec 2025)
@@ -103,7 +140,7 @@ export function GdeltDashboard() {
     const phase: 'CRISIS' | 'ELEVATED' | 'STABLE' = composite > 0.6 ? 'CRISIS' : composite > 0.35 ? 'ELEVATED' : 'STABLE'
 
     return { instabilityDelta, currentTone, phase }
-  }, [data])
+  }, [displayData])
 
   // Only meaningful for real data — mock mode has its own badge.
   const isStale =
@@ -157,16 +194,6 @@ export function GdeltDashboard() {
           {error === 'mock' ? (
             <span className="px-2 py-0.5 bg-signal-amber/10 border border-signal-amber/30 rounded text-[10px] font-mono text-signal-amber">
               {t('gdelt.mockData')}
-            </span>
-          ) : isStale ? (
-            /* Staleness is judged from the newest row, not from whether this
-               request succeeded — a cache hit over months-old data is not live. */
-            <span
-              title={staleTooltip}
-              className="px-2 py-0.5 bg-signal-red/10 border border-signal-red/30 rounded text-[10px] font-mono text-signal-red cursor-help"
-            >
-              {t('gdelt.staleBadge')}
-              {stalenessDays !== null && ` · ${stalenessDays}d`}
             </span>
           ) : error ? (
             <span
@@ -266,10 +293,10 @@ export function GdeltDashboard() {
 
             {/* Chart */}
             <div className="block md:hidden">
-              <GdeltSignalChart data={data} height={250} events={events} />
+              <GdeltSignalChart data={displayData} height={250} events={events} />
             </div>
             <div className="hidden md:block">
-              <GdeltSignalChart data={data} height={350} events={events} />
+              <GdeltSignalChart data={displayData} height={350} events={events} />
             </div>
 
             {/* Event timeline */}
@@ -320,11 +347,20 @@ export function GdeltDashboard() {
               </span>
               <span className="flex items-center gap-3 font-mono">
                 {/* Coverage end date — the number that actually tells you
-                    whether the chart is current. */}
-                {latestDataDate && (
-                  <span className={cn(isStale && 'text-signal-red')}>
+                    whether the chart is current. Reports the last COMPLETE date
+                    (what is drawn above), not the newest row of any single
+                    signal, so the footer can never claim coverage the chart
+                    doesn't show. */}
+                {displayThrough && (
+                  <span
+                    title={staleTooltip}
+                    className={cn(
+                      staleTooltip && 'cursor-help',
+                      isStale && 'text-signal-red'
+                    )}
+                  >
                     {t('gdelt.footer.dataThrough')}
-                    {formatDate(latestDataDate)}
+                    {formatDate(displayThrough)}
                   </span>
                 )}
                 {fetchedAt && (
