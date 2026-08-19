@@ -57,9 +57,9 @@ export default function MonitoringParticipatePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
           <Link
             href="/installing-democracy"
-            className="inline-flex items-center gap-1.5 text-xs text-umbral-muted hover:text-white transition-colors mb-2"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-umbral-charcoal border border-signal-teal text-white text-sm font-medium hover:bg-umbral-ash hover:border-signal-teal/80 transition-colors mb-2"
           >
-            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             {t('installingDemocracy.title')}
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
@@ -86,14 +86,16 @@ export default function MonitoringParticipatePage() {
           {screen === 'new' && (
             <div className="space-y-4">
               <NewParticipantForm />
-              <button
-                type="button"
-                onClick={() => setScreen('chooser')}
-                className="text-xs text-umbral-muted hover:text-white transition-colors"
-              >
-                <ArrowLeft className="w-3 h-3 inline-block mr-1" aria-hidden="true" />
-                {t('installingDemocracy.participate.tracks.returning')}
-              </button>
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setScreen('chooser')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-umbral-charcoal border border-signal-teal text-white text-sm font-medium hover:bg-umbral-ash hover:border-signal-teal/80 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  {t('installingDemocracy.participate.back')}
+                </button>
+              </div>
             </div>
           )}
 
@@ -104,10 +106,10 @@ export default function MonitoringParticipatePage() {
                 <button
                   type="button"
                   onClick={() => setScreen('chooser')}
-                  className="text-xs text-umbral-muted hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-umbral-charcoal border border-signal-teal text-white text-sm font-medium hover:bg-umbral-ash hover:border-signal-teal/80 transition-colors"
                 >
-                  <ArrowLeft className="w-3 h-3 inline-block mr-1" aria-hidden="true" />
-                  {t('installingDemocracy.participate.tracks.new')}
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  {t('installingDemocracy.participate.back')}
                 </button>
               </div>
             </div>

@@ -1165,7 +1165,9 @@
         "saved": "Avance guardado",
         "saveError": "No se pudo guardar. Intenta de nuevo.",
         "signOut": "Cerrar sesión",
-        "clearHint": "Haz clic de nuevo para quitar esta valoración"
+        "clearHint": "Haz clic de nuevo para quitar esta valoración",
+        "jumpToMilestone": "Ir al hito:",
+        "currentMonth": "Mes {month} de {total}"
       },
       "likert": {
         "0": "No iniciado",
@@ -1196,7 +1198,8 @@
         "ratedCount": "{n}/62 evaluadas",
         "noApplications": "No hay solicitudes.",
         "noExperts": "No hay expertos aprobados."
-      }
+      },
+      "back": "Atrás"
     },
     "expertStatus": {
       "completed": "Cumplida",

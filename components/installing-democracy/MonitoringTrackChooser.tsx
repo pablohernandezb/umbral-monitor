@@ -16,9 +16,9 @@ export function MonitoringTrackChooser({ onChoose }: MonitoringTrackChooserProps
       <button
         type="button"
         onClick={() => onChoose('new')}
-        className="card p-6 text-left hover:border-signal-teal/50 transition-colors group"
+        className="card flex items-center gap-3 p-6 text-left hover:border-signal-teal/50 transition-colors group"
       >
-        <UserPlus className="w-6 h-6 text-signal-teal mb-3" aria-hidden="true" />
+        <UserPlus className="w-9 h-9 text-signal-teal shrink-0" aria-hidden="true" />
         <p className="text-base font-semibold text-white group-hover:text-signal-teal transition-colors">
           {t('installingDemocracy.participate.tracks.new')}
         </p>
@@ -27,9 +27,9 @@ export function MonitoringTrackChooser({ onChoose }: MonitoringTrackChooserProps
       <button
         type="button"
         onClick={() => onChoose('returning')}
-        className="card p-6 text-left hover:border-signal-teal/50 transition-colors group"
+        className="card flex items-center gap-3 p-6 text-left hover:border-signal-teal/50 transition-colors group"
       >
-        <KeyRound className="w-6 h-6 text-signal-teal mb-3" aria-hidden="true" />
+        <KeyRound className="w-9 h-9 text-signal-teal shrink-0" aria-hidden="true" />
         <p className="text-base font-semibold text-white group-hover:text-signal-teal transition-colors">
           {t('installingDemocracy.participate.tracks.returning')}
         </p>

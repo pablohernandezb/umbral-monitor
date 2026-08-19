@@ -1165,7 +1165,9 @@
         "saved": "Progress saved",
         "saveError": "Could not save. Please try again.",
         "signOut": "Sign out",
-        "clearHint": "Click again to remove this rating"
+        "clearHint": "Click again to remove this rating",
+        "jumpToMilestone": "Go to milestone:",
+        "currentMonth": "Month {month} of {total}"
       },
       "likert": {
         "0": "Not started",
@@ -1196,7 +1198,8 @@
         "ratedCount": "{n}/62 rated",
         "noApplications": "No applications.",
         "noExperts": "No approved experts."
-      }
+      },
+      "back": "Back"
     },
     "expertStatus": {
       "completed": "Completed",

@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Loader2, LogOut, Save } from 'lucide-react'
+import { Loader2, LogOut, Save, CheckCircle2, CalendarDays } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { getTransitionChecklist } from '@/lib/data'
 import { getMyEvaluations, saveEvaluations } from '@/app/installing-democracy/participate/actions'
-import { TRANSITION_PHASES, phaseForMonth } from '@/data/transition-phases'
+import { TRANSITION_PHASES, phaseForMonth, currentRoadmapMonth, ROADMAP_TOTAL_MONTHS } from '@/data/transition-phases'
 import { ChecklistActionCard } from './ChecklistActionCard'
 import type { TransitionAction, EvaluationMap } from '@/types'
 
@@ -62,6 +62,8 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
   }, [actions])
 
   const ratedCount = Object.keys(scores).length
+  // Static per mount — a month-granularity readout doesn't need to tick.
+  const roadmapMonth = useMemo(() => currentRoadmapMonth(), [])
 
   async function handleSave() {
     setSaving(true)
@@ -105,14 +107,28 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
       <div className="sticky top-16 z-20 -mx-4 sm:mx-0 px-4 sm:px-0">
         <div className="card p-3 md:p-4 bg-umbral-black/95 backdrop-blur-md space-y-2.5">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm font-mono text-white">
-              {t('installingDemocracy.participate.eval.progress', { rated: ratedCount })}
-            </p>
-            {saveMessage && (
-              <p className={`text-xs ${saveMessage.isError ? 'text-signal-red' : 'text-signal-teal'}`}>
-                {saveMessage.text}
+            {/* Left group — current calendar month, then the rated count with
+                breathing space between the two. Gold matches the CalendarDays
+                "milestone" convention used on each action card (flag key:
+                gold=milestone, blue=pillar, red=actor). */}
+            <div className="flex items-center gap-1.5">
+              <CalendarDays className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+              <span className="text-sm font-mono text-white">
+                {t('installingDemocracy.participate.eval.currentMonth', {
+                  month: roadmapMonth,
+                  total: ROADMAP_TOTAL_MONTHS,
+                })}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 ml-8">
+              <CheckCircle2 className="w-4 h-4 text-signal-teal shrink-0" aria-hidden="true" />
+              <p className="text-sm font-mono text-white">
+                {t('installingDemocracy.participate.eval.progress', { rated: ratedCount })}
               </p>
-            )}
+            </div>
+
+            {/* Right — sign out / save */}
             <div className="ml-auto flex items-center gap-2">
               <button
                 type="button"
@@ -140,11 +156,20 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
             </div>
           </div>
 
+          {saveMessage && (
+            <p className={`text-center text-xs ${saveMessage.isError ? 'text-signal-red' : 'text-signal-teal'}`}>
+              {saveMessage.text}
+            </p>
+          )}
+
           {/* Milestone jump links — anchor to each section's id below.
               Native fragment scroll (html has scroll-smooth) rather than a JS
               scrollIntoView, since this is a normal page, not an overlay with
               its own scroll container. */}
           <div className="flex items-center gap-1.5 overflow-x-auto -mx-1 px-1">
+            <span className="shrink-0 whitespace-nowrap text-[10px] font-mono text-umbral-muted">
+              {t('installingDemocracy.participate.eval.jumpToMilestone')}
+            </span>
             {TRANSITION_PHASES.map(def => (
               <a
                 key={def.phase}

@@ -29,3 +29,23 @@ export function phaseForMonth(m: number): number {
   if (m === 12) return 5
   return 6
 }
+
+// ============================================================
+// CURRENT CALENDAR MONTH ON THE 18-MONTH ROADMAP
+// ============================================================
+//
+// Purely calendar-based — not tied to any admin data or actual milestone
+// progress. Month 1 is August 2026 (matches the transitionEnd countdown in
+// data/transition-milestones.ts: Aug 1, 2026 + 18 months = Feb 1, 2028).
+const ROADMAP_START_YEAR = 2026
+const ROADMAP_START_MONTH = 8 // August, 1-indexed
+export const ROADMAP_TOTAL_MONTHS = 18
+
+/**
+ * Which of the 18 roadmap months the calendar is currently in, clamped to
+ * [1, ROADMAP_TOTAL_MONTHS] before the roadmap starts or after it ends.
+ */
+export function currentRoadmapMonth(now: Date = new Date()): number {
+  const elapsed = (now.getFullYear() - ROADMAP_START_YEAR) * 12 + (now.getMonth() + 1 - ROADMAP_START_MONTH)
+  return Math.min(ROADMAP_TOTAL_MONTHS, Math.max(1, elapsed + 1))
+}

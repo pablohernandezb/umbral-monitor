@@ -79,11 +79,13 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
           </p>
         )}
         <p className={cn('text-base md:text-lg text-umbral-muted', showPercent && 'mt-1')}>
-          {t('installingDemocracy.bar.expertAssessedLabel')}
-          {progress.totalEvaluators > 0 && (
+          {t('installingDemocracy.bar.completedOf')
+            .replace('{completed}', String(progress.completed))
+            .replace('{total}', String(progress.total))}
+          {progress.inProgress > 0 && (
             <>
               {' · '}
-              {t('installingDemocracy.participate.public.experts', { count: progress.totalEvaluators })}
+              {t('installingDemocracy.bar.inProgress').replace('{count}', String(progress.inProgress))}
             </>
           )}
         </p>

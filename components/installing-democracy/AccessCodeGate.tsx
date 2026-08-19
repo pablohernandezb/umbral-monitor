@@ -43,7 +43,7 @@ export function AccessCodeGate({ onValidated }: AccessCodeGateProps) {
           {t('installingDemocracy.participate.code.label')}
         </label>
         <input
-          type="text"
+          type="password"
           value={code}
           onChange={e => {
             setCode(e.target.value)
@@ -51,6 +51,7 @@ export function AccessCodeGate({ onValidated }: AccessCodeGateProps) {
           }}
           placeholder={t('installingDemocracy.participate.code.enter')}
           autoCapitalize="characters"
+          autoComplete="off"
           spellCheck={false}
           className="w-full px-3 py-2.5 bg-umbral-charcoal border border-umbral-ash rounded-md text-sm font-mono tracking-wider text-white placeholder-umbral-muted focus:outline-none focus:border-signal-teal"
         />
