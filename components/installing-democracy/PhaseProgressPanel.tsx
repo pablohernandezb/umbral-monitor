@@ -36,8 +36,12 @@ export function PhaseProgressPanel({ phases }: PhaseProgressPanelProps) {
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-sm font-bold text-white font-mono">{phase.completedPct}%</p>
-                <p className="text-[10px] text-umbral-muted font-mono">{phase.completed}/{phase.total}</p>
+                <p className="text-sm font-bold text-white font-mono">{phase.completionPct}%</p>
+                <p className="text-[10px] text-umbral-muted font-mono">
+                  {phase.evaluatorCount > 0
+                    ? t('installingDemocracy.participate.public.experts', { count: phase.evaluatorCount })
+                    : t('installingDemocracy.participate.public.notEvaluated')}
+                </p>
               </div>
             </div>
 
@@ -48,7 +52,7 @@ export function PhaseProgressPanel({ phases }: PhaseProgressPanelProps) {
             <div className="h-1.5 rounded-full bg-[#e4e4e7]/80 overflow-hidden">
               <div
                 className="h-full bg-signal-teal transition-all duration-500"
-                style={{ width: `${phase.completedPct}%` }}
+                style={{ width: `${phase.completionPct}%` }}
               />
             </div>
           </div>

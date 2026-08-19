@@ -22,6 +22,7 @@ interface TransitionChecklistDbRow {
   evidence_en: string | null
   sources: TransitionSource[]
   completed_date: string | null
+  is_alert?: boolean
 }
 
 function mapRow(row: TransitionChecklistDbRow): TransitionAction {
@@ -42,6 +43,7 @@ function mapRow(row: TransitionChecklistDbRow): TransitionAction {
     evidenceEn: row.evidence_en,
     sources: row.sources ?? [],
     completedDate: row.completed_date,
+    isAlert: row.is_alert ?? false,
   }
 }
 
@@ -70,6 +72,9 @@ export interface TransitionActionPatch {
   evidenceEn?: string | null
   sources?: TransitionSource[]
   completedDate?: string | null
+  /** Purely presentational red pulse/tilt on the public card — no percentage,
+   * badge, or rollup reads this. */
+  isAlert?: boolean
 }
 
 export async function updateTransitionActionAdmin(id: string, patch: TransitionActionPatch) {
@@ -85,6 +90,7 @@ export async function updateTransitionActionAdmin(id: string, patch: TransitionA
   if (patch.evidenceEs !== undefined) update.evidence_es = patch.evidenceEs
   if (patch.evidenceEn !== undefined) update.evidence_en = patch.evidenceEn
   if (patch.sources !== undefined) update.sources = patch.sources
+  if (patch.isAlert !== undefined) update.is_alert = patch.isAlert
 
   // On setting status to 'completed' with no completedDate given, default it to
   // today. Moving off 'completed' leaves completedDate as the admin sets it —

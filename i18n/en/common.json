@@ -83,7 +83,7 @@
       "adults": "Adults",
       "minors": "Minors",
       "unknown_text": "Total of missing for whom no information is available about their place of detention",
-      "foreign_text": "Total of foreign"  
+      "foreign_text": "Total of foreign"
     },
     "faq": {
       "title": "Frequently Asked Questions",
@@ -109,8 +109,8 @@
           "answer": "No. Umbral is an independent data analysis platform. We do not promote any specific political agenda nor are we affiliated with parties, governments, or political organizations."
         },
         {
-        "question": "How can I cite or collaborate with the project?",
-        "answer": "To cite Umbral, please use our URL <a href=\"https://umbral.watch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">umbral.watch</a>. For media or research inquiries, email <a href=\"mailto:hi@pablohernandezb.dev\" class=\"text-signal-teal hover:underline\">hi@pablohernandezb.dev</a>. If you find this project helpful and would like to collaborate, you can <a href=\"https://buymeacoffee.com/pablohernandezb\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">buy us a coffee</a>."
+          "question": "How can I cite or collaborate with the project?",
+          "answer": "To cite Umbral, please use our URL <a href=\"https://umbral.watch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">umbral.watch</a>. For media or research inquiries, email <a href=\"mailto:hi@pablohernandezb.dev\" class=\"text-signal-teal hover:underline\">hi@pablohernandezb.dev</a>. If you find this project helpful and would like to collaborate, you can <a href=\"https://buymeacoffee.com/pablohernandezb\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-signal-teal hover:underline\">buy us a coffee</a>."
         }
       ]
     }
@@ -404,7 +404,7 @@
       ]
     }
   },
-"historicalEpisodes": {
+  "historicalEpisodes": {
     "revertedLiberalization": {
       "name": "Reverted Liberalization",
       "period": "1936-1948",
@@ -426,7 +426,7 @@
       "description": "An episode of autocratization in a democracy that resulted in a transition to autocracy. Beginning with the election of Hugo Chávez and the 1999 constitutional changes, the regime experienced a gradual erosion of democratic norms ('preempted democratic transition' turned breakdown) that culminated in a closed authoritarian regime under Maduro."
     }
   },
-"regimeHistory": {
+  "regimeHistory": {
     "revertedLiberalization": "Reverted Liberalization",
     "regressedAutocracy": "Regressed Autocracy",
     "democraticTransition": "Democratic Transition",
@@ -435,7 +435,7 @@
   "ticker": {
     "daysSince": "{days} days have passed since the events of January 3, 2026"
   },
-"deedEvents": {
+  "deedEvents": {
     "category": {
       "WeakenedCivilServiceorIntegrityInstitutions": "Weakened Civil Service or Integrity Institutions",
       "CooptationoftheOpposition": "Co-optation of the Opposition",
@@ -498,64 +498,64 @@
       "december": "December"
     },
     "actors": {
-      "headofstate" : " Head of State (President)",
-      "thegovernment" : " The Government",
-      "rulingparty" : " Ruling Party",
-      "foreignleader" : " Foreign leader (Presidents, Prime Ministers, Kings/Queens)",
-      "citizensvotersthepublic" : " Citizens/voters/the public, not organized through interest or other group (Electorate)",
-      "socialmovementprotestgroup" : " Social movement/protest group, or individual activists/movement’s leader/s",
-      "armedforces" : " Armed Forces",
-      "domesticterrorist" : " Domestic terrorist, or terrorist organization",
-      "opposition" : " Opposition/Opposition Leaders",
-      "foreigncountry" : " Foreign country (or a set of countries)",
-      "highestcourt" : " Highest court, or justice on highest court (Supreme Court justice)",
-      "interestgrouppacunion" : " Interest group/PAC/union",
-      "legislatureparliament" : " Legislature/Parliament",
-      "nonelectedfederalofficials" : " Non-elected federal officials or staff (from agencies, political appointees)",
-      "judiciary" : " Judiciary",
-      "criminalorganizations" : " Criminal organizations (Cartels, mafias)",
-      "police" : " Police (Federal, local)",
-      "watchdog" : " Watchdog (Electoral Institutes)",
-      "cabinetmember" : " Cabinet Member’s (Secretary of State, Minister of Finance)",
-      "candidateforfederaloffice" : " Candidate for federal office (Presidential or legislative candidates)",
-      "other" : " Other",
-      "internationalintergovernmentalorganization" : " International/intergovernmental organization (UN, World Bank, EU)",
-      "stateprovincialelectedofficial" : " State/provincial elected official (Governors, state legislators)",
-      "domesticcorporations" : " Domestic corporations"
+      "headofstate": " Head of State (President)",
+      "thegovernment": " The Government",
+      "rulingparty": " Ruling Party",
+      "foreignleader": " Foreign leader (Presidents, Prime Ministers, Kings/Queens)",
+      "citizensvotersthepublic": " Citizens/voters/the public, not organized through interest or other group (Electorate)",
+      "socialmovementprotestgroup": " Social movement/protest group, or individual activists/movement’s leader/s",
+      "armedforces": " Armed Forces",
+      "domesticterrorist": " Domestic terrorist, or terrorist organization",
+      "opposition": " Opposition/Opposition Leaders",
+      "foreigncountry": " Foreign country (or a set of countries)",
+      "highestcourt": " Highest court, or justice on highest court (Supreme Court justice)",
+      "interestgrouppacunion": " Interest group/PAC/union",
+      "legislatureparliament": " Legislature/Parliament",
+      "nonelectedfederalofficials": " Non-elected federal officials or staff (from agencies, political appointees)",
+      "judiciary": " Judiciary",
+      "criminalorganizations": " Criminal organizations (Cartels, mafias)",
+      "police": " Police (Federal, local)",
+      "watchdog": " Watchdog (Electoral Institutes)",
+      "cabinetmember": " Cabinet Member’s (Secretary of State, Minister of Finance)",
+      "candidateforfederaloffice": " Candidate for federal office (Presidential or legislative candidates)",
+      "other": " Other",
+      "internationalintergovernmentalorganization": " International/intergovernmental organization (UN, World Bank, EU)",
+      "stateprovincialelectedofficial": " State/provincial elected official (Governors, state legislators)",
+      "domesticcorporations": " Domestic corporations"
     },
     "targets": {
-      "armedforces" : " Armed Forces",
-      "interestgrouppacunion" : " Interest group/PAC/union",
-      "citizensvotersthepublic" : " Citizens/voters/the public, not organized through interest or other group (Electorate)",
-      "headofstate" : " Head of State (President)",
-      "thegovernment" : " The Government",
-      "criminalorganizations" : " Criminal organizations (Cartels, mafias)",
-      "police" : " Police (Federal, local)",
-      "religiousinstitutions" : " Religious institutions",
-      "nonelected" : " Non-elected federal officials or staff (from agencies, political appointees)",
-      "highestcourt" : " Highest court, or justice on highest court (Supreme Court justice)",
-      "mediaorganizations" : " Media organizations",
-      "journalist" : " Journalist (Individual or a collective)",
-      "civilsociety" : " Civil society (organization, or a collective of them)",
-      "watchdog" : " Watchdog (Electoral Institutes)",
-      "domesticngos" : " Domestic NGOs",
-      "legislatureparliament" : " Legislature/Parliament",
-      "rulingparty" : " Ruling Party",
-      "universities" : " Universities (Colleges, Professors, Students)",
-      "socialmovementprotestgroup" : " Social movement/protest group, or individual activists/movement’s leader/s",
-      "opposition" : " Opposition/Opposition Leaders",
-      "localcitytowncountymunicipal" : " Local/city/town/county/municipal elected official",
-      "stateprovincialelectedofficial" : " State/provincial elected official",
-      "candidatefornationaloffice" : " Candidate for national office (Presidential or legislative candidates)",
-      "districtornationallowercourt" : " District or national lower court, or judge on court (District Court)",
-      "nonelectedpublic" : " Non-elected public or cultural figure",
-      "candidateforlocalcitytowncountymunicipal" : " Candidate for local/city/town/county/municipal office",
-      "nationalelectedofficial" : " National elected official",
-      "minister" : " Minister",
-      "minoritygroup" : " Minority Group",
-      "domesticterrorist" : " Domestic terrorist, or terrorist organization",
-      "candidateforstateprovincialoffice" : " Candidate for state/provincial office",
-      "unionleader" : " Union leader"
+      "armedforces": " Armed Forces",
+      "interestgrouppacunion": " Interest group/PAC/union",
+      "citizensvotersthepublic": " Citizens/voters/the public, not organized through interest or other group (Electorate)",
+      "headofstate": " Head of State (President)",
+      "thegovernment": " The Government",
+      "criminalorganizations": " Criminal organizations (Cartels, mafias)",
+      "police": " Police (Federal, local)",
+      "religiousinstitutions": " Religious institutions",
+      "nonelected": " Non-elected federal officials or staff (from agencies, political appointees)",
+      "highestcourt": " Highest court, or justice on highest court (Supreme Court justice)",
+      "mediaorganizations": " Media organizations",
+      "journalist": " Journalist (Individual or a collective)",
+      "civilsociety": " Civil society (organization, or a collective of them)",
+      "watchdog": " Watchdog (Electoral Institutes)",
+      "domesticngos": " Domestic NGOs",
+      "legislatureparliament": " Legislature/Parliament",
+      "rulingparty": " Ruling Party",
+      "universities": " Universities (Colleges, Professors, Students)",
+      "socialmovementprotestgroup": " Social movement/protest group, or individual activists/movement’s leader/s",
+      "opposition": " Opposition/Opposition Leaders",
+      "localcitytowncountymunicipal": " Local/city/town/county/municipal elected official",
+      "stateprovincialelectedofficial": " State/provincial elected official",
+      "candidatefornationaloffice": " Candidate for national office (Presidential or legislative candidates)",
+      "districtornationallowercourt": " District or national lower court, or judge on court (District Court)",
+      "nonelectedpublic": " Non-elected public or cultural figure",
+      "candidateforlocalcitytowncountymunicipal": " Candidate for local/city/town/county/municipal office",
+      "nationalelectedofficial": " National elected official",
+      "minister": " Minister",
+      "minoritygroup": " Minority Group",
+      "domesticterrorist": " Domestic terrorist, or terrorist organization",
+      "candidateforstateprovincialoffice": " Candidate for state/provincial office",
+      "unionleader": " Union leader"
     }
   },
   "admin": {
@@ -930,7 +930,7 @@
       "artvolnorm": "Attention Surge"
     },
     "stats": {
-      "instabilityDelta": "Instability \u0394",
+      "instabilityDelta": "Instability Δ",
       "instabilityDeltaLabel": "vs Dec 2025 baseline",
       "currentTone": "Media Tone",
       "currentToneLabel": "Current",
@@ -961,13 +961,14 @@
     "titleHighlight": "Installing",
     "titleRest": "Democracy",
     "tagline": "Tracking Venezuela's 18-month democratic transition, action by action.",
-    "summary": "A verifiable, source-backed tracker of the 62 actions across 19 pillars that a democratic transition in Venezuela would require — grounded in an 18-month roadmap starting August 1, 2026. Each action is marked complete only against a public, verifiable indicator.",
+    "summary": "A verifiable, source-backed tracker of the 62 actions across 19 pillars that a democratic transition in Venezuela would require — grounded in an 18-month roadmap starting August 1, 2026.",
     "cta": "View the tracker",
     "bar": {
       "overallLabel": "Overall transition progress",
       "completedOf": "{completed} of {total} actions completed",
       "inProgress": "{count} in progress",
-      "complete": "Roadmap complete"
+      "complete": "Roadmap complete",
+      "expertAssessedLabel": "Expert-assessed completion"
     },
     "stats": {
       "totalActions": "Actions",
@@ -975,7 +976,9 @@
       "completed": "Completed",
       "inProgress": "In progress",
       "stalled": "Stalled",
-      "pending": "Pending"
+      "pending": "Pending",
+      "completionPct": "Completion (expert-assessed)",
+      "totalEvaluators": "Evaluating experts"
     },
     "phases": {
       "liberties": {
@@ -1094,7 +1097,8 @@
       "indicator": "Verifiable indicator",
       "responsible": "Who's responsible",
       "evidence": "What happened",
-      "sources": "{count} sources"
+      "sources": "{count} sources",
+      "completion": "Expert-assessed completion"
     },
     "filters": {
       "pillar": "Pillar",
@@ -1104,7 +1108,101 @@
       "all": "All",
       "noResults": "No actions match your filters."
     },
+    "methodology": {
+      "title": "Methodology",
+      "close": "Close",
+      "notice": "The values shown are based on expert assessments. You can read more about {link}.",
+      "noticeLink": "the methodology",
+      "faq": {
+        "question": "How can I participate?",
+        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 62 actions is. Your ratings feed the public completion bars."
+      },
+      "cta": "Participate in the Monitoring"
+    },
+    "references": {
+      "title": "References",
+      "source": "Source",
+      "type": "Type",
+      "date": "Date"
+    },
+    "showingCount": "Showing {shown} of {total}",
+    "filteredFrom": "filtered from {total}",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "participate": {
+      "title": "Monitor the transition",
+      "intro": "This tracker is scored by vetted experts. Apply to become an evaluator, or if you already have an access code, continue your evaluation.",
+      "tracks": {
+        "new": "New Participant",
+        "returning": "Returning Expert"
+      },
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "institution": "Institutional affiliation",
+        "submit": "Submit application",
+        "received": {
+          "title": "Application received",
+          "body": "An administrator will review it; once approved you'll be sent a personal access code."
+        },
+        "alreadyPending": "An application with this email is already pending.",
+        "alreadyApproved": "This email is already approved. Use your access code, or contact the administrator.",
+        "invalidEmail": "Invalid email address",
+        "genericError": "Could not submit the application. Please try again."
+      },
+      "code": {
+        "label": "Access code",
+        "enter": "Enter your access code",
+        "submit": "Continue",
+        "invalid": "Invalid code. Check that you copied it correctly.",
+        "forget": "Forget code"
+      },
+      "eval": {
+        "instructions": "For each action, rate how complete it is on a 0–4 scale.",
+        "progress": "{rated} of 62 rated",
+        "save": "Save progress",
+        "saving": "Saving…",
+        "saved": "Progress saved",
+        "saveError": "Could not save. Please try again.",
+        "signOut": "Sign out",
+        "clearHint": "Click again to remove this rating"
+      },
+      "likert": {
+        "0": "Not started",
+        "1": "Barely begun",
+        "2": "Partially",
+        "3": "Mostly",
+        "4": "Fully completed"
+      },
+      "public": {
+        "experts": "{count} experts",
+        "notEvaluated": "Not yet evaluated"
+      },
+      "faq": {
+        "question": "How can I participate?",
+        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 62 actions is. Your ratings feed the public completion bars."
+      },
+      "cta": "Participate in the Monitoring",
+      "admin": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "approve": "Approve",
+        "reject": "Reject",
+        "copyCode": "Copy code",
+        "copied": "Copied",
+        "sendReminder": "Send this code to the expert; it won't be emailed automatically.",
+        "regenerate": "Regenerate code",
+        "ratedCount": "{n}/62 rated",
+        "noApplications": "No applications.",
+        "noExperts": "No approved experts."
+      }
+    },
+    "expertStatus": {
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "pending": "Pending or unmet",
+      "unrated": "Not yet assessable"
+    }
   }
 }

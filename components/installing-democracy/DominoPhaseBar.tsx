@@ -10,7 +10,7 @@ import type { TransitionProgress } from '@/types'
 
 interface DominoPhaseBarProps {
   progress: TransitionProgress
-  /** Month + completed/total caption under each segment. Default true. */
+  /** Month + expert-assessed % caption under each segment. Default true. */
   showCaption?: boolean
   /** The big "{pct}%" headline number. Default true — set false when a
    * percentage is already shown elsewhere on the page, to avoid duplicating it. */
@@ -65,7 +65,7 @@ function renderTitle(title: string) {
 export function DominoPhaseBar({ progress, showCaption = true, showPercent = true }: DominoPhaseBarProps) {
   const { t } = useTranslation()
   const [openTooltip, setOpenTooltip] = useState<number | null>(null)
-  const isAllComplete = progress.completedPct === 100
+  const isAllComplete = progress.completionPct === 100
   const total = progress.phases.length
   const prefersReducedMotion = useReducedMotion()
 
@@ -75,17 +75,15 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
       <div className="text-center">
         {showPercent && (
           <p className="text-4xl md:text-5xl font-bold text-white font-display">
-            {progress.completedPct}%
+            {progress.completionPct}%
           </p>
         )}
         <p className={cn('text-base md:text-lg text-umbral-muted', showPercent && 'mt-1')}>
-          {t('installingDemocracy.bar.completedOf')
-            .replace('{completed}', String(progress.completed))
-            .replace('{total}', String(progress.total))}
-          {progress.inProgress > 0 && (
+          {t('installingDemocracy.bar.expertAssessedLabel')}
+          {progress.totalEvaluators > 0 && (
             <>
               {' · '}
-              {t('installingDemocracy.bar.inProgress').replace('{count}', String(progress.inProgress))}
+              {t('installingDemocracy.participate.public.experts', { count: progress.totalEvaluators })}
             </>
           )}
         </p>
@@ -159,7 +157,7 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
           clipped by it. */}
       <div
         role="progressbar"
-        aria-valuenow={progress.completedPct}
+        aria-valuenow={progress.completionPct}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={t('installingDemocracy.bar.overallLabel')}
@@ -168,8 +166,6 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
           {progress.phases.map((phase, index) => {
             const key = PHASE_KEY_BY_NUMBER[phase.phase]
             const description = t(`installingDemocracy.phases.${key}.description`)
-            const completedWidth = phase.total > 0 ? (phase.completed / phase.total) * 100 : 0
-            const inProgressWidth = phase.total > 0 ? (phase.inProgress / phase.total) * 100 : 0
             const isActive = phase.isActive && !isAllComplete
 
             return (
@@ -191,21 +187,17 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
                   onClick={() => setOpenTooltip(prev => (prev === phase.phase ? null : phase.phase))}
                   title={description}
                 >
+                  {/* Single continuous teal fill to the milestone's expert-
+                      assessed completionPct — no amber in-progress overlay:
+                      completion is now continuous from expert scores, not a
+                      discrete admin status. */}
                   {!isAllComplete && (
-                    <>
-                      <motion.div
-                        className="absolute inset-y-0 left-0 bg-signal-teal"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${completedWidth}%` }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                      />
-                      <motion.div
-                        className="absolute inset-y-0 bg-signal-amber/60"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${inProgressWidth}%`, left: `${completedWidth}%` }}
-                        transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-                      />
-                    </>
+                    <motion.div
+                      className="absolute inset-y-0 left-0 bg-signal-teal"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${phase.completionPct}%` }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                    />
                   )}
 
                   {/* Active-phase pulse. This has to be an INNER overlay: an
@@ -242,7 +234,7 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
             return (
               <div key={phase.phase} className="flex-1 min-w-0">
                 <p className="text-[9px] md:text-[10px] text-umbral-muted text-center font-mono">
-                  {month} · {phase.completed}/{phase.total}
+                  {month} · {phase.completionPct}%
                 </p>
               </div>
             )

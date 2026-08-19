@@ -13,6 +13,7 @@ import type {
   GacetaRecord,
   GacetaBatch,
   TransitionAction,
+  EvaluationAggregate,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 import { ACTORS_BY_ACTION } from './transition-actors'
@@ -4483,3 +4484,24 @@ export const MOCK_TRANSITION_CHECKLIST: TransitionAction[] = RAW_TRANSITION_CHEC
   }
   return withActors
 })
+
+// ============================================================
+// INSTALLING DEMOCRACY — expert monitoring (mock aggregates)
+// ============================================================
+//
+// No expert has evaluated anything in mock mode — by design, not by
+// omission. Fabricating plausible scores here would mean inventing an
+// opinion about how complete a real, unfinished transition roadmap is;
+// starting at a clean 0% is the honest state before real experts are
+// onboarded, and matches the acceptance criterion that the page renders
+// cleanly at 0% with zero evaluations (no divide-by-zero, no NaN).
+export const MOCK_EVALUATION_AGGREGATES: EvaluationAggregate[] = MOCK_TRANSITION_CHECKLIST.map(
+  action => ({
+    actionId: action.id,
+    evaluatorCount: 0,
+    meanScore: 0,
+    completionPct: 0,
+  })
+)
+
+export const MOCK_TOTAL_EVALUATORS = 0

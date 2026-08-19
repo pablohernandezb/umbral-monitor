@@ -717,6 +717,82 @@ CREATE INDEX IF NOT EXISTS idx_transition_checklist_pillar ON transition_checkli
 CREATE INDEX IF NOT EXISTS idx_transition_checklist_status ON transition_checklist(status);
 ALTER TABLE transition_checklist ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public read transition_checklist" ON transition_checklist FOR SELECT USING (true);
+
+-- ============================================================
+-- MONITORING_EXPERTS + TRANSITION_EVALUATIONS
+-- "Installing Democracy" expert monitoring layer
+-- (INSTALLING_DEMOCRACY_MONITORING_SPEC.md)
+--
+-- monitoring_experts holds PII (name, email, institution) and the access
+-- code. RLS is enabled with NO anon policy at all — every read/write goes
+-- through the service-role client inside a server action. Never select this
+-- table from a client component.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS monitoring_experts (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name         TEXT NOT NULL,
+  email        TEXT NOT NULL,
+  institution  TEXT NOT NULL,
+  status       TEXT NOT NULL DEFAULT 'pending'
+               CHECK (status IN ('pending','approved','rejected')),
+  access_code  TEXT UNIQUE,               -- 20 alphanumeric; null until approved
+  admin_note   TEXT,
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  approved_at  TIMESTAMPTZ
+);
+CREATE UNIQUE INDEX IF NOT EXISTS monitoring_experts_email_lower
+  ON monitoring_experts (LOWER(email));
+ALTER TABLE monitoring_experts ENABLE ROW LEVEL SECURITY;
+-- Deliberately no CREATE POLICY here — no anon/authenticated policy means
+-- PostgREST returns nothing to the public client, by default-deny.
+
+-- transition_evaluations: one current score (0..4) per expert per action.
+-- Same no-anon-policy treatment — raw rows are never public. Public reads
+-- go only through the aggregate views below, which carry no identity.
+CREATE TABLE IF NOT EXISTS transition_evaluations (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  evaluator_id  UUID NOT NULL REFERENCES monitoring_experts(id) ON DELETE CASCADE,
+  action_id     TEXT NOT NULL REFERENCES transition_checklist(id) ON DELETE CASCADE,
+  score         INTEGER NOT NULL CHECK (score BETWEEN 0 AND 4),
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (evaluator_id, action_id)
+);
+ALTER TABLE transition_evaluations ENABLE ROW LEVEL SECURITY;
+
+-- Public aggregate view — the ONLY safe way for the anon client to read
+-- evaluation data. Exposes counts/means per action, never who rated what.
+-- The LEFT JOIN from transition_checklist guarantees every one of the 62
+-- actions appears with completion_pct = 0 when unrated, matching the
+-- fixed-62-denominator rule in lib/transition.ts.
+CREATE OR REPLACE VIEW transition_evaluation_aggregates
+WITH (security_invoker = on) AS
+SELECT
+  a.id                                    AS action_id,
+  COUNT(e.score)                          AS evaluator_count,
+  COALESCE(AVG(e.score), 0)::NUMERIC(4,3) AS mean_score,
+  ROUND(COALESCE(AVG(e.score), 0) / 4.0 * 100)::INT AS completion_pct
+FROM transition_checklist a
+LEFT JOIN transition_evaluations e ON e.action_id = a.id
+GROUP BY a.id;
+GRANT SELECT ON transition_evaluation_aggregates TO anon, authenticated;
+
+-- Second, narrower aggregate: total distinct experts across the whole
+-- checklist. Split out from the per-action view above because it needs a
+-- DISTINCT over evaluator_id — still zero identity exposed (a single count),
+-- but kept as its own grant so the per-action view's shape stays a clean
+-- one-row-per-action list.
+CREATE OR REPLACE VIEW transition_evaluator_total
+WITH (security_invoker = on) AS
+SELECT COUNT(DISTINCT evaluator_id)::INT AS total_evaluators
+FROM transition_evaluations;
+GRANT SELECT ON transition_evaluator_total TO anon, authenticated;
+
+-- ============================================================
+-- TRANSITION_CHECKLIST.IS_ALERT
+-- Admin-only visual flag: pulses/tilts the action card red on the public
+-- list. Purely presentational — no percentage, badge, or rollup reads it.
+-- ============================================================
+ALTER TABLE transition_checklist ADD COLUMN IF NOT EXISTS is_alert BOOLEAN NOT NULL DEFAULT false;
 `
 
 // Export for reference

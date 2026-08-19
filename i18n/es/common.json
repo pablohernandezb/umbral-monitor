@@ -404,7 +404,7 @@
       ]
     }
   },
-"historicalEpisodes": {
+  "historicalEpisodes": {
     "revertedLiberalization": {
       "name": "Liberalización revertida",
       "period": "1936-1948",
@@ -426,7 +426,7 @@
       "description": "Un episodio de autocratización en una democracia que resultó en una transición a la autocracia. Comenzando con la elección de Hugo Chávez y los cambios constitucionales de 1999, el régimen experimentó una erosión gradual de las normas democráticas que culminó en un régimen autoritario bajo Maduro."
     }
   },
-"regimeHistory": {
+  "regimeHistory": {
     "revertedLiberalization": "Liberalización revertida",
     "regressedAutocracy": "Autocracia regresiva",
     "democraticTransition": "Transición democrática",
@@ -435,7 +435,7 @@
   "ticker": {
     "daysSince": "Han transcurrido {days} días desde los hechos del 3 de enero de 2026"
   },
-"deedEvents": {
+  "deedEvents": {
     "category": {
       "WeakenedCivilServiceorIntegrityInstitutions": "Debilitamiento de la función pública o de las instituciones de integridad",
       "CooptationoftheOpposition": "Cooptación de la oposición",
@@ -483,79 +483,79 @@
       "PurgingofElites": "Depuración de las élites",
       "DiscriminationagainstMinorities": "Discriminación contra las minorías"
     },
-  "month": {
-    "january": "Enero",
-    "february": "Febrero",
-    "march": "Marzo",
-    "april": "Abril",
-    "may": "Mayo",
-    "june": "Junio",
-    "july": "Julio",
-    "august": "Agosto",
-    "september": "Septiembre",
-    "october": "Octubre",
-    "november": "Noviembre",
-    "december": "Diciembre"
-  },
-  "actors": {
-    "headofstate" : " Jefe de Estado (Presidente)",
-    "thegovernment" : " Gobierno",
-    "rulingparty" : " Partido gobernante",
-    "foreignleader" : " Líderes extranjeros (Presidentes, Primeros Ministros, Reyes/Reinas)",
-    "citizensvotersthepublic" : " Ciudadanos/votantes/público, no organizados por intereses u otros grupos (Electorado)",
-    "socialmovementprotestgroup" : " Movimientos sociales/grupos de protesta, o activistas/líderes de movimientos",
-    "armedforces" : " Fuerzas Armadas",
-    "domesticterrorist" : " Terroristas nacionales u organizaciones terroristas",
-    "opposition" : " Oposición/Líderes de la oposición",
-    "foreigncountry" : " País extranjero (o conjunto de países)",
-    "highestcourt" : " Tribunal Supremo o magistrado del Tribunal Supremo (magistrado del Tribunal Supremo)",
-    "interestgrouppacunion" : " Grupo de interés/PAC/sindicato",
-    "legislatureparliament" : " Legislatura/Parlamento",
-    "nonelectedfederalofficials" : " Funcionarios o personal federal no electo (de agencias, nombramientos políticos)",
-    "judiciary" : " Poder judicial",
-    "criminalorganizations" : " Organizaciones criminales (cárteles, mafias)",
-    "police" : " Policía (federal, local)",
-    "watchdog" : " Órgano de control (institutos electorales)",
-    "cabinetmember" : " Miembro del gabinete (Secretario de Estado, Ministro de Hacienda)",
-    "candidateforfederaloffice" : " Candidato a un cargo federal (candidatos presidenciales o legislativos)",
-    "other" : " Otros",
-    "internationalintergovernmentalorganization" : " Organización internacional/intergubernamental (ONU, Banco Mundial, UE)",
-    "stateprovincialelectedofficial" : " Funcionarios electos estatales/provinciales (gobernadores, legisladores estatales)",
-    "domesticcorporations" : " Sociedades nacionales"
-  },
-  "targets": {
-    "armedforces" : " Fuerzas Armadas",
-    "interestgrouppacunion" : " Grupo de interés/PAC/sindicato",
-    "citizensvotersthepublic" : " Ciudadanos/votantes/público, no organizados por intereses u otros grupos (electorado)",
-    "headofstate" : " Jefe de Estado (presidente)",
-    "thegovernment" : " Gobierno",
-    "criminalorganizations" : " Organizaciones criminales (cárteles, mafias)",
-    "police" : " Policía (federal, local)",
-    "religiousinstitutions" : " Instituciones religiosas",
-    "nonelected" : " Funcionarios o personal federal no electo (de agencias, designados políticos)",
-    "highestcourt" : " Tribunal Supremo o magistrado del Tribunal Supremo (magistrado de la Corte Suprema)",
-    "mediaorganizations" : " Medios de comunicación",
-    "journalist" : " Periodista (individual o colectivo)",
-    "civilsociety" : " Sociedad civil (organización o colectivo)",
-    "watchdog" : " Organismo de control (institutos electorales)",
-    "domesticngos" : " ONG nacionales",
-    "legislatureparliament" : " Legislatura/Parlamento",
-    "rulingparty" : " Partido gobernante",
-    "universities" : " Universidades (universidades, profesores, estudiantes)",
-    "socialmovementprotestgroup" : " Movimiento social/grupo de protesta, o activistas individuales/líderes de movimientos",
-    "opposition" : " Oposición/Líderes de la oposición",
-    "localcitytowncountymunicipal" : " Funcionario electo local/municipal/municipal",
-    "stateprovincialelectedofficial" : " Funcionario electo estatal/provincial",
-    "candidatefornationaloffice" : " Candidato a un cargo nacional (Candidatos presidenciales o legislativos)",
-    "districtornationallowercourt" : " Tribunal inferior distrital o nacional, o juez de un tribunal (Tribunal de Distrito)",
-    "nonelectedpublic" : " Personalidad pública o cultural no electa",
-    "candidateforlocalcitytowncountymunicipal" : " Candidato a un cargo local/municipal/municipal",
-    "nationalelectedofficial" : " Funcionario electo nacional",
-    "minister" : " Ministro",
-    "minoritygroup" : " Grupo minoritario",
-    "domesticterrorist" : " Terrorista nacional u organización terrorista",
-    "candidateforstateprovincialoffice" : " Candidato a un cargo estatal/provincial",
-    "unionleader" : " Líder sindical"
+    "month": {
+      "january": "Enero",
+      "february": "Febrero",
+      "march": "Marzo",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Junio",
+      "july": "Julio",
+      "august": "Agosto",
+      "september": "Septiembre",
+      "october": "Octubre",
+      "november": "Noviembre",
+      "december": "Diciembre"
+    },
+    "actors": {
+      "headofstate": " Jefe de Estado (Presidente)",
+      "thegovernment": " Gobierno",
+      "rulingparty": " Partido gobernante",
+      "foreignleader": " Líderes extranjeros (Presidentes, Primeros Ministros, Reyes/Reinas)",
+      "citizensvotersthepublic": " Ciudadanos/votantes/público, no organizados por intereses u otros grupos (Electorado)",
+      "socialmovementprotestgroup": " Movimientos sociales/grupos de protesta, o activistas/líderes de movimientos",
+      "armedforces": " Fuerzas Armadas",
+      "domesticterrorist": " Terroristas nacionales u organizaciones terroristas",
+      "opposition": " Oposición/Líderes de la oposición",
+      "foreigncountry": " País extranjero (o conjunto de países)",
+      "highestcourt": " Tribunal Supremo o magistrado del Tribunal Supremo (magistrado del Tribunal Supremo)",
+      "interestgrouppacunion": " Grupo de interés/PAC/sindicato",
+      "legislatureparliament": " Legislatura/Parlamento",
+      "nonelectedfederalofficials": " Funcionarios o personal federal no electo (de agencias, nombramientos políticos)",
+      "judiciary": " Poder judicial",
+      "criminalorganizations": " Organizaciones criminales (cárteles, mafias)",
+      "police": " Policía (federal, local)",
+      "watchdog": " Órgano de control (institutos electorales)",
+      "cabinetmember": " Miembro del gabinete (Secretario de Estado, Ministro de Hacienda)",
+      "candidateforfederaloffice": " Candidato a un cargo federal (candidatos presidenciales o legislativos)",
+      "other": " Otros",
+      "internationalintergovernmentalorganization": " Organización internacional/intergubernamental (ONU, Banco Mundial, UE)",
+      "stateprovincialelectedofficial": " Funcionarios electos estatales/provinciales (gobernadores, legisladores estatales)",
+      "domesticcorporations": " Sociedades nacionales"
+    },
+    "targets": {
+      "armedforces": " Fuerzas Armadas",
+      "interestgrouppacunion": " Grupo de interés/PAC/sindicato",
+      "citizensvotersthepublic": " Ciudadanos/votantes/público, no organizados por intereses u otros grupos (electorado)",
+      "headofstate": " Jefe de Estado (presidente)",
+      "thegovernment": " Gobierno",
+      "criminalorganizations": " Organizaciones criminales (cárteles, mafias)",
+      "police": " Policía (federal, local)",
+      "religiousinstitutions": " Instituciones religiosas",
+      "nonelected": " Funcionarios o personal federal no electo (de agencias, designados políticos)",
+      "highestcourt": " Tribunal Supremo o magistrado del Tribunal Supremo (magistrado de la Corte Suprema)",
+      "mediaorganizations": " Medios de comunicación",
+      "journalist": " Periodista (individual o colectivo)",
+      "civilsociety": " Sociedad civil (organización o colectivo)",
+      "watchdog": " Organismo de control (institutos electorales)",
+      "domesticngos": " ONG nacionales",
+      "legislatureparliament": " Legislatura/Parlamento",
+      "rulingparty": " Partido gobernante",
+      "universities": " Universidades (universidades, profesores, estudiantes)",
+      "socialmovementprotestgroup": " Movimiento social/grupo de protesta, o activistas individuales/líderes de movimientos",
+      "opposition": " Oposición/Líderes de la oposición",
+      "localcitytowncountymunicipal": " Funcionario electo local/municipal/municipal",
+      "stateprovincialelectedofficial": " Funcionario electo estatal/provincial",
+      "candidatefornationaloffice": " Candidato a un cargo nacional (Candidatos presidenciales o legislativos)",
+      "districtornationallowercourt": " Tribunal inferior distrital o nacional, o juez de un tribunal (Tribunal de Distrito)",
+      "nonelectedpublic": " Personalidad pública o cultural no electa",
+      "candidateforlocalcitytowncountymunicipal": " Candidato a un cargo local/municipal/municipal",
+      "nationalelectedofficial": " Funcionario electo nacional",
+      "minister": " Ministro",
+      "minoritygroup": " Grupo minoritario",
+      "domesticterrorist": " Terrorista nacional u organización terrorista",
+      "candidateforstateprovincialoffice": " Candidato a un cargo estatal/provincial",
+      "unionleader": " Líder sindical"
     }
   },
   "admin": {
@@ -916,7 +916,6 @@
     },
     "structural": {
       "title": "Cambios estructurales",
-
       "suppressions": "Supresiones",
       "reorganizations": "Reorganizaciones",
       "creations": "Creaciones"
@@ -931,7 +930,7 @@
       "artvolnorm": "Oleada de Atención"
     },
     "stats": {
-      "instabilityDelta": "Inestabilidad \u0394",
+      "instabilityDelta": "Inestabilidad Δ",
       "instabilityDeltaLabel": "vs línea base dic 2025",
       "currentTone": "Tono Mediático",
       "currentToneLabel": "Actual",
@@ -954,7 +953,7 @@
     "source": "Fuente: Proyecto GDELT",
     "noData": "Datos de señales no disponibles actualmente",
     "mockData": "DATOS SIMULADOS",
-    "live":"EN VIVO"
+    "live": "EN VIVO"
   },
   "installingDemocracy": {
     "nav": "Instalando la democracia",
@@ -962,13 +961,14 @@
     "titleHighlight": "Instalando",
     "titleRest": "la democracia",
     "tagline": "Seguimiento a la transición democrática de Venezuela, acción por acción, durante 18 meses.",
-    "summary": "Un tablero verificable y documentado de las 62 acciones en 19 pilares que exigiría una transición democrática en Venezuela, con base en un cronograma de 18 meses que arrancó el 1 de agosto de 2026. Cada acción se marca como cumplida solo frente a un indicador público y verificable.",
+    "summary": "Un tablero verificable y documentado de las 62 acciones en 19 pilares que exigiría una transición democrática en Venezuela, con base en un cronograma de 18 meses que arrancó el 1 de agosto de 2026.",
     "cta": "Ver el tablero",
     "bar": {
       "overallLabel": "Progreso general de la transición",
       "completedOf": "{completed} de {total} acciones cumplidas",
       "inProgress": "{count} en curso",
-      "complete": "Cronograma completado"
+      "complete": "Cronograma completado",
+      "expertAssessedLabel": "Avance evaluado por expertos"
     },
     "stats": {
       "totalActions": "Acciones",
@@ -976,7 +976,9 @@
       "completed": "Cumplidas",
       "inProgress": "En curso",
       "stalled": "Estancadas",
-      "pending": "Pendientes"
+      "pending": "Pendientes",
+      "completionPct": "Avance (evaluado por expertos)",
+      "totalEvaluators": "Expertos evaluadores"
     },
     "phases": {
       "liberties": {
@@ -1095,7 +1097,8 @@
       "indicator": "Indicador verificable",
       "responsible": "Responsable",
       "evidence": "Qué ocurrió",
-      "sources": "{count} fuentes"
+      "sources": "{count} fuentes",
+      "completion": "Avance evaluado por expertos"
     },
     "filters": {
       "pillar": "Pilar",
@@ -1105,7 +1108,101 @@
       "all": "Todos",
       "noResults": "Ninguna acción coincide con tus filtros."
     },
+    "methodology": {
+      "title": "Metodología",
+      "close": "Cerrar",
+      "notice": "Los valores mostrados se basan en valoraciones de expertos. Puedes leer más sobre {link}.",
+      "noticeLink": "la metodología",
+      "faq": {
+        "question": "¿Cómo puedo participar?",
+        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 62 acciones. Tus valoraciones alimentan las barras de avance públicas."
+      },
+      "cta": "Participa en el monitoreo"
+    },
+    "references": {
+      "title": "Referencias",
+      "source": "Fuente",
+      "type": "Tipo",
+      "date": "Fecha"
+    },
+    "showingCount": "Mostrando {shown} de {total}",
+    "filteredFrom": "filtrado de {total}",
     "showMore": "Ver más",
-    "showLess": "Ver menos"
+    "showLess": "Ver menos",
+    "participate": {
+      "title": "Monitorea la transición",
+      "intro": "Este monitoreo lo evalúan expertos verificados. Postúlate para convertirte en evaluador, o si ya tienes un código de acceso, continúa tu evaluación.",
+      "tracks": {
+        "new": "Nuevo participante",
+        "returning": "Experto recurrente"
+      },
+      "form": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "institution": "Afiliación institucional",
+        "submit": "Enviar solicitud",
+        "received": {
+          "title": "Solicitud recibida",
+          "body": "Un administrador revisará tu solicitud; una vez aprobada, se te enviará un código de acceso personal."
+        },
+        "alreadyPending": "Ya existe una solicitud pendiente con este correo.",
+        "alreadyApproved": "Este correo ya fue aprobado. Usa tu código de acceso o contacta al administrador.",
+        "invalidEmail": "Correo electrónico inválido",
+        "genericError": "No se pudo enviar la solicitud. Intenta de nuevo."
+      },
+      "code": {
+        "label": "Código de acceso",
+        "enter": "Ingresa tu código de acceso",
+        "submit": "Continuar",
+        "invalid": "Código inválido. Verifica que lo copiaste correctamente.",
+        "forget": "Olvidar código"
+      },
+      "eval": {
+        "instructions": "Para cada acción, indica qué tan completa está en una escala de 0 a 4.",
+        "progress": "{rated} de 62 evaluadas",
+        "save": "Guardar avance",
+        "saving": "Guardando…",
+        "saved": "Avance guardado",
+        "saveError": "No se pudo guardar. Intenta de nuevo.",
+        "signOut": "Cerrar sesión",
+        "clearHint": "Haz clic de nuevo para quitar esta valoración"
+      },
+      "likert": {
+        "0": "No iniciado",
+        "1": "Apenas iniciado",
+        "2": "Parcialmente",
+        "3": "En su mayor parte",
+        "4": "Completado"
+      },
+      "public": {
+        "experts": "{count} expertos",
+        "notEvaluated": "Aún sin evaluar"
+      },
+      "faq": {
+        "question": "¿Cómo puedo participar?",
+        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 62 acciones. Tus valoraciones alimentan las barras de avance públicas."
+      },
+      "cta": "Participa en el monitoreo",
+      "admin": {
+        "pending": "Pendientes",
+        "approved": "Aprobados",
+        "rejected": "Rechazados",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "copyCode": "Copiar código",
+        "copied": "Copiado",
+        "sendReminder": "Envía este código al experto; no se enviará por correo automáticamente.",
+        "regenerate": "Regenerar código",
+        "ratedCount": "{n}/62 evaluadas",
+        "noApplications": "No hay solicitudes.",
+        "noExperts": "No hay expertos aprobados."
+      }
+    },
+    "expertStatus": {
+      "completed": "Cumplida",
+      "inProgress": "En progreso",
+      "pending": "Pendiente o incumplida",
+      "unrated": "No evaluable"
+    }
   }
 }

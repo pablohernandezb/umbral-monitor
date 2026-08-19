@@ -109,6 +109,27 @@ export default function InstallingDemocracyAdminPage() {
     setForm(null)
   }
 
+  const [togglingAlertId, setTogglingAlertId] = useState<string | null>(null)
+
+  async function toggleAlert(action: TransitionAction) {
+    const next = !action.isAlert
+    setTogglingAlertId(action.id)
+    // Optimistic: applied to local state regardless of what the server
+    // returns, so this also works in mock mode (updateTransitionActionAdmin
+    // returns `data: null` there — nothing to merge back from).
+    setActions(prev => prev.map(a => (a.id === action.id ? { ...a, isAlert: next } : a)))
+    const result = await updateTransitionActionAdmin(action.id, { isAlert: next })
+    setTogglingAlertId(null)
+
+    if (result.error) {
+      // Roll back on a real failure.
+      setActions(prev => prev.map(a => (a.id === action.id ? { ...a, isAlert: !next } : a)))
+      setToast({ message: result.error, type: 'error' })
+      return
+    }
+    setToast({ message: next ? 'Alert effect enabled' : 'Alert effect disabled', type: 'success' })
+  }
+
   async function saveEdit(id: string) {
     if (!form) return
     setSaving(true)
@@ -222,6 +243,18 @@ export default function InstallingDemocracyAdminPage() {
                       <span className={`px-2 py-0.5 rounded text-[10px] uppercase tracking-wide shrink-0 ${STATUS_STYLES[action.status]}`}>
                         {action.status}
                       </span>
+                      <button
+                        onClick={() => toggleAlert(action)}
+                        disabled={togglingAlertId === action.id}
+                        title="Pulse/tilt this card red on the public list"
+                        className={`px-3 py-1 text-xs rounded-md shrink-0 border transition-colors disabled:opacity-50 ${
+                          action.isAlert
+                            ? 'bg-red-950/40 text-red-300 border-red-500/40'
+                            : 'text-gray-400 hover:text-red-300 border-gray-700 hover:border-red-500/30'
+                        }`}
+                      >
+                        {action.isAlert ? 'Alert: ON' : 'Alert: OFF'}
+                      </button>
                       <button
                         onClick={() => (isEditing ? cancelEdit() : startEdit(action))}
                         className="px-3 py-1 text-xs text-teal-400 hover:text-teal-300 border border-teal-500/30 rounded-md shrink-0"

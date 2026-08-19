@@ -352,36 +352,76 @@ export interface TransitionAction {
   evidenceEn?: string | null
   sources: TransitionSource[]
   completedDate?: string | null // ISO date
+  /** Admin-only visual flag — pulses/tilts the card red on the public list.
+   * Optional (not a required boolean) because mock rows predate this field
+   * and default to "off" rather than needing every literal touched. */
+  isAlert?: boolean
 }
 
 export interface PhaseProgress {
   phase: number             // 1..6 (milestone number)
   total: number
+  completionPct: number     // expert-assessed: mean of member items' itemPct (0..100)
+  evaluatorCount: number    // see EvaluationAggregate note: max across member actions,
+                            // not a true distinct count — the public aggregate view
+                            // carries no evaluator identity to dedupe against.
+  isActive: boolean         // earliest phase with completionPct < 100
+  // Secondary admin annotation stats (NOT the % driver — see lib/transition.ts):
   completed: number
   inProgress: number
   stalled: number
   pending: number
-  completedPct: number      // completed/total*100, rounded
-  momentumPct: number       // (completed + 0.5*inProgress)/total*100
-  isActive: boolean         // earliest phase not 100% complete
 }
 
 export interface PillarProgress {
   pillar: string
   total: number
+  completionPct: number     // expert-assessed (0..100)
+  evaluatorCount: number    // same max-across-members caveat as PhaseProgress
+  // Secondary admin annotation stats (NOT the % driver):
   completed: number
   inProgress: number
-  completedPct: number
 }
 
 export interface TransitionProgress {
   total: number             // 62
+  completionPct: number     // headline: mean of the 62 item percentages (each item 1.613%)
+  totalEvaluators: number   // distinct experts across the whole checklist
+  phases: PhaseProgress[]
+  pillars: PillarProgress[]
+  // Secondary admin annotation stats (NOT the % driver):
   completed: number
   inProgress: number
   stalled: number
   pending: number
-  completedPct: number
-  momentumPct: number
-  phases: PhaseProgress[]
-  pillars: PillarProgress[]
 }
+
+// ============================================================
+// INSTALLING DEMOCRACY — expert monitoring (access-code gated evaluation)
+// ============================================================
+
+export type MonitoringStatus = 'pending' | 'approved' | 'rejected'
+
+// Admin-only shape — never sent to the public client.
+export interface MonitoringExpert {
+  id: string
+  name: string
+  email: string
+  institution: string
+  status: MonitoringStatus
+  accessCode?: string | null
+  adminNote?: string | null
+  createdAt: string
+  approvedAt?: string | null
+}
+
+// Identity-free — safe for the anon client (reads transition_evaluation_aggregates).
+export interface EvaluationAggregate {
+  actionId: string
+  evaluatorCount: number
+  meanScore: number      // 0..4
+  completionPct: number  // 0..100
+}
+
+// One expert's own scores, keyed by action id (for prefill on return).
+export type EvaluationMap = Record<string, number> // actionId -> 0..4

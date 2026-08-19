@@ -5,23 +5,47 @@ import { useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { PILLAR_ICONS, ACTOR_ICONS } from './icons'
 import { phaseForMonth } from '@/data/transition-phases'
-import { PHASE_KEY_BY_NUMBER } from '@/lib/transition'
-import type { TransitionAction } from '@/types'
+import { PHASE_KEY_BY_NUMBER, expertStatusTone, type ExpertStatusTone } from '@/lib/transition'
+import { LikertSelector } from './LikertSelector'
+import type { TransitionAction, EvaluationAggregate } from '@/types'
 
-const STATUS_STYLES: Record<TransitionAction['status'], string> = {
+// Same 4-state legend as the methodology panel (Cumplida/En progreso/
+// Pendiente/No evaluable) — this badge is now fully automatic, computed from
+// expertStatusTone(aggregate), not the admin-curated `action.status` it used
+// to show. The admin status still exists in the data model and admin panel;
+// it just no longer renders on the public card.
+const EXPERT_STATUS_STYLES: Record<ExpertStatusTone, string> = {
   completed: 'bg-signal-teal/15 text-signal-teal border-signal-teal/30',
-  in_progress: 'bg-signal-amber/15 text-signal-amber border-signal-amber/30',
-  stalled: 'bg-signal-red/15 text-signal-red border-signal-red/30',
-  // Light pill per §6 — needs dark text since the pill itself is light.
-  pending: 'bg-[#e4e4e7] text-[#111113] border-transparent',
+  inProgress: 'bg-signal-amber/15 text-signal-amber border-signal-amber/30',
+  pending: 'bg-signal-red/15 text-signal-red border-signal-red/30',
+  // Light pill — needs dark text since the pill itself is light.
+  unrated: 'bg-[#e4e4e7] text-[#111113] border-transparent',
 }
 
 interface ChecklistActionCardProps {
   action: TransitionAction
   compact?: boolean
+  /** Public completion data for this action. Undefined/zero renders as
+   * "not yet evaluated" rather than a misleading empty 0% bar. */
+  aggregate?: EvaluationAggregate
+  /** Renders a 0–4 LikertSelector in place of the completion bar — used by
+   * the Returning Expert evaluation form. `evaluationValue`/`onEvaluate`
+   * are required together with this. */
+  evaluate?: boolean
+  evaluationValue?: number
+  onEvaluate?: (score: number | undefined) => void
+  evaluateDisabled?: boolean
 }
 
-export function ChecklistActionCard({ action, compact = false }: ChecklistActionCardProps) {
+export function ChecklistActionCard({
+  action,
+  compact = false,
+  aggregate,
+  evaluate = false,
+  evaluationValue,
+  onEvaluate,
+  evaluateDisabled,
+}: ChecklistActionCardProps) {
   const { t, locale } = useTranslation()
 
   const PillarIcon = PILLAR_ICONS[action.pillar]
@@ -32,18 +56,51 @@ export function ChecklistActionCard({ action, compact = false }: ChecklistAction
   const indicatorText = locale === 'es' ? action.indicatorEs : action.indicatorEn
   const responsibleText = locale === 'es' ? action.responsibleEs : action.responsibleEn
   const evidenceText = locale === 'es' ? action.evidenceEs : action.evidenceEn
+  const tone = expertStatusTone(aggregate)
 
   return (
-    <div className="card p-4 md:p-5 space-y-3">
-      {/* Status badge */}
+    <div
+      className={cn(
+        'card p-4 md:p-5 space-y-3',
+        // Admin-only visual flag (transition_checklist.is_alert) — purely
+        // presentational, same red pulse the fact-check feed uses for
+        // flagged tweets. No rotation/tilt, no badge/text added.
+        action.isAlert && 'border-2 border-signal-red/40 animate-pulse-border shadow-[0_0_15px_rgba(220,38,38,0.15)]'
+      )}
+    >
+      {/* Expert completion — the PRIMARY signal (monitoring spec §10).
+          Bar + percentage only; the "expert-assessed" label and the
+          evaluator-count/not-evaluated line are covered by the status badge
+          below instead, so they aren't repeated here. */}
+      {!evaluate && (
+        <div>
+          <div className="flex items-center justify-end mb-1">
+            <p className="text-xs font-bold text-white font-mono">{aggregate?.completionPct ?? 0}%</p>
+          </div>
+          <div className="h-1.5 rounded-full bg-[#e4e4e7]/80 overflow-hidden">
+            <div
+              className="h-full bg-signal-teal transition-all duration-500"
+              style={{ width: `${aggregate?.completionPct ?? 0}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Status badge — automatic, computed from expertStatusTone(aggregate).
+          Below 5 evaluators this always reads "unrated" regardless of mean
+          score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts), so
+          this badge and the % above can never disagree: the same threshold
+          zeroes an under-5 item's contribution to every rollup too. The
+          admin-curated `status` still exists for internal use (admin panel)
+          but no longer renders here. */}
       <div className="flex items-center justify-between gap-2">
         <span
           className={cn(
             'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border',
-            STATUS_STYLES[action.status]
+            EXPERT_STATUS_STYLES[tone]
           )}
         >
-          {t(`installingDemocracy.status.${action.status}`)}
+          {t(`installingDemocracy.expertStatus.${tone}`)}
         </span>
         {/* Venezuelan flag colour key: gold = milestone, blue = pillar, red = actors. */}
         <span className="inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right">
@@ -75,6 +132,21 @@ export function ChecklistActionCard({ action, compact = false }: ChecklistAction
         </p>
         <p className="text-xs md:text-sm text-umbral-light">{indicatorText}</p>
       </div>
+
+      {/* Evaluation control — replaces the public completion bar in evaluate mode */}
+      {evaluate && (
+        <div>
+          <p className="text-[10px] text-umbral-muted uppercase tracking-wide font-mono mb-1.5">
+            {t('installingDemocracy.action.completion')}
+          </p>
+          <LikertSelector
+            value={evaluationValue}
+            onChange={score => onEvaluate?.(score)}
+            actionLabel={actionText}
+            disabled={evaluateDisabled}
+          />
+        </div>
+      )}
 
       {/* Responsible actors */}
       <div>

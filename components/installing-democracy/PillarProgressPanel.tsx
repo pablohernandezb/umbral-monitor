@@ -34,15 +34,20 @@ export function PillarProgressPanel({ pillars }: PillarProgressPanelProps) {
                   {t(`installingDemocracy.pillars.${pillar.pillar}`)}
                 </p>
                 <p className="text-xs font-mono text-umbral-muted shrink-0">
-                  {pillar.completed}/{pillar.total} · {pillar.completedPct}%
+                  {pillar.completionPct}%
                 </p>
               </div>
               <div className="h-1.5 rounded-full bg-[#e4e4e7]/80 overflow-hidden">
                 <div
                   className="h-full bg-signal-teal transition-all duration-500"
-                  style={{ width: `${pillar.completedPct}%` }}
+                  style={{ width: `${pillar.completionPct}%` }}
                 />
               </div>
+              {pillar.evaluatorCount > 0 && (
+                <p className="mt-1 text-[10px] text-umbral-muted font-mono">
+                  {t('installingDemocracy.participate.public.experts', { count: pillar.evaluatorCount })}
+                </p>
+              )}
             </div>
           </div>
         )

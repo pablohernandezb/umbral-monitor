@@ -22,6 +22,7 @@ import type {
   TransitionAction,
   TransitionProgress,
   TransitionSource,
+  EvaluationAggregate,
 } from '@/types'
 import type { GdeltEvent } from '@/types/gdelt'
 import { computeProgress } from '@/lib/transition'
@@ -50,6 +51,8 @@ import {
   mockGacetaRecords,
   mockGacetaBatches,
   MOCK_TRANSITION_CHECKLIST,
+  MOCK_EVALUATION_AGGREGATES,
+  MOCK_TOTAL_EVALUATORS,
 } from '@/data/mock'
 import { computeGacetaSummary } from '@/components/gaceta/gaceta-utils'
 
@@ -1337,6 +1340,9 @@ interface TransitionChecklistDbRow {
   evidence_en: string | null
   sources: TransitionSource[]
   completed_date: string | null
+  // Optional: rows queried before the is_alert migration is applied simply
+  // won't have this column back from PostgREST.
+  is_alert?: boolean
 }
 
 function mapTransitionRow(row: TransitionChecklistDbRow): TransitionAction {
@@ -1357,6 +1363,7 @@ function mapTransitionRow(row: TransitionChecklistDbRow): TransitionAction {
     evidenceEn: row.evidence_en,
     sources: row.sources ?? [],
     completedDate: row.completed_date,
+    isAlert: row.is_alert ?? false,
   }
 }
 
@@ -1377,12 +1384,67 @@ export async function getTransitionChecklist(): Promise<ApiResponse<TransitionAc
   }
 }
 
-export async function getTransitionProgress(): Promise<ApiResponse<TransitionProgress>> {
-  const { data: actions, error } = await getTransitionChecklist()
-  if (error || !actions) {
-    return { data: null, error }
+/**
+ * Reads the identity-free `transition_evaluation_aggregates` view — safe for
+ * the anon client. Never reads raw `transition_evaluations` (see
+ * INSTALLING_DEMOCRACY_MONITORING_SPEC.md §5).
+ */
+export async function getEvaluationAggregates(): Promise<ApiResponse<EvaluationAggregate[]>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: MOCK_EVALUATION_AGGREGATES, error: null }
   }
-  return { data: computeProgress(actions), error: null }
+
+  const { data, error } = await supabase.from('transition_evaluation_aggregates').select('*')
+
+  return {
+    data: data
+      ? (data as Array<{ action_id: string; evaluator_count: number; mean_score: number; completion_pct: number }>).map(
+          row => ({
+            actionId: row.action_id,
+            evaluatorCount: row.evaluator_count,
+            meanScore: row.mean_score,
+            completionPct: row.completion_pct,
+          })
+        )
+      : null,
+    error: error?.message || null,
+  }
+}
+
+/**
+ * Distinct-expert count across the whole checklist, from the
+ * `transition_evaluator_total` view — a single count, no identity. Split
+ * from getEvaluationAggregates() because it needs its own DISTINCT query
+ * shape (see lib/transition.ts for why this can't be derived from the
+ * per-action aggregates alone).
+ */
+export async function getTotalEvaluatorCount(): Promise<ApiResponse<number>> {
+  if (IS_MOCK_MODE || !supabase) {
+    return { data: MOCK_TOTAL_EVALUATORS, error: null }
+  }
+
+  const { data, error } = await supabase.from('transition_evaluator_total').select('total_evaluators').single()
+
+  return {
+    data: data ? (data as { total_evaluators: number }).total_evaluators : null,
+    error: error?.message || null,
+  }
+}
+
+export async function getTransitionProgress(): Promise<ApiResponse<TransitionProgress>> {
+  const [{ data: actions, error: actionsError }, { data: aggregates, error: aggregatesError }, { data: totalEvaluators, error: evaluatorsError }] =
+    await Promise.all([getTransitionChecklist(), getEvaluationAggregates(), getTotalEvaluatorCount()])
+
+  if (actionsError || !actions) {
+    return { data: null, error: actionsError }
+  }
+  // Aggregates/evaluator-count failures degrade to "nobody has rated yet"
+  // rather than blanking the whole page — the checklist itself is the part
+  // that matters most if something's wrong with the newer monitoring tables.
+  const safeAggregates = !aggregatesError && aggregates ? aggregates : []
+  const safeTotalEvaluators = !evaluatorsError && totalEvaluators !== null ? totalEvaluators : 0
+
+  return { data: computeProgress(actions, safeAggregates, safeTotalEvaluators), error: null }
 }
 
 /**
