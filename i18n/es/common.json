@@ -961,7 +961,7 @@
     "titleHighlight": "Instalando",
     "titleRest": "la democracia",
     "tagline": "Seguimiento a la transición democrática de Venezuela, acción por acción, durante 18 meses.",
-    "summary": "Un tablero verificable y documentado de las 62 acciones en 19 pilares que exigiría una transición democrática en Venezuela, con base en un cronograma de 18 meses que arrancó el 1 de agosto de 2026.",
+    "summary": "Un tablero verificable y documentado de las 60 acciones en 19 pilares que exigiría una transición democrática en Venezuela, con base en un cronograma de 18 meses que arrancó el 1 de agosto de 2026.",
     "cta": "Ver el tablero",
     "bar": {
       "overallLabel": "Progreso general de la transición",
@@ -1115,7 +1115,7 @@
       "noticeLink": "la metodología",
       "faq": {
         "question": "¿Cómo puedo participar?",
-        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 62 acciones. Tus valoraciones alimentan las barras de avance públicas."
+        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 60 acciones. Tus valoraciones alimentan las barras de avance públicas."
       },
       "cta": "Participa en el monitoreo"
     },
@@ -1123,7 +1123,8 @@
       "title": "Referencias",
       "source": "Fuente",
       "type": "Tipo",
-      "date": "Fecha"
+      "date": "Fecha",
+      "openSource": "Abrir fuente"
     },
     "showingCount": "Mostrando {shown} de {total}",
     "filteredFrom": "filtrado de {total}",
@@ -1137,9 +1138,9 @@
         "returning": "Experto recurrente"
       },
       "form": {
-        "name": "Nombre",
-        "email": "Correo electrónico",
-        "institution": "Afiliación institucional",
+        "name": "Nombre completo",
+        "email": "Correo institucional",
+        "institution": "Institución académica",
         "submit": "Enviar solicitud",
         "received": {
           "title": "Solicitud recibida",
@@ -1159,7 +1160,7 @@
       },
       "eval": {
         "instructions": "Para cada acción, indica qué tan completa está en una escala de 0 a 4.",
-        "progress": "{rated} de 62 evaluadas",
+        "progress": "{rated} de {total} evaluadas",
         "save": "Guardar avance",
         "saving": "Guardando…",
         "saved": "Avance guardado",
@@ -1182,7 +1183,7 @@
       },
       "faq": {
         "question": "¿Cómo puedo participar?",
-        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 62 acciones. Tus valoraciones alimentan las barras de avance públicas."
+        "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 60 acciones. Tus valoraciones alimentan las barras de avance públicas."
       },
       "cta": "Participa en el monitoreo",
       "admin": {
@@ -1195,11 +1196,21 @@
         "copied": "Copiado",
         "sendReminder": "Envía este código al experto; no se enviará por correo automáticamente.",
         "regenerate": "Regenerar código",
-        "ratedCount": "{n}/62 evaluadas",
+        "ratedCount": "{n}/60 evaluadas",
         "noApplications": "No hay solicitudes.",
         "noExperts": "No hay expertos aprobados."
       },
-      "back": "Atrás"
+      "back": "Atrás",
+      "comment": {
+        "label": "Comentario",
+        "add": "Añadir comentario",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "placeholder": "Escribe tu comentario sobre esta acción...",
+        "saveError": "No se pudo guardar el comentario. Intenta de nuevo."
+      }
     },
     "expertStatus": {
       "completed": "Cumplida",

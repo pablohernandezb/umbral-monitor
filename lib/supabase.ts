@@ -689,7 +689,7 @@ CREATE POLICY "Authenticated delete gazette_records" ON gazette_records FOR DELE
 
 -- ============================================================
 -- TRANSITION_CHECKLIST TABLE
--- "Installing Democracy" 62-action, 18-month transition roadmap
+-- "Installing Democracy" 60-action, 18-month transition roadmap
 -- ============================================================
 CREATE TABLE IF NOT EXISTS transition_checklist (
   id             TEXT PRIMARY KEY,
@@ -761,9 +761,9 @@ ALTER TABLE transition_evaluations ENABLE ROW LEVEL SECURITY;
 
 -- Public aggregate view — the ONLY safe way for the anon client to read
 -- evaluation data. Exposes counts/means per action, never who rated what.
--- The LEFT JOIN from transition_checklist guarantees every one of the 62
--- actions appears with completion_pct = 0 when unrated, matching the
--- fixed-62-denominator rule in lib/transition.ts.
+-- The LEFT JOIN from transition_checklist guarantees every action in the
+-- checklist appears with completion_pct = 0 when unrated, matching the
+-- fixed-denominator rule in lib/transition.ts.
 CREATE OR REPLACE VIEW transition_evaluation_aggregates
 WITH (security_invoker = on) AS
 SELECT
@@ -793,6 +793,27 @@ GRANT SELECT ON transition_evaluator_total TO anon, authenticated;
 -- list. Purely presentational — no percentage, badge, or rollup reads it.
 -- ============================================================
 ALTER TABLE transition_checklist ADD COLUMN IF NOT EXISTS is_alert BOOLEAN NOT NULL DEFAULT false;
+
+-- ============================================================
+-- TRANSITION_COMMENTS
+-- One private note per (expert, action) — an expert's own working comment,
+-- never public, never shared with other experts. Admin can read every
+-- comment (across all experts) for moderation, via the service-role client
+-- only — same no-anon-policy treatment as monitoring_experts and
+-- transition_evaluations.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS transition_comments (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  evaluator_id  UUID NOT NULL REFERENCES monitoring_experts(id) ON DELETE CASCADE,
+  action_id     TEXT NOT NULL REFERENCES transition_checklist(id) ON DELETE CASCADE,
+  body          TEXT NOT NULL,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (evaluator_id, action_id)
+);
+ALTER TABLE transition_comments ENABLE ROW LEVEL SECURITY;
+-- Deliberately no CREATE POLICY here — no anon/authenticated policy means
+-- PostgREST returns nothing to the public client, by default-deny.
 `
 
 // Export for reference

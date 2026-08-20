@@ -177,7 +177,7 @@ export default function MonitoringExpertsAdminPage() {
                   {expert.accessCode && <CopyButton text={expert.accessCode} />}
                 </div>
                 <span className="text-xs text-gray-400 shrink-0">
-                  {ratedCounts[expert.id] ?? 0}/62 rated
+                  {ratedCounts[expert.id] ?? 0}/60 rated
                 </span>
                 <button
                   onClick={() => handleRegenerate(expert)}

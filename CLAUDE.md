@@ -107,7 +107,7 @@ curl.exe "http://localhost:3000/api/analytics/snapshot?secret=umbral-cron-a7f3e9
 16. **`submission_averages_snapshots`**: Daily per-scenario average ratings — one row per date, expert + public means and participant counts; upserted by analytics cron at 14:00 UTC
 17. **`gazette_batches`**: Upload batches for Official Gazette records — `id` (UUID), `label`, `source_file`, `row_count`, `is_active`, `uploaded_at`
 18. **`gazette_records`**: Individual gazette entries — `gazette_number`, `gazette_type` (Ordinaria/Extraordinaria), `gazette_date`, `decree_number`, `change_type`, `change_label` (GacetaChangeLabel enum), `person_name`, `post_or_position`, `institution`, `organism`, `is_military_person`, `military_rank`, `is_military_post`, `summary`; linked to `gazette_batches` via `batch_id`
-19. **`transition_checklist`**: "Installing Democracy" 62-action, 18-month transition roadmap — `pillar` (19 keys), `month` (1–18), `sort_order`, bilingual `action_*`/`indicator_*`/`responsible_*`, `actors` (JSONB actor-key array), `status` (pending/in_progress/completed/stalled), bilingual `evidence_*`, `sources` (JSONB), `completed_date`; admin-curated, no cron
+19. **`transition_checklist`**: "Installing Democracy" 60-action, 18-month transition roadmap — `pillar` (19 keys), `month` (1–18), `sort_order`, bilingual `action_*`/`indicator_*`/`responsible_*`, `actors` (JSONB actor-key array), `status` (pending/in_progress/completed/stalled), bilingual `evidence_*`, `sources` (JSONB), `completed_date`; admin-curated, no cron
 
 **Scenario key-to-number mapping** (used in `scenario_probabilities` JSONB):
 - 1 = `regressedAutocracy`, 2 = `revertedLiberalization`, 3 = `stabilizedElectoralAutocracy`, 4 = `preemptedDemocraticTransition`, 5 = `democraticTransition`

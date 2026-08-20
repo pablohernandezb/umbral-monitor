@@ -1,12 +1,78 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { getAllTransitionActions, updateTransitionActionAdmin, type TransitionActionPatch } from './actions'
+import {
+  getAllTransitionActions,
+  updateTransitionActionAdmin,
+  getCommentsForAction,
+  adminDeleteComment,
+  type TransitionActionPatch,
+} from './actions'
 import { Toast } from '@/components/admin/Toast'
 import { PILLAR_ICONS } from '@/components/installing-democracy/icons'
 import { phaseForMonth } from '@/data/transition-phases'
 import { PHASE_KEY_BY_NUMBER } from '@/lib/transition'
-import type { TransitionAction, TransitionSource, TransitionStatus } from '@/types'
+import type { TransitionAction, TransitionSource, TransitionStatus, AdminTransitionComment } from '@/types'
+
+// Expert comments are private between experts (see participate/actions.ts) —
+// the admin is the only other party who can read them, for moderation. Lazy
+// loaded on first expand so opening an action's editor doesn't always pay
+// for a comments round-trip.
+function AdminActionComments({ actionId }: { actionId: string }) {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [comments, setComments] = useState<AdminTransitionComment[]>([])
+
+  async function toggleOpen() {
+    if (!open && !loaded) {
+      setLoading(true)
+      const res = await getCommentsForAction(actionId)
+      setComments(res.data)
+      setLoaded(true)
+      setLoading(false)
+    }
+    setOpen(prev => !prev)
+  }
+
+  async function handleDelete(commentId: string) {
+    await adminDeleteComment(commentId)
+    setComments(prev => prev.filter(c => c.id !== commentId))
+  }
+
+  return (
+    <div className="border-t border-gray-800 pt-3">
+      <button onClick={toggleOpen} className="text-xs text-gray-400 hover:text-white transition-colors">
+        {open ? 'Hide' : 'Show'} expert comments{loaded ? ` (${comments.length})` : ''}
+      </button>
+      {open && (
+        <div className="mt-2 space-y-2">
+          {loading && <p className="text-xs text-gray-500">Loading...</p>}
+          {!loading && comments.length === 0 && (
+            <p className="text-xs text-gray-600">No comments yet.</p>
+          )}
+          {!loading &&
+            comments.map(c => (
+              <div key={c.id} className="bg-gray-900 border border-gray-800 rounded-md p-2">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-xs text-gray-300 font-medium">
+                    {c.evaluatorName} <span className="text-gray-500">({c.evaluatorEmail})</span>
+                  </span>
+                  <button
+                    onClick={() => handleDelete(c.id)}
+                    className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+                <p className="text-xs text-gray-400 whitespace-pre-wrap">{c.body}</p>
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 type ToastState = { message: string; type: 'success' | 'error' } | null
 
@@ -358,6 +424,8 @@ export default function InstallingDemocracyAdminPage() {
                             )}
                           </div>
                         </div>
+
+                        <AdminActionComments actionId={action.id} />
 
                         <div className="flex items-center gap-2 pt-2">
                           <button

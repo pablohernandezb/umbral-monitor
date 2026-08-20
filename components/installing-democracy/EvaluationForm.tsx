@@ -4,17 +4,23 @@ import { useEffect, useMemo, useState } from 'react'
 import { Loader2, LogOut, Save, CheckCircle2, CalendarDays } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { getTransitionChecklist } from '@/lib/data'
-import { getMyEvaluations, saveEvaluations } from '@/app/installing-democracy/participate/actions'
+import {
+  getMyEvaluations,
+  saveEvaluations,
+  getMyComments,
+  saveComment,
+  deleteComment,
+} from '@/app/installing-democracy/participate/actions'
 import { TRANSITION_PHASES, phaseForMonth, currentRoadmapMonth, ROADMAP_TOTAL_MONTHS } from '@/data/transition-phases'
 import { ChecklistActionCard } from './ChecklistActionCard'
-import type { TransitionAction, EvaluationMap } from '@/types'
+import type { TransitionAction, EvaluationMap, CommentMap } from '@/types'
 
 interface EvaluationFormProps {
   code: string
   onSignOut: () => void
 }
 
-/** The Returning Expert evaluation view (monitoring spec §8.3): all 62 actions
+/** The Returning Expert evaluation view (monitoring spec §8.3): all 60 actions
  * grouped by the 6 roadmap milestones, each with a 0–4 LikertSelector. */
 export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
   const { t } = useTranslation()
@@ -25,6 +31,7 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
   // indistinguishable from "never touched" unless compared against what was
   // actually saved before.
   const [savedScores, setSavedScores] = useState<EvaluationMap>({})
+  const [comments, setComments] = useState<CommentMap>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<{ text: string; isError: boolean } | null>(null)
@@ -33,9 +40,10 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
     let cancelled = false
 
     async function load() {
-      const [checklistRes, evalRes] = await Promise.all([
+      const [checklistRes, evalRes, commentsRes] = await Promise.all([
         getTransitionChecklist(),
         getMyEvaluations(code),
+        getMyComments(code),
       ])
       if (cancelled) return
       if (checklistRes.data) setActions(checklistRes.data)
@@ -43,6 +51,7 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
         setScores(evalRes.evaluations)
         setSavedScores(evalRes.evaluations)
       }
+      if (commentsRes.ok) setComments(commentsRes.comments)
       setLoading(false)
     }
     load()
@@ -51,6 +60,29 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
       cancelled = true
     }
   }, [code])
+
+  // Comments are instant-save (not batched with scores) — each call updates
+  // local state only after the server confirms, so a failed save doesn't
+  // silently drift from what's actually persisted.
+  async function handleSaveComment(actionId: string, body: string) {
+    const result = await saveComment(code, actionId, body)
+    if (result.ok) {
+      setComments(prev => ({ ...prev, [actionId]: body.trim() }))
+    }
+    return result
+  }
+
+  async function handleDeleteComment(actionId: string) {
+    const result = await deleteComment(code, actionId)
+    if (result.ok) {
+      setComments(prev => {
+        const next = { ...prev }
+        delete next[actionId]
+        return next
+      })
+    }
+    return result
+  }
 
   const grouped = useMemo(() => {
     const map = new Map<number, TransitionAction[]>()
@@ -124,7 +156,7 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
             <div className="flex items-center gap-1.5 ml-8">
               <CheckCircle2 className="w-4 h-4 text-signal-teal shrink-0" aria-hidden="true" />
               <p className="text-sm font-mono text-white">
-                {t('installingDemocracy.participate.eval.progress', { rated: ratedCount })}
+                {t('installingDemocracy.participate.eval.progress', { rated: ratedCount, total: actions.length })}
               </p>
             </div>
 
@@ -209,6 +241,9 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
                   evaluate
                   evaluationValue={scores[action.id]}
                   onEvaluate={score => handleEvaluate(action.id, score)}
+                  comment={comments[action.id]}
+                  onSaveComment={body => handleSaveComment(action.id, body)}
+                  onDeleteComment={() => handleDeleteComment(action.id)}
                 />
               ))}
             </div>

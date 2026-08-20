@@ -7,6 +7,7 @@ import { PILLAR_ICONS, ACTOR_ICONS } from './icons'
 import { phaseForMonth } from '@/data/transition-phases'
 import { PHASE_KEY_BY_NUMBER, expertStatusTone, type ExpertStatusTone } from '@/lib/transition'
 import { LikertSelector } from './LikertSelector'
+import { ActionCommentBox } from './ActionCommentBox'
 import type { TransitionAction, EvaluationAggregate } from '@/types'
 
 // Same 4-state legend as the methodology panel (Cumplida/En progreso/
@@ -35,6 +36,11 @@ interface ChecklistActionCardProps {
   evaluationValue?: number
   onEvaluate?: (score: number | undefined) => void
   evaluateDisabled?: boolean
+  /** Comment system — expert-only, private note per (expert, action). Only
+   * rendered when `evaluate` is true; omit to hide the comment box entirely. */
+  comment?: string
+  onSaveComment?: (body: string) => Promise<{ ok: boolean; error?: string }>
+  onDeleteComment?: () => Promise<{ ok: boolean; error?: string }>
 }
 
 export function ChecklistActionCard({
@@ -45,6 +51,9 @@ export function ChecklistActionCard({
   evaluationValue,
   onEvaluate,
   evaluateDisabled,
+  comment,
+  onSaveComment,
+  onDeleteComment,
 }: ChecklistActionCardProps) {
   const { t, locale } = useTranslation()
 
@@ -64,8 +73,9 @@ export function ChecklistActionCard({
         'card p-4 md:p-5 space-y-3',
         // Admin-only visual flag (transition_checklist.is_alert) — purely
         // presentational, same red pulse the fact-check feed uses for
-        // flagged tweets. No rotation/tilt, no badge/text added.
-        action.isAlert && 'border-2 border-signal-red/40 animate-pulse-border shadow-[0_0_15px_rgba(220,38,38,0.15)]'
+        // flagged tweets. No rotation/tilt, no badge/text added. Public-only:
+        // suppressed in `evaluate` mode so it can't bias an expert's rating.
+        action.isAlert && !evaluate && 'border-2 border-signal-red/40 animate-pulse-border shadow-[0_0_15px_rgba(220,38,38,0.15)]'
       )}
     >
       {/* Expert completion — the PRIMARY signal (monitoring spec §10).
@@ -87,23 +97,30 @@ export function ChecklistActionCard({
       )}
 
       {/* Status badge — automatic, computed from expertStatusTone(aggregate).
-          Below 5 evaluators this always reads "unrated" regardless of mean
-          score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts), so
-          this badge and the % above can never disagree: the same threshold
-          zeroes an under-5 item's contribution to every rollup too. The
-          admin-curated `status` still exists for internal use (admin panel)
-          but no longer renders here. */}
+          Below the rater threshold this always reads "unrated" regardless of
+          mean score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts),
+          so this badge and the % above can never disagree. Hidden in evaluate
+          mode entirely: redundant there (the LikertSelector already shows the
+          expert's own rating), and showing the public aggregate status while
+          someone is actively rating could bias them — same reasoning as
+          hiding the alert pulse in evaluate mode. The admin-curated `status`
+          still exists for internal use (admin panel) but no longer renders
+          on the public card either way. */}
       <div className="flex items-center justify-between gap-2">
-        <span
-          className={cn(
-            'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border',
-            EXPERT_STATUS_STYLES[tone]
-          )}
-        >
-          {t(`installingDemocracy.expertStatus.${tone}`)}
-        </span>
-        {/* Venezuelan flag colour key: gold = milestone, blue = pillar, red = actors. */}
-        <span className="inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right">
+        {!evaluate && (
+          <span
+            className={cn(
+              'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border',
+              EXPERT_STATUS_STYLES[tone]
+            )}
+          >
+            {t(`installingDemocracy.expertStatus.${tone}`)}
+          </span>
+        )}
+        {/* Venezuelan flag colour key: gold = milestone, blue = pillar, red = actors.
+            ml-auto keeps this pinned right whether or not the badge above it
+            is rendered (evaluate mode omits it entirely). */}
+        <span className="ml-auto inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right">
           <CalendarDays className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-px" aria-hidden="true" />
           {/* The icon replaces the word "Milestone:", so keep it for screen readers. */}
           <span className="sr-only">{t('installingDemocracy.filters.milestone')}: </span>
@@ -143,6 +160,23 @@ export function ChecklistActionCard({
             value={evaluationValue}
             onChange={score => onEvaluate?.(score)}
             actionLabel={actionText}
+            disabled={evaluateDisabled}
+          />
+        </div>
+      )}
+
+      {/* Comment — expert-only private note, instant save (not batched with
+          the score "Save progress"). Only shown when the parent wired up
+          save/delete handlers. */}
+      {evaluate && onSaveComment && onDeleteComment && (
+        <div className="pt-1 border-t border-umbral-ash/50">
+          <p className="text-[10px] text-umbral-muted uppercase tracking-wide font-mono mb-1.5">
+            {t('installingDemocracy.participate.comment.label')}
+          </p>
+          <ActionCommentBox
+            comment={comment}
+            onSave={onSaveComment}
+            onDelete={onDeleteComment}
             disabled={evaluateDisabled}
           />
         </div>

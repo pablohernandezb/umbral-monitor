@@ -19,8 +19,8 @@ export const PHASE_KEY_BY_NUMBER: Record<number, string> = Object.fromEntries(
  * superseding the admin `status` counts that drove it before. Per-action %
  * comes from `aggregates` (the public, identity-free
  * `transition_evaluation_aggregates` view); an action with no evaluations
- * contributes 0%, not "unknown" — the denominator is always the full 62 so
- * the headline is honest before experts arrive.
+ * contributes 0%, not "unknown" — the denominator is always the full checklist
+ * so the headline is honest before experts arrive.
  *
  * Admin `status`/`evidence`/`sources` remain as a secondary annotation layer:
  * tallied below for display, but no longer feeding any percentage.
@@ -34,8 +34,11 @@ function itemPctLookup(aggregates: EvaluationAggregate[]): Map<string, Evaluatio
  * all — below that, both the badge and the headline math treat it as
  * "not yet assessable" rather than acting on a thin, possibly unrepresentative
  * sample (a single rater giving 4/4 would otherwise read as "100% done").
+ *
+ * Set to 2 for now (product decision, while the pool of approved experts is
+ * still small) — raise this back up as more experts come on board.
  */
-export const MIN_EVALUATORS_FOR_ASSESSMENT = 5
+export const MIN_EVALUATORS_FOR_ASSESSMENT = 2
 
 export type ExpertStatusTone = 'completed' | 'inProgress' | 'pending' | 'unrated'
 
@@ -64,7 +67,7 @@ function ratedItemPct(aggregate: EvaluationAggregate | undefined): number {
 }
 
 /**
- * Pure rollup of the 62-action checklist into headline, per-milestone, and
+ * Pure rollup of the 60-action checklist into headline, per-milestone, and
  * per-pillar progress. No I/O — importable from the page, the hero, and any
  * future cron without circular deps (mirrors the exported computeStarVoting()).
  *

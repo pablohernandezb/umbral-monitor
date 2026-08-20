@@ -119,3 +119,62 @@ export async function updateTransitionActionAdmin(id: string, patch: TransitionA
     error: error?.message || null,
   }
 }
+
+// ============================================================
+// EXPERT COMMENTS — admin moderation view
+// Private between experts (see participate/actions.ts) — the admin is the
+// only party besides the commenting expert who can ever read these, via the
+// service-role client only.
+// ============================================================
+
+export async function getCommentsForAction(actionId: string) {
+  const supabase = createAdminClient()
+  if (!supabase) {
+    // Mock mode: no persistent expert/comment store to read.
+    return { data: [], error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('transition_comments')
+    .select('id, action_id, body, created_at, updated_at, monitoring_experts(name, email)')
+    .eq('action_id', actionId)
+    .order('updated_at', { ascending: false })
+
+  if (error || !data) {
+    return { data: [], error: error?.message ?? null }
+  }
+
+  type Row = {
+    id: string
+    action_id: string
+    body: string
+    created_at: string
+    updated_at: string
+    monitoring_experts: { name: string; email: string } | { name: string; email: string }[] | null
+  }
+
+  const comments = (data as Row[]).map(row => {
+    // Supabase-js types this embed as an array for some FK shapes even though
+    // the relationship is one-to-one here; normalize either shape.
+    const expert = Array.isArray(row.monitoring_experts) ? row.monitoring_experts[0] : row.monitoring_experts
+    return {
+      id: row.id,
+      actionId: row.action_id,
+      evaluatorName: expert?.name ?? 'Unknown',
+      evaluatorEmail: expert?.email ?? '',
+      body: row.body,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  })
+
+  return { data: comments, error: null }
+}
+
+export async function adminDeleteComment(commentId: string) {
+  const supabase = createAdminClient()
+  if (!supabase) return { error: null }
+
+  const { error } = await supabase.from('transition_comments').delete().eq('id', commentId)
+  return { error: error?.message ?? null }
+}

@@ -384,8 +384,8 @@ export interface PillarProgress {
 }
 
 export interface TransitionProgress {
-  total: number             // 62
-  completionPct: number     // headline: mean of the 62 item percentages (each item 1.613%)
+  total: number             // 60
+  completionPct: number     // headline: mean of the item percentages (each item ~1.67%)
   totalEvaluators: number   // distinct experts across the whole checklist
   phases: PhaseProgress[]
   pillars: PillarProgress[]
@@ -425,3 +425,19 @@ export interface EvaluationAggregate {
 
 // One expert's own scores, keyed by action id (for prefill on return).
 export type EvaluationMap = Record<string, number> // actionId -> 0..4
+
+// One expert's own comments, keyed by action id — private between experts;
+// admin can read every expert's comments for moderation (see
+// app/admin/installing-democracy/comments/actions.ts).
+export type CommentMap = Record<string, string> // actionId -> comment body
+
+// Admin-only shape — a comment joined with which expert/action it belongs to.
+export interface AdminTransitionComment {
+  id: string
+  actionId: string
+  evaluatorName: string
+  evaluatorEmail: string
+  body: string
+  createdAt: string
+  updatedAt: string
+}

@@ -5,7 +5,9 @@ import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { IS_MOCK_MODE } from '@/lib/supabase'
 import { createAdminClient } from '@/lib/supabase-server'
-import type { EvaluationMap } from '@/types'
+import type { EvaluationMap, CommentMap } from '@/types'
+
+const MAX_COMMENT_LENGTH = 2000
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -230,4 +232,91 @@ export async function saveEvaluations(
   revalidatePath('/installing-democracy')
   revalidatePath('/')
   return { ok: true, savedCount: entries.length, clearedCount: toClear.length }
+}
+
+// ============================================================
+// COMMENTS — one private note per (expert, action) (§ comment system)
+//
+// Never public, never shared with other experts — same no-anon-policy
+// treatment as monitoring_experts and transition_evaluations. Instant save:
+// each add/edit/delete is its own round trip, independent of "Save progress".
+// ============================================================
+
+export async function getMyComments(
+  code: string
+): Promise<{ ok: true; comments: CommentMap } | { ok: false }> {
+  const result = await validateAccessCode(code)
+  if (!result.ok) return { ok: false }
+
+  if (IS_MOCK_MODE) return { ok: true, comments: {} }
+
+  const supabase = createAdminClient()
+  if (!supabase) return { ok: false }
+
+  const { data, error } = await supabase
+    .from('transition_comments')
+    .select('action_id, body')
+    .eq('evaluator_id', result.evaluatorId)
+
+  if (error || !data) return { ok: false }
+
+  const comments: CommentMap = {}
+  for (const row of data as { action_id: string; body: string }[]) {
+    comments[row.action_id] = row.body
+  }
+  return { ok: true, comments }
+}
+
+export async function saveComment(
+  code: string,
+  actionId: string,
+  body: string
+): Promise<{ ok: boolean; error?: string }> {
+  const result = await validateAccessCode(code)
+  if (!result.ok) return { ok: false, error: 'invalid_code' }
+
+  const trimmed = body.trim()
+  if (!trimmed) return { ok: false, error: 'empty' }
+  if (trimmed.length > MAX_COMMENT_LENGTH) return { ok: false, error: 'too_long' }
+
+  if (IS_MOCK_MODE) {
+    // No persistent store: the save round-trip succeeds so the form's UX is
+    // fully exercisable, but nothing is retained across requests.
+    return { ok: true }
+  }
+
+  const supabase = createAdminClient()
+  if (!supabase) return { ok: false, error: 'unavailable' }
+
+  const { error } = await supabase.from('transition_comments').upsert(
+    {
+      evaluator_id: result.evaluatorId,
+      action_id: actionId,
+      body: trimmed,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'evaluator_id,action_id' }
+  )
+  if (error) return { ok: false, error: 'db_error' }
+
+  return { ok: true }
+}
+
+export async function deleteComment(code: string, actionId: string): Promise<{ ok: boolean; error?: string }> {
+  const result = await validateAccessCode(code)
+  if (!result.ok) return { ok: false, error: 'invalid_code' }
+
+  if (IS_MOCK_MODE) return { ok: true }
+
+  const supabase = createAdminClient()
+  if (!supabase) return { ok: false, error: 'unavailable' }
+
+  const { error } = await supabase
+    .from('transition_comments')
+    .delete()
+    .eq('evaluator_id', result.evaluatorId)
+    .eq('action_id', actionId)
+  if (error) return { ok: false, error: 'db_error' }
+
+  return { ok: true }
 }

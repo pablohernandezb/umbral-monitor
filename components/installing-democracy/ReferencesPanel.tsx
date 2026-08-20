@@ -1,6 +1,6 @@
 'use client'
 
-import { BookMarked } from 'lucide-react'
+import { BookMarked, ExternalLink } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { TRANSITION_REFERENCES } from '@/data/transition-references'
 
@@ -24,9 +24,6 @@ export function ReferencesPanel({ id }: ReferencesPanelProps) {
         <h2 className="text-sm font-semibold text-white uppercase tracking-wide">
           {t('installingDemocracy.references.title')}
         </h2>
-        <span className="ml-auto text-xs font-mono text-umbral-muted">
-          {TRANSITION_REFERENCES.length}
-        </span>
       </div>
 
       {/* Presentational: the same labels are attached to each value as sr-only
@@ -47,7 +44,20 @@ export function ReferencesPanel({ id }: ReferencesPanelProps) {
 
           return (
             <li key={reference.id} className={`${COLUMNS} py-3 md:items-baseline`}>
-              <p className="text-sm text-umbral-light leading-snug">{reference.title}</p>
+              <p className="text-sm text-umbral-light leading-snug">
+                {reference.title}
+                {reference.url && (
+                  <a
+                    href={reference.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-1.5 inline-flex align-middle text-signal-teal hover:text-white transition-colors"
+                    aria-label={t('installingDemocracy.references.openSource')}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                  </a>
+                )}
+              </p>
 
               {/* `md:contents` promotes these two to grid cells at desktop so
                   they land in their own columns; on mobile they stay a single

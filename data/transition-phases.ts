@@ -13,8 +13,8 @@ export interface TransitionPhaseDef {
 }
 
 export const TRANSITION_PHASES: TransitionPhaseDef[] = [
-  { phase: 1, key: 'liberties', monthStart: 1, monthEnd: 3 },              // Mes 3    — 22 actions
-  { phase: 2, key: 'electoralInstitutions', monthStart: 4, monthEnd: 6 },  // Mes 6    — 15 actions
+  { phase: 1, key: 'liberties', monthStart: 1, monthEnd: 3 },              // Mes 3    — 21 actions
+  { phase: 2, key: 'electoralInstitutions', monthStart: 4, monthEnd: 6 },  // Mes 6    — 14 actions
   { phase: 3, key: 'competition', monthStart: 7, monthEnd: 7 },            // Mes 7    —  2 actions
   { phase: 4, key: 'foundingElection', monthStart: 8, monthEnd: 11 },      // Mes 10–11 — 9 actions
   { phase: 5, key: 'transfer', monthStart: 12, monthEnd: 12 },             // Mes 12   —  3 actions

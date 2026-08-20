@@ -961,7 +961,7 @@
     "titleHighlight": "Installing",
     "titleRest": "Democracy",
     "tagline": "Tracking Venezuela's 18-month democratic transition, action by action.",
-    "summary": "A verifiable, source-backed tracker of the 62 actions across 19 pillars that a democratic transition in Venezuela would require — grounded in an 18-month roadmap starting August 1, 2026.",
+    "summary": "A verifiable, source-backed tracker of the 60 actions across 19 pillars that a democratic transition in Venezuela would require — grounded in an 18-month roadmap starting August 1, 2026.",
     "cta": "View the tracker",
     "bar": {
       "overallLabel": "Overall transition progress",
@@ -1115,7 +1115,7 @@
       "noticeLink": "the methodology",
       "faq": {
         "question": "How can I participate?",
-        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 62 actions is. Your ratings feed the public completion bars."
+        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 60 actions is. Your ratings feed the public completion bars."
       },
       "cta": "Participate in the Monitoring"
     },
@@ -1123,7 +1123,8 @@
       "title": "References",
       "source": "Source",
       "type": "Type",
-      "date": "Date"
+      "date": "Date",
+      "openSource": "Open source"
     },
     "showingCount": "Showing {shown} of {total}",
     "filteredFrom": "filtered from {total}",
@@ -1137,9 +1138,9 @@
         "returning": "Returning Expert"
       },
       "form": {
-        "name": "Name",
-        "email": "Email",
-        "institution": "Institutional affiliation",
+        "name": "Full name",
+        "email": "Institutional Email",
+        "institution": "Academic Institution",
         "submit": "Submit application",
         "received": {
           "title": "Application received",
@@ -1159,7 +1160,7 @@
       },
       "eval": {
         "instructions": "For each action, rate how complete it is on a 0–4 scale.",
-        "progress": "{rated} of 62 rated",
+        "progress": "{rated} of {total} rated",
         "save": "Save progress",
         "saving": "Saving…",
         "saved": "Progress saved",
@@ -1182,7 +1183,7 @@
       },
       "faq": {
         "question": "How can I participate?",
-        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 62 actions is. Your ratings feed the public completion bars."
+        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 60 actions is. Your ratings feed the public completion bars."
       },
       "cta": "Participate in the Monitoring",
       "admin": {
@@ -1195,11 +1196,21 @@
         "copied": "Copied",
         "sendReminder": "Send this code to the expert; it won't be emailed automatically.",
         "regenerate": "Regenerate code",
-        "ratedCount": "{n}/62 rated",
+        "ratedCount": "{n}/60 rated",
         "noApplications": "No applications.",
         "noExperts": "No approved experts."
       },
-      "back": "Back"
+      "back": "Back",
+      "comment": {
+        "label": "Comment",
+        "add": "Add comment",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "placeholder": "Write your comment on this action...",
+        "saveError": "Could not save the comment. Please try again."
+      }
     },
     "expertStatus": {
       "completed": "Completed",
