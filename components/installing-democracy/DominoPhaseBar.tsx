@@ -68,6 +68,9 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
   const isAllComplete = progress.completionPct === 100
   const total = progress.phases.length
   const prefersReducedMotion = useReducedMotion()
+  // Which segment to glow. -1 when the roadmap is complete (computeProgress
+  // marks no phase active in that case) — the completed treatment takes over.
+  const activeIndex = isAllComplete ? -1 : progress.phases.findIndex(p => p.isActive)
 
   return (
     <div className="w-full">
@@ -163,12 +166,47 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={t('installingDemocracy.bar.overallLabel')}
+        className="relative"
       >
-        <div className="flex rounded-full overflow-hidden">
+        {/* Active-segment glow — deliberately a SIBLING of the rail, never a
+            child of a segment. Anything painted inside a segment is subject to
+            that segment's chevron clip-path AND the rail's overflow-hidden,
+            which is what defeated the three earlier attempts: an outer
+            drop-shadow got discarded entirely, an inner tinted fill was
+            mistaken for the completionPct bar, and an inset ring traced the
+            segment's rectangular box instead of the chevron silhouette.
+            Painting outside the clipped rail avoids all three — this blooms
+            *around* the rail and never overlaps the fill. */}
+        {activeIndex >= 0 && (
+          <motion.div
+            aria-hidden="true"
+            /* The rail segments are opaque and sit above this at z-10, so the
+               glow's core is hidden behind them — only the part of the box
+               that extends PAST the rail edge is ever visible. It must keep a
+               small negative inset for that reason; pulling it inside the
+               rail (inset-y-1) made it disappear completely. */
+            className="pointer-events-none absolute -inset-y-0.5 z-0 rounded-full bg-signal-teal blur-lg"
+            style={{
+              left: `${(activeIndex / total) * 100}%`,
+              width: `${100 / total}%`,
+            }}
+            animate={
+              prefersReducedMotion
+                ? { opacity: 0.45 }
+                : { opacity: [0.3, 0.8, 0.3] }
+            }
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }
+            }
+          />
+        )}
+
+        <div className="relative z-10 flex rounded-full overflow-hidden">
           {progress.phases.map((phase, index) => {
             const key = PHASE_KEY_BY_NUMBER[phase.phase]
             const description = t(`installingDemocracy.phases.${key}.description`)
-            const isActive = phase.isActive && !isAllComplete
 
             return (
               <div key={phase.phase} className="flex-1 min-w-0">
@@ -201,22 +239,6 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
                       transition={{ duration: 0.6, ease: 'easeOut' }}
                     />
                   )}
-
-                  {/* Active-phase pulse. This has to be an INNER overlay: an
-                      outer drop-shadow glow is invisible here because the
-                      segment's own clip-path (applied after filters) and the
-                      rail's overflow-hidden both discard anything painted
-                      outside the chevron silhouette. */}
-                  {isActive &&
-                    (prefersReducedMotion ? (
-                      <div className="absolute inset-0 bg-signal-teal/25 pointer-events-none" />
-                    ) : (
-                      <motion.div
-                        className="absolute inset-0 bg-signal-teal pointer-events-none"
-                        animate={{ opacity: [0.1, 0.5, 0.1] }}
-                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                    ))}
                 </div>
               </div>
             )

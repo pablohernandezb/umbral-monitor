@@ -764,8 +764,19 @@ ALTER TABLE transition_evaluations ENABLE ROW LEVEL SECURITY;
 -- The LEFT JOIN from transition_checklist guarantees every action in the
 -- checklist appears with completion_pct = 0 when unrated, matching the
 -- fixed-denominator rule in lib/transition.ts.
-CREATE OR REPLACE VIEW transition_evaluation_aggregates
-WITH (security_invoker = on) AS
+--
+-- Deliberately OMITS security_invoker = on. That setting makes a view
+-- enforce RLS as the QUERYING role rather than the view's owner — since
+-- transition_evaluations has RLS enabled with no anon policy, an
+-- invoker-rights view run by anon would see zero rows of it no matter how
+-- many evaluations exist, making every aggregate read as 0 regardless of
+-- real data (this broke the public page: found 2026-08 — evaluations existed
+-- in the raw table but the aggregate view showed 0 evaluators for anon).
+-- The default (owner-rights) view is the correct, standard pattern here: the
+-- view itself computes the aggregate with full access to the base tables,
+-- and only its own column list — which never includes evaluator identity —
+-- is what the anon GRANT below exposes.
+CREATE OR REPLACE VIEW transition_evaluation_aggregates AS
 SELECT
   a.id                                    AS action_id,
   COUNT(e.score)                          AS evaluator_count,
@@ -780,9 +791,8 @@ GRANT SELECT ON transition_evaluation_aggregates TO anon, authenticated;
 -- checklist. Split out from the per-action view above because it needs a
 -- DISTINCT over evaluator_id — still zero identity exposed (a single count),
 -- but kept as its own grant so the per-action view's shape stays a clean
--- one-row-per-action list.
-CREATE OR REPLACE VIEW transition_evaluator_total
-WITH (security_invoker = on) AS
+-- one-row-per-action list. Same security_invoker reasoning as above.
+CREATE OR REPLACE VIEW transition_evaluator_total AS
 SELECT COUNT(DISTINCT evaluator_id)::INT AS total_evaluators
 FROM transition_evaluations;
 GRANT SELECT ON transition_evaluator_total TO anon, authenticated;
