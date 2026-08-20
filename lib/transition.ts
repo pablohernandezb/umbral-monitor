@@ -58,11 +58,17 @@ export function expertStatusTone(aggregate: EvaluationAggregate | undefined): Ex
 }
 
 /**
- * An item's contribution to any rollup: 0 if unrated OR under the rater
+ * An item's threshold-gated completion: 0 if unrated OR under the rater
  * threshold (same "unrated" tone as expertStatusTone), otherwise its real
  * expert-assessed completionPct.
+ *
+ * Used BOTH for every rollup below and for the per-card percentage in
+ * ChecklistActionCard. The card originally read `aggregate.completionPct`
+ * raw, which let a single 1/4 rating render as "25%" on a card whose badge
+ * simultaneously said "not yet assessable" and which counted as 0% in the
+ * headline — always route display through here, never the raw aggregate.
  */
-function ratedItemPct(aggregate: EvaluationAggregate | undefined): number {
+export function ratedItemPct(aggregate: EvaluationAggregate | undefined): number {
   return expertStatusTone(aggregate) === 'unrated' ? 0 : (aggregate?.completionPct ?? 0)
 }
 

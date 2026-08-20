@@ -5,7 +5,7 @@ import { useTranslation } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { PILLAR_ICONS, ACTOR_ICONS } from './icons'
 import { phaseForMonth } from '@/data/transition-phases'
-import { PHASE_KEY_BY_NUMBER, expertStatusTone, type ExpertStatusTone } from '@/lib/transition'
+import { PHASE_KEY_BY_NUMBER, expertStatusTone, ratedItemPct, type ExpertStatusTone } from '@/lib/transition'
 import { LikertSelector } from './LikertSelector'
 import { ActionCommentBox } from './ActionCommentBox'
 import type { TransitionAction, EvaluationAggregate } from '@/types'
@@ -66,6 +66,7 @@ export function ChecklistActionCard({
   const responsibleText = locale === 'es' ? action.responsibleEs : action.responsibleEn
   const evidenceText = locale === 'es' ? action.evidenceEs : action.evidenceEn
   const tone = expertStatusTone(aggregate)
+  const displayPct = ratedItemPct(aggregate)
 
   return (
     <div
@@ -81,16 +82,20 @@ export function ChecklistActionCard({
       {/* Expert completion — the PRIMARY signal (monitoring spec §10).
           Bar + percentage only; the "expert-assessed" label and the
           evaluator-count/not-evaluated line are covered by the status badge
-          below instead, so they aren't repeated here. */}
+          below instead, so they aren't repeated here.
+
+          Reads ratedItemPct(), NOT aggregate.completionPct — below the rater
+          threshold that returns 0, matching both this card's own badge and
+          the item's (zero) contribution to the headline. */}
       {!evaluate && (
         <div>
           <div className="flex items-center justify-end mb-1">
-            <p className="text-xs font-bold text-white font-mono">{aggregate?.completionPct ?? 0}%</p>
+            <p className="text-xs font-bold text-white font-mono">{displayPct}%</p>
           </div>
           <div className="h-1.5 rounded-full bg-[#e4e4e7]/80 overflow-hidden">
             <div
               className="h-full bg-signal-teal transition-all duration-500"
-              style={{ width: `${aggregate?.completionPct ?? 0}%` }}
+              style={{ width: `${displayPct}%` }}
             />
           </div>
         </div>
@@ -98,8 +103,9 @@ export function ChecklistActionCard({
 
       {/* Status badge — automatic, computed from expertStatusTone(aggregate).
           Below the rater threshold this always reads "unrated" regardless of
-          mean score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts),
-          so this badge and the % above can never disagree. Hidden in evaluate
+          mean score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts).
+          The % above is gated on that same threshold via ratedItemPct(), so
+          the two stay in agreement. Hidden in evaluate
           mode entirely: redundant there (the LikertSelector already shows the
           expert's own rating), and showing the public aggregate status while
           someone is actively rating could bias them — same reasoning as
