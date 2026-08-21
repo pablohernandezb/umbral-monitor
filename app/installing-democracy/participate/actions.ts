@@ -320,3 +320,30 @@ export async function deleteComment(code: string, actionId: string): Promise<{ o
 
   return { ok: true }
 }
+
+/**
+ * The signed-in expert's own name, for display in the evaluation header.
+ * Gated on the same code validation as everything else — an expert only ever
+ * gets their OWN name back, never another evaluator's, so this doesn't widen
+ * the privacy surface (monitoring_experts stays service-role only).
+ */
+export async function getMyProfile(
+  code: string
+): Promise<{ ok: true; name: string } | { ok: false }> {
+  const result = await validateAccessCode(code)
+  if (!result.ok) return { ok: false }
+
+  if (IS_MOCK_MODE) return { ok: false }
+
+  const supabase = createAdminClient()
+  if (!supabase) return { ok: false }
+
+  const { data, error } = await supabase
+    .from('monitoring_experts')
+    .select('name')
+    .eq('id', result.evaluatorId)
+    .maybeSingle()
+
+  if (error || !data) return { ok: false }
+  return { ok: true, name: data.name as string }
+}

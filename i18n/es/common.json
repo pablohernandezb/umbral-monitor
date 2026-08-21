@@ -1168,7 +1168,8 @@
         "signOut": "Cerrar sesión",
         "clearHint": "Haz clic de nuevo para quitar esta valoración",
         "jumpToMilestone": "Ir al hito:",
-        "currentMonth": "Mes {month} de {total}"
+        "currentMonth": "Mes {month} de {total}",
+        "signedInAs": "Sesión iniciada como"
       },
       "likert": {
         "0": "No iniciado",

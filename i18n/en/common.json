@@ -1168,7 +1168,8 @@
         "signOut": "Sign out",
         "clearHint": "Click again to remove this rating",
         "jumpToMilestone": "Go to milestone:",
-        "currentMonth": "Month {month} of {total}"
+        "currentMonth": "Month {month} of {total}",
+        "signedInAs": "Signed in as"
       },
       "likert": {
         "0": "Not started",

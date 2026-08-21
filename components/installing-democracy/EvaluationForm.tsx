@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Loader2, LogOut, Save, CheckCircle2, CalendarDays } from 'lucide-react'
+import { Loader2, LogOut, Save, CheckCircle2, CalendarDays, User } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { getTransitionChecklist } from '@/lib/data'
 import {
@@ -10,6 +10,7 @@ import {
   getMyComments,
   saveComment,
   deleteComment,
+  getMyProfile,
 } from '@/app/installing-democracy/participate/actions'
 import { TRANSITION_PHASES, phaseForMonth, currentRoadmapMonth, ROADMAP_TOTAL_MONTHS } from '@/data/transition-phases'
 import { ChecklistActionCard } from './ChecklistActionCard'
@@ -32,6 +33,7 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
   // actually saved before.
   const [savedScores, setSavedScores] = useState<EvaluationMap>({})
   const [comments, setComments] = useState<CommentMap>({})
+  const [expertName, setExpertName] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<{ text: string; isError: boolean } | null>(null)
@@ -40,10 +42,11 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
     let cancelled = false
 
     async function load() {
-      const [checklistRes, evalRes, commentsRes] = await Promise.all([
+      const [checklistRes, evalRes, commentsRes, profileRes] = await Promise.all([
         getTransitionChecklist(),
         getMyEvaluations(code),
         getMyComments(code),
+        getMyProfile(code),
       ])
       if (cancelled) return
       if (checklistRes.data) setActions(checklistRes.data)
@@ -52,6 +55,7 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
         setSavedScores(evalRes.evaluations)
       }
       if (commentsRes.ok) setComments(commentsRes.comments)
+      if (profileRes.ok) setExpertName(profileRes.name)
       setLoading(false)
     }
     load()
@@ -138,13 +142,28 @@ export function EvaluationForm({ code, onSignOut }: EvaluationFormProps) {
       {/* Sticky progress + save bar */}
       <div className="sticky top-16 z-20 -mx-4 sm:mx-0 px-4 sm:px-0">
         <div className="card p-3 md:p-4 bg-umbral-black/95 backdrop-blur-md space-y-2.5">
+          {/* Signed-in expert — their OWN name only (getMyProfile is gated on
+              the same access code), so this shows no one else's identity.
+              Hidden entirely if the profile lookup failed, rather than
+              rendering an empty row. */}
+          {expertName && (
+            <div className="flex items-center gap-1.5">
+              <User className="w-4 h-4 text-signal-teal shrink-0" aria-hidden="true" />
+              <span className="sr-only">
+                {t('installingDemocracy.participate.eval.signedInAs')}:{' '}
+              </span>
+              <span className="text-sm font-mono text-white">{expertName}</span>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center gap-3">
             {/* Left group — current calendar month, then the rated count with
-                breathing space between the two. Gold matches the CalendarDays
-                "milestone" convention used on each action card (flag key:
-                gold=milestone, blue=pillar, red=actor). */}
+                breathing space between the two. All three sticky-bar icons
+                share the same teal: this is a plain date readout, not a
+                milestone marker, so it deliberately does NOT use the gold that
+                means "milestone" on the action cards. */}
             <div className="flex items-center gap-1.5">
-              <CalendarDays className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+              <CalendarDays className="w-4 h-4 text-signal-teal shrink-0" aria-hidden="true" />
               <span className="text-sm font-mono text-white">
                 {t('installingDemocracy.participate.eval.currentMonth', {
                   month: roadmapMonth,
