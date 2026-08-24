@@ -6,6 +6,7 @@ import {
   approveApplication,
   rejectApplication,
   regenerateCode,
+  updateExpert,
 } from './actions'
 import { Toast } from '@/components/admin/Toast'
 import type { MonitoringExpert, MonitoringStatus } from '@/types'
@@ -46,6 +47,8 @@ export default function MonitoringExpertsAdminPage() {
   // itself has moved out of the Pending tab on refetch.
   const [revealed, setRevealed] = useState<{ name: string; code: string } | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({ name: '', email: '', institution: '' })
 
   async function reload() {
     setLoading(true)
@@ -83,6 +86,25 @@ export default function MonitoringExpertsAdminPage() {
       return
     }
     setToast({ message: `${expert.name} rejected`, type: 'success' })
+    reload()
+  }
+
+  function startEdit(expert: MonitoringExpert) {
+    setEditingId(expert.id)
+    setEditForm({ name: expert.name, email: expert.email, institution: expert.institution })
+  }
+
+  async function handleSaveEdit(id: string) {
+    setBusyId(id)
+    const res = await updateExpert(id, editForm)
+    setBusyId(null)
+
+    if (res.error) {
+      setToast({ message: res.error, type: 'error' })
+      return
+    }
+    setToast({ message: 'Expert updated', type: 'success' })
+    setEditingId(null)
     reload()
   }
 
@@ -162,6 +184,53 @@ export default function MonitoringExpertsAdminPage() {
             key={expert.id}
             className="bg-gray-900 border border-gray-800 rounded-lg p-4 flex items-center gap-4 flex-wrap"
           >
+            {editingId === expert.id ? (
+              /* Inline edit — replaces the whole row's content so the fields
+                 get full width, then Save/Cancel. Editing is allowed in every
+                 tab: a typo in an email is just as worth fixing on a rejected
+                 or pending applicant as on an approved one. */
+              <div className="w-full space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    value={editForm.name}
+                    onChange={e => setEditForm({ ...editForm, name: e.target.value })}
+                    placeholder="Name"
+                    className="px-3 py-2 bg-gray-950 border border-gray-700 rounded-md text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
+                  />
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                    placeholder="Email"
+                    className="px-3 py-2 bg-gray-950 border border-gray-700 rounded-md text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
+                  />
+                  <input
+                    type="text"
+                    value={editForm.institution}
+                    onChange={e => setEditForm({ ...editForm, institution: e.target.value })}
+                    placeholder="Institution"
+                    className="px-3 py-2 bg-gray-950 border border-gray-700 rounded-md text-sm text-white placeholder-gray-500 focus:outline-none focus:border-teal-500"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleSaveEdit(expert.id)}
+                    disabled={busyId === expert.id}
+                    className="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+                  >
+                    {busyId === expert.id ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="px-4 py-1.5 text-xs text-gray-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
             <div className="flex-1 min-w-[200px]">
               <p className="text-sm font-medium text-white">{expert.name}</p>
               <p className="text-xs text-gray-400">{expert.email} · {expert.institution}</p>
@@ -206,6 +275,16 @@ export default function MonitoringExpertsAdminPage() {
                   Reject
                 </button>
               </div>
+            )}
+
+            <button
+              onClick={() => startEdit(expert)}
+              disabled={busyId === expert.id}
+              className="px-3 py-1 text-xs text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 rounded-md shrink-0 disabled:opacity-50"
+            >
+              Edit
+            </button>
+              </>
             )}
           </div>
         ))}

@@ -158,3 +158,48 @@ export async function updateAdminNote(id: string, note: string): Promise<{ error
   if (!error) revalidatePath('/admin/installing-democracy/experts')
   return { error: error?.message ?? null }
 }
+
+/**
+ * Edit an expert's name / email / institution.
+ *
+ * Email needs its own duplicate check: monitoring_experts has a UNIQUE index
+ * on lower(email), so editing one expert onto another's address would fail at
+ * the DB with an opaque 23505. Catch it here and return a usable message
+ * instead.
+ */
+export async function updateExpert(
+  id: string,
+  input: { name: string; email: string; institution: string }
+): Promise<{ data: MonitoringExpert | null; error: string | null }> {
+  const name = input.name.trim()
+  const email = input.email.trim().toLowerCase()
+  const institution = input.institution.trim()
+
+  if (!name || !institution) return { data: null, error: 'Name and institution are required.' }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    return { data: null, error: 'Invalid email address.' }
+  }
+
+  const supabase = createAdminClient()
+  if (!supabase) {
+    // Mock mode: no persistent expert store to edit.
+    return { data: null, error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('monitoring_experts')
+    .update({ name, email, institution })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    if (error.code === '23505') {
+      return { data: null, error: 'Another expert already uses that email address.' }
+    }
+    return { data: null, error: error.message }
+  }
+
+  revalidatePath('/admin/installing-democracy/experts')
+  return { data: data ? mapExpert(data as MonitoringExpertRow) : null, error: null }
+}
