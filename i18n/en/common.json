@@ -978,7 +978,8 @@
       "stalled": "Stalled",
       "pending": "Pending",
       "completionPct": "Completion (expert-assessed)",
-      "totalEvaluators": "Evaluating experts"
+      "totalEvaluators": "Experts",
+      "milestones": "Milestones"
     },
     "phases": {
       "liberties": {
@@ -1217,7 +1218,7 @@
       "completed": "Completed",
       "inProgress": "In progress",
       "pending": "Pending or unmet",
-      "unrated": "Not yet assessable"
+      "unrated": "Not assessable"
     }
   }
 }

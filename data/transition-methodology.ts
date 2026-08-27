@@ -254,7 +254,7 @@ export const METHODOLOGY_BLOCKS: MethodologyBlock[] = [
       {
         tone: 'unrated',
         labelEs: 'No evaluable',
-        labelEn: 'Not yet assessable',
+        labelEn: 'Not assessable',
         rangeEs: '',
         rangeEn: '',
         bodyEs: 'La información disponible no permite realizar una valoración responsable. No significa que la acción no se haya realizado; significa que todavía no podemos determinarlo.',

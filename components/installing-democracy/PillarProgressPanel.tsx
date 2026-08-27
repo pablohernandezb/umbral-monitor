@@ -43,11 +43,6 @@ export function PillarProgressPanel({ pillars }: PillarProgressPanelProps) {
                   style={{ width: `${pillar.completionPct}%` }}
                 />
               </div>
-              {pillar.evaluatorCount > 0 && (
-                <p className="mt-1 text-[10px] text-umbral-muted font-mono">
-                  {t('installingDemocracy.participate.public.experts', { count: pillar.evaluatorCount })}
-                </p>
-              )}
             </div>
           </div>
         )

@@ -82,13 +82,18 @@ export function DominoPhaseBar({ progress, showCaption = true, showPercent = tru
           </p>
         )}
         <p className={cn('text-base md:text-lg text-umbral-muted', showPercent && 'mt-1')}>
+          {/* Expert-assessed counts, matching the stat row and the card badges
+              — NOT the admin-status tally, which nothing on this page shows. */}
           {t('installingDemocracy.bar.completedOf')
-            .replace('{completed}', String(progress.completed))
+            .replace('{completed}', String(progress.assessedCompleted))
             .replace('{total}', String(progress.total))}
-          {progress.inProgress > 0 && (
+          {progress.assessedInProgress > 0 && (
             <>
               {' · '}
-              {t('installingDemocracy.bar.inProgress').replace('{count}', String(progress.inProgress))}
+              {t('installingDemocracy.bar.inProgress').replace(
+                '{count}',
+                String(progress.assessedInProgress)
+              )}
             </>
           )}
         </p>

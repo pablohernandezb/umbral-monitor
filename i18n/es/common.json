@@ -978,7 +978,8 @@
       "stalled": "Estancadas",
       "pending": "Pendientes",
       "completionPct": "Avance (evaluado por expertos)",
-      "totalEvaluators": "Expertos evaluadores"
+      "totalEvaluators": "Expertos",
+      "milestones": "Hitos"
     },
     "phases": {
       "liberties": {

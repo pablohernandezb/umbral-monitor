@@ -389,7 +389,21 @@ export interface TransitionProgress {
   totalEvaluators: number   // distinct experts across the whole checklist
   phases: PhaseProgress[]
   pillars: PillarProgress[]
-  // Secondary admin annotation stats (NOT the % driver):
+  /**
+   * Expert-assessed tally — the same four badge states expertStatusTone()
+   * puts on each action card. These four always sum to `total`, so the public
+   * stat row is self-checking.
+   *
+   * Deliberately named apart from the admin-status fields below: those two
+   * sets mean different things and mixing them up is exactly how the card
+   * percentage once ended up disagreeing with its own badge.
+   */
+  assessedCompleted: number
+  assessedInProgress: number
+  assessedPending: number
+  assessedUnrated: number
+  // Admin-curated annotation tally. Not shown anywhere on the public page —
+  // kept for the admin panel and as context.
   completed: number
   inProgress: number
   stalled: number

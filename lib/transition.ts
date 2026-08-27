@@ -92,8 +92,17 @@ export function computeProgress(
   const itemPct = (id: string) => ratedItemPct(byId.get(id))
   const itemEvaluatorCount = (id: string) => byId.get(id)?.evaluatorCount ?? 0
 
+  // Expert-assessed tally — the four badge states, partitioning all `total`
+  // actions. This is what the public stat row shows.
+  const toneOf = (id: string) => expertStatusTone(byId.get(id))
+  const assessedCompleted = actions.filter(a => toneOf(a.id) === 'completed').length
+  const assessedInProgress = actions.filter(a => toneOf(a.id) === 'inProgress').length
+  const assessedPending = actions.filter(a => toneOf(a.id) === 'pending').length
+  const assessedUnrated = actions.filter(a => toneOf(a.id) === 'unrated').length
+
   // Secondary annotation-layer tallies (admin status), unchanged in meaning
-  // from the pre-expert version — they no longer compute any percentage.
+  // from the pre-expert version — they no longer compute any percentage and
+  // are not displayed on the public page.
   const completed = actions.filter(a => a.status === 'completed').length
   const inProgress = actions.filter(a => a.status === 'in_progress').length
   const stalled = actions.filter(a => a.status === 'stalled').length
@@ -175,6 +184,10 @@ export function computeProgress(
     totalEvaluators,
     phases,
     pillars,
+    assessedCompleted,
+    assessedInProgress,
+    assessedPending,
+    assessedUnrated,
     completed,
     inProgress,
     stalled,

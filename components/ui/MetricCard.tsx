@@ -15,6 +15,12 @@ interface MetricCardProps {
   className?: string
   size?: 'default' | 'large'
   icon?: React.ReactNode
+  /**
+   * Doubles the icon's box (40px -> 48px, sized to fit a w-12 icon). Opt-in so
+   * the other MetricCard consumers — the landing page, blocking dashboard and
+   * gaceta tab — keep their current proportions untouched.
+   */
+  iconSize?: 'default' | 'large'
 }
 
 export function MetricCard({
@@ -24,7 +30,8 @@ export function MetricCard({
   format = 'number',
   className,
   size = 'default',
-  icon
+  icon,
+  iconSize = 'default'
 }: MetricCardProps) {
   const formattedValue = format === 'percentage' 
     ? `${value}%` 
@@ -41,7 +48,12 @@ export function MetricCard({
       <div className="flex items-center gap-4">
         {icon && (
           <div className="flex-shrink-0 text-umbral-muted">
-            <div className="w-10 h-10 flex items-center justify-center">
+            <div
+              className={cn(
+                'flex items-center justify-center',
+                iconSize === 'large' ? 'w-12 h-12' : 'w-10 h-10'
+              )}
+            >
               {icon}
             </div>
           </div>
