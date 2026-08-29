@@ -7,10 +7,10 @@ import {
   Layers,
   Milestone,
   Users,
+  GraduationCap,
   CheckCircle2,
   Loader2,
   Clock,
-  CircleDashed,
   ChevronDown,
 } from 'lucide-react'
 import { useTranslation } from '@/i18n'
@@ -106,6 +106,19 @@ export default function InstallingDemocracyPage() {
     [aggregates]
   )
 
+  // Distinct pillars and actors actually used across the checklist. Derived
+  // rather than hardcoded so the stat row can't drift out of date when actions
+  // are added or removed — deleting td-006 already orphaned one actor key
+  // (`internationalActors`), which a hardcoded count would have missed.
+  const distinctPillars = useMemo(
+    () => new Set(actions.map(a => a.pillar)).size,
+    [actions]
+  )
+  const distinctActors = useMemo(
+    () => new Set(actions.flatMap(a => a.actors)).size,
+    [actions]
+  )
+
   const filteredActions = useMemo(() => {
     let result = [...actions]
 
@@ -197,19 +210,21 @@ export default function InstallingDemocracyPage() {
           {/* Stat row */}
           <section className="pb-12">
             {/* Two rows of four. Row 1 is the roadmap's fixed structure; row 2
-                is the expert-assessed state of it — those four are the same
-                badge states shown on each action card, and they always sum to
-                `progress.total`, so the row is self-checking. */}
+                is the expert-assessed state of it.
+                NOTE: row 2 only adds up to `total` while every action clears
+                the rater threshold. Actions below it are "not assessable" and
+                are counted in none of these three — that state has no card by
+                design, so the three can legitimately sum to less than 60. */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-              <MetricCard iconSize="large" label={t('installingDemocracy.stats.totalActions')} value={progress.total} icon={<ListChecks className="w-12 h-12" />} />
-              <MetricCard iconSize="large" label={t('installingDemocracy.stats.pillars')} value={19} icon={<Layers className="w-12 h-12" />} />
               <MetricCard iconSize="large" label={t('installingDemocracy.stats.milestones')} value={TRANSITION_PHASES.length} icon={<Milestone className="w-12 h-12" />} />
-              <MetricCard iconSize="large" label={t('installingDemocracy.stats.totalEvaluators')} value={progress.totalEvaluators} icon={<Users className="w-12 h-12" />} />
+              <MetricCard iconSize="large" label={t('installingDemocracy.stats.pillars')} value={distinctPillars} icon={<Layers className="w-12 h-12" />} />
+              <MetricCard iconSize="large" label={t('installingDemocracy.stats.actors')} value={distinctActors} icon={<Users className="w-12 h-12" />} />
+              <MetricCard iconSize="large" label={t('installingDemocracy.stats.totalEvaluators')} value={progress.totalEvaluators} icon={<GraduationCap className="w-12 h-12" />} />
 
+              <MetricCard iconSize="large" label={t('installingDemocracy.stats.totalActions')} value={progress.total} icon={<ListChecks className="w-12 h-12" />} />
               <MetricCard iconSize="large" label={t('installingDemocracy.stats.completed')} value={progress.assessedCompleted} icon={<CheckCircle2 className="w-12 h-12" />} />
               <MetricCard iconSize="large" label={t('installingDemocracy.stats.inProgress')} value={progress.assessedInProgress} icon={<Loader2 className="w-12 h-12" />} />
               <MetricCard iconSize="large" label={t('installingDemocracy.stats.pending')} value={progress.assessedPending} icon={<Clock className="w-12 h-12" />} />
-              <MetricCard iconSize="large" label={t('installingDemocracy.expertStatus.unrated')} value={progress.assessedUnrated} icon={<CircleDashed className="w-12 h-12" />} />
             </div>
           </section>
 

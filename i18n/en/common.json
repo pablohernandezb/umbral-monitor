@@ -979,7 +979,8 @@
       "pending": "Pending",
       "completionPct": "Completion (expert-assessed)",
       "totalEvaluators": "Experts",
-      "milestones": "Milestones"
+      "milestones": "Milestones",
+      "actors": "Actors"
     },
     "phases": {
       "liberties": {
@@ -1136,7 +1137,7 @@
       "intro": "This tracker is scored by vetted experts. Apply to become an evaluator, or if you already have an access code, continue your evaluation.",
       "tracks": {
         "new": "New Participant",
-        "returning": "Returning Expert"
+        "returning": "Registered Expert"
       },
       "form": {
         "name": "Full name",

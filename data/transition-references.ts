@@ -31,6 +31,15 @@ export const TRANSITION_REFERENCES: TransitionReference[] = [
     url: 'https://transparenciave.org/camino-para-recuperar-la-democracia-la-libertad-y-el-estado-de-derecho/',
   },
   {
+    id: 'labpaz-semaforo',
+    title: 'Laboratorio de Paz — “El semáforo de la transición”: una herramienta para verificar si hay cambios hacia la democracia en Venezuela',
+    typeEs: 'Sociedad civil venezolana',
+    typeEn: 'Venezuelan civil society',
+    dateEs: '2026',
+    dateEn: '2026',
+    url: 'https://labpaz.org/2026/04/20/el-semaforo-de-la-transicion-una-herramienta-para-verificar-si-hay-cambios-hacia-la-democracia-en-venezuela/',
+  },
+  {
     id: 'chatham-sabatini-farsari',
     title: 'Chatham House — The US plan for Venezuela won’t work without the rule of law. Here’s how to make progress (Sabatini & Farsari)',
     typeEs: 'Think tank / investigación',

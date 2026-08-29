@@ -979,7 +979,8 @@
       "pending": "Pendientes",
       "completionPct": "Avance (evaluado por expertos)",
       "totalEvaluators": "Expertos",
-      "milestones": "Hitos"
+      "milestones": "Hitos",
+      "actors": "Actores"
     },
     "phases": {
       "liberties": {
@@ -1136,7 +1137,7 @@
       "intro": "Este monitoreo lo evalúan expertos verificados. Postúlate para convertirte en evaluador, o si ya tienes un código de acceso, continúa tu evaluación.",
       "tracks": {
         "new": "Nuevo participante",
-        "returning": "Experto recurrente"
+        "returning": "Experto registrado"
       },
       "form": {
         "name": "Nombre completo",
