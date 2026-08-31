@@ -317,6 +317,13 @@ export function MethodologyPanel({ open, onClose }: MethodologyPanelProps) {
             <p className="mt-2 text-sm leading-relaxed text-umbral-muted">
               {t('installingDemocracy.methodology.credits.body')}
             </p>
+            {/* This isn't just a stated intention — it's what the schema
+                enforces: monitoring_experts has RLS with no anon policy, and
+                the public aggregate views expose counts only, never identity
+                (see lib/supabase.ts). */}
+            <p className="mt-3 text-sm leading-relaxed text-umbral-muted">
+              {t('installingDemocracy.methodology.credits.anonymity')}
+            </p>
           </div>
 
           {/* The bibliography is repeated here so the panel is self-contained
