@@ -56,13 +56,22 @@ export const METHODOLOGY_BLOCKS: MethodologyBlock[] = [
   },
   {
     type: 'p',
-    es: ['En Venezuela las cosas pasan a ritmo vertiginoso y con frecuencia los árboles no nos permiten ver el bosque. Cada día ocurre un asunto muy escandaloso, una catástrofe, o simplemente un tema de farándula que monopoliza la discusión pública del momento, y lo urgente va privando sobre lo importante. Umbral ha sido desarrollado por Pablo Hernández como tablero de control para intentar ver el bosque.'],
-    en: ['In Venezuela things move at a dizzying pace, and the trees often keep us from seeing the forest. Every day brings some scandal, a catastrophe, or simply a celebrity story that monopolizes the public conversation of the moment, and the urgent keeps crowding out the important. Umbral was built by Pablo Hernández as a control panel to try to see the forest.'],
+    // Attribution folded into this existing sentence rather than repeated in a
+    // separate credits block — the two would otherwise have said nearly the
+    // same thing a screen apart, and disagreed ("por Pablo Hernández" vs "por
+    // un equipo liderado por Pablo Hernández").
+    es: ['En Venezuela las cosas pasan a ritmo vertiginoso y con frecuencia los árboles no nos permiten ver el bosque. Cada día ocurre un asunto muy escandaloso, una catástrofe, o simplemente un tema de farándula que monopoliza la discusión pública del momento, y lo urgente va privando sobre lo importante. Umbral ha sido desarrollado por un equipo liderado por Pablo Hernández Borges como tablero de control para intentar ver el bosque.'],
+    en: ['In Venezuela things move at a dizzying pace, and the trees often keep us from seeing the forest. Every day brings some scandal, a catastrophe, or simply a celebrity story that monopolizes the public conversation of the moment, and the urgent keeps crowding out the important. Umbral was built by a team led by Pablo Hernández Borges as a control panel to try to see the forest.'],
   },
   {
     type: 'p',
     es: ['En esta capa de Umbral, no estamos intentando predecir la transición; estamos estableciendo qué tendría que ocurrir para poder decir que la transición está avanzando realmente.'],
     en: ["In this layer of Umbral, we are not trying to predict the transition; we are establishing what would have to happen for us to say the transition is genuinely advancing."],
+  },
+  {
+    type: 'p',
+    es: ['La capa de Instalando la Democracia ha sido desarrollada a partir de los indicadores identificados por Carmen Beatriz Fernández.'],
+    en: ['The Installing Democracy layer was built on the indicators identified by Carmen Beatriz Fernández.'],
   },
 
   {

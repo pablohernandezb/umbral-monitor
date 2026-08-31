@@ -1117,14 +1117,10 @@
       "noticeLink": "the methodology",
       "faq": {
         "question": "How can I participate?",
-        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 60 actions is. Your ratings feed the public completion bars."
-      },
-      "cta": "Participate in the Monitoring",
-      "credits": {
-        "title": "Credits",
-        "body": "Umbral was developed by a team led by Pablo Hernández Borges, as a control panel for trying to see the forest of Venezuela's regime transformation. The Installing Democracy layer was built on the indicators identified by Carmen Beatriz Fernández.",
+        "answer": "Umbral's transition tracker is scored by vetted experts. Apply with your name, email, and institutional affiliation; once an administrator approves you, you'll receive a personal access code to rate how complete each of the 60 actions is. Your ratings feed the public completion bars.",
         "anonymity": "The evaluating experts remain anonymous while the exercise is under way. Their names will be published once it concludes, and only with their prior authorization."
-      }
+      },
+      "cta": "Participate in the Monitoring"
     },
     "references": {
       "title": "References",

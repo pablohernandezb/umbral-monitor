@@ -299,31 +299,19 @@ export function MethodologyPanel({ open, onClose }: MethodologyPanelProps) {
             <p className="mt-2 text-sm leading-relaxed text-umbral-muted">
               {t('installingDemocracy.methodology.faq.answer')}
             </p>
+            {/* Not just a stated intention — the schema enforces it:
+                monitoring_experts has RLS with no anon policy, and the public
+                aggregate views expose counts only, never identity
+                (see lib/supabase.ts). */}
+            <p className="mt-3 text-sm leading-relaxed text-umbral-muted">
+              {t('installingDemocracy.methodology.faq.anonymity')}
+            </p>
             <Link
               href="/installing-democracy/participate"
               className="btn btn-primary mt-4 inline-flex items-center"
             >
               {t('installingDemocracy.methodology.cta')}
             </Link>
-          </div>
-
-          {/* Credits — sits between the participation CTA and the
-              bibliography. Styled as plain body prose rather than a callout so
-              it reads as an attribution note, not another action. */}
-          <div className="mt-9">
-            <h3 className="text-base font-semibold text-white">
-              {t('installingDemocracy.methodology.credits.title')}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-umbral-muted">
-              {t('installingDemocracy.methodology.credits.body')}
-            </p>
-            {/* This isn't just a stated intention — it's what the schema
-                enforces: monitoring_experts has RLS with no anon policy, and
-                the public aggregate views expose counts only, never identity
-                (see lib/supabase.ts). */}
-            <p className="mt-3 text-sm leading-relaxed text-umbral-muted">
-              {t('installingDemocracy.methodology.credits.anonymity')}
-            </p>
           </div>
 
           {/* The bibliography is repeated here so the panel is self-contained
