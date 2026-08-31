@@ -1119,7 +1119,11 @@
         "question": "¿Cómo puedo participar?",
         "answer": "El monitoreo de la transición en Umbral es evaluado por expertos verificados. Postúlate con tu nombre, correo y afiliación institucional; cuando un administrador te apruebe, recibirás un código de acceso personal para evaluar qué tan completa está cada una de las 60 acciones. Tus valoraciones alimentan las barras de avance públicas."
       },
-      "cta": "Participa en el monitoreo"
+      "cta": "Participa en el monitoreo",
+      "credits": {
+        "title": "Créditos",
+        "body": "Umbral ha sido desarrollado por un equipo liderado por Pablo Hernández Borges como tablero de control para intentar ver el bosque de la transformación del régimen en Venezuela. La capa de Instalando la Democracia ha sido desarrollada a partir de los indicadores identificados por Carmen Beatriz Fernández."
+      }
     },
     "references": {
       "title": "Referencias",

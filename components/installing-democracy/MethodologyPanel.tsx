@@ -307,6 +307,18 @@ export function MethodologyPanel({ open, onClose }: MethodologyPanelProps) {
             </Link>
           </div>
 
+          {/* Credits — sits between the participation CTA and the
+              bibliography. Styled as plain body prose rather than a callout so
+              it reads as an attribution note, not another action. */}
+          <div className="mt-9">
+            <h3 className="text-base font-semibold text-white">
+              {t('installingDemocracy.methodology.credits.title')}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-umbral-muted">
+              {t('installingDemocracy.methodology.credits.body')}
+            </p>
+          </div>
+
           {/* The bibliography is repeated here so the panel is self-contained
               and the in-text link has somewhere to land without closing it. */}
           <div className="mt-10">
