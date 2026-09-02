@@ -7,14 +7,106 @@ import {
   rejectApplication,
   regenerateCode,
   updateExpert,
+  listSaveLog,
 } from './actions'
 import { Toast } from '@/components/admin/Toast'
-import type { MonitoringExpert, MonitoringStatus } from '@/types'
+import type { MonitoringExpert, MonitoringStatus, AdminSaveLogEntry } from '@/types'
 
 type ToastState = { message: string; type: 'success' | 'error' } | null
-type Tab = MonitoringStatus
+type Tab = MonitoringStatus | 'activity'
 
-const TABS: Tab[] = ['pending', 'approved', 'rejected']
+const TABS: Tab[] = ['pending', 'approved', 'rejected', 'activity']
+
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  })
+}
+
+/** Chronological "Save progress" log — who saved what, and when. Lazily
+ *  loaded the first time the tab is opened. */
+function SaveLogPanel() {
+  const [entries, setEntries] = useState<AdminSaveLogEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState<string | null>(null)
+
+  useEffect(() => {
+    listSaveLog().then(res => {
+      setEntries(res.data)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading) return <p className="text-sm text-gray-400">Loading activity...</p>
+  if (entries.length === 0) {
+    return <div className="text-center py-16 text-gray-500 text-sm">No saves recorded yet.</div>
+  }
+
+  return (
+    <div className="space-y-2">
+      {entries.map(entry => {
+        const isOpen = expanded === entry.id
+        const scoreList = Object.entries(entry.scores)
+        return (
+          <div key={entry.id} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <p className="text-sm font-medium text-white">{entry.evaluatorName}</p>
+                <p className="text-xs text-gray-400">{entry.evaluatorEmail}</p>
+              </div>
+              <p className="text-xs text-gray-500 shrink-0">{formatDateTime(entry.createdAt)}</p>
+              <span className="text-xs text-teal-400 shrink-0">{entry.savedCount} saved</span>
+              {entry.clearedCount > 0 && (
+                <span className="text-xs text-amber-400 shrink-0">{entry.clearedCount} cleared</span>
+              )}
+              <button
+                onClick={() => setExpanded(isOpen ? null : entry.id)}
+                className="px-3 py-1 text-xs text-gray-400 hover:text-white border border-gray-700 rounded-md shrink-0"
+              >
+                {isOpen ? 'Hide' : 'Detail'}
+              </button>
+            </div>
+
+            {isOpen && (
+              <div className="mt-3 border-t border-gray-800 pt-3 space-y-2">
+                {scoreList.length > 0 && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Scores submitted</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {scoreList.map(([actionId, score]) => (
+                        <span
+                          key={actionId}
+                          className="px-2 py-0.5 rounded bg-gray-950 border border-gray-800 text-[11px] font-mono text-gray-300"
+                        >
+                          {actionId}: {score}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {entry.clearedIds.length > 0 && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Cleared</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {entry.clearedIds.map(actionId => (
+                        <span
+                          key={actionId}
+                          className="px-2 py-0.5 rounded bg-gray-950 border border-amber-500/30 text-[11px] font-mono text-amber-400"
+                        >
+                          {actionId}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—'
@@ -169,12 +261,15 @@ export default function MonitoringExpertsAdminPage() {
                 : 'border-gray-800 text-gray-400 hover:text-white'
             }`}
           >
-            {t} ({experts.filter(e => e.status === t).length})
+            {/* The activity tab isn't a status, so it carries no count. */}
+            {t === 'activity' ? t : `${t} (${experts.filter(e => e.status === t).length})`}
           </button>
         ))}
       </div>
 
-      <div className="space-y-2">
+      {tab === 'activity' && <SaveLogPanel />}
+
+      <div className={tab === 'activity' ? 'hidden' : 'space-y-2'}>
         {rows.length === 0 && (
           <div className="text-center py-16 text-gray-500 text-sm">No {tab} applications.</div>
         )}

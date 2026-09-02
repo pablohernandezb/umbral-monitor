@@ -229,8 +229,25 @@ export async function saveEvaluations(
     if (error) return { ok: false, error: 'db_error' }
   }
 
+  // Activity log — records the press itself, with a snapshot of what was
+  // submitted, so the admin can see who is active and who needs chasing.
+  // Deliberately NOT allowed to fail the save: the expert's data is already
+  // committed above, and losing a log row is far less bad than telling them
+  // their work didn't save when it did.
+  const { error: logError } = await supabase.from('transition_save_log').insert({
+    evaluator_id: result.evaluatorId,
+    saved_count: entries.length,
+    cleared_count: toClear.length,
+    scores: Object.fromEntries(entries),
+    cleared_ids: toClear,
+  })
+  if (logError) {
+    console.error('transition_save_log insert failed (evaluations still saved):', logError.message)
+  }
+
   revalidatePath('/installing-democracy')
   revalidatePath('/')
+  revalidatePath('/admin/installing-democracy/experts')
   return { ok: true, savedCount: entries.length, clearedCount: toClear.length }
 }
 

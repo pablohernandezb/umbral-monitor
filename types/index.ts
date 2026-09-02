@@ -445,6 +445,20 @@ export type EvaluationMap = Record<string, number> // actionId -> 0..4
 // app/admin/installing-democracy/comments/actions.ts).
 export type CommentMap = Record<string, string> // actionId -> comment body
 
+// Admin-only shape — one "Save progress" press, joined with who made it.
+export interface AdminSaveLogEntry {
+  id: string
+  evaluatorName: string
+  evaluatorEmail: string
+  savedCount: number
+  clearedCount: number
+  /** actionId -> 0..4, exactly as submitted in that press. */
+  scores: Record<string, number>
+  /** Action ids un-rated back to "not evaluated" in that press. */
+  clearedIds: string[]
+  createdAt: string
+}
+
 // Admin-only shape — a comment joined with which expert/action it belongs to.
 export interface AdminTransitionComment {
   id: string

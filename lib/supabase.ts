@@ -824,6 +824,33 @@ CREATE TABLE IF NOT EXISTS transition_comments (
 ALTER TABLE transition_comments ENABLE ROW LEVEL SECURITY;
 -- Deliberately no CREATE POLICY here — no anon/authenticated policy means
 -- PostgREST returns nothing to the public client, by default-deny.
+
+-- ============================================================
+-- TRANSITION_SAVE_LOG
+-- One row per "Save progress" press in the expert evaluation form: who,
+-- when, and a snapshot of exactly what was submitted. Admin-only — it is
+-- how the admin sees who is active and who needs chasing by email.
+--
+-- Append-only in practice: nothing in the app updates or deletes a row.
+-- Same no-anon-policy treatment as the other monitoring tables.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS transition_save_log (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  evaluator_id  UUID NOT NULL REFERENCES monitoring_experts(id) ON DELETE CASCADE,
+  saved_count   INTEGER NOT NULL DEFAULT 0,
+  cleared_count INTEGER NOT NULL DEFAULT 0,
+  -- { "td-001": 2, "td-002": 4, ... } exactly as submitted in this press.
+  scores        JSONB NOT NULL DEFAULT '{}'::jsonb,
+  -- ["td-014", ...] action ids un-rated back to "not evaluated" in this press.
+  cleared_ids   JSONB NOT NULL DEFAULT '[]'::jsonb,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_transition_save_log_evaluator
+  ON transition_save_log(evaluator_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_transition_save_log_created
+  ON transition_save_log(created_at DESC);
+ALTER TABLE transition_save_log ENABLE ROW LEVEL SECURITY;
+-- Deliberately no CREATE POLICY — admin/service-role reads only.
 `
 
 // Export for reference

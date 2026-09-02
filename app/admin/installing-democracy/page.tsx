@@ -242,12 +242,25 @@ export default function InstallingDemocracyAdminPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Installing Democracy — Transition Checklist</h1>
-        <p className="text-sm text-gray-400">
-          {actions.length} actions · {actions.filter(a => a.status === 'completed').length} completed ·{' '}
-          {actions.filter(a => a.status === 'in_progress').length} in progress
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-white mb-1">Installing Democracy — Transition Checklist</h1>
+          <p className="text-sm text-gray-400">
+            {actions.length} actions · {actions.filter(a => a.status === 'completed').length} completed ·{' '}
+            {actions.filter(a => a.status === 'in_progress').length} in progress
+          </p>
+        </div>
+
+        {/* Module backup. A plain link, not fetch() — the route replies with a
+            Content-Disposition attachment, so the browser handles the save
+            dialog and no blob has to be held in memory. */}
+        <a
+          href="/api/admin/installing-democracy/backup"
+          className="px-4 py-2 text-sm text-teal-400 hover:text-teal-300 border border-teal-500/30 hover:border-teal-500/50 rounded-md transition-colors shrink-0"
+          title="Download a .sql restore file for the whole module (access codes excluded)"
+        >
+          Download backup
+        </a>
       </div>
 
       {/* Filters */}

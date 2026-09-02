@@ -203,3 +203,54 @@ export async function updateExpert(
   revalidatePath('/admin/installing-democracy/experts')
   return { data: data ? mapExpert(data as MonitoringExpertRow) : null, error: null }
 }
+
+/**
+ * Activity log — every "Save progress" press, newest first, joined with who
+ * made it. Admin-only: transition_save_log has RLS with no anon policy, so
+ * this is reachable only through the service-role client.
+ */
+export async function listSaveLog(limit = 100) {
+  const supabase = createAdminClient()
+  if (!supabase) {
+    // Mock mode: no persistent store to read.
+    return { data: [], error: null }
+  }
+
+  const { data, error } = await supabase
+    .from('transition_save_log')
+    .select('id, saved_count, cleared_count, scores, cleared_ids, created_at, monitoring_experts(name, email)')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error || !data) {
+    return { data: [], error: error?.message ?? null }
+  }
+
+  type Row = {
+    id: string
+    saved_count: number
+    cleared_count: number
+    scores: Record<string, number> | null
+    cleared_ids: string[] | null
+    created_at: string
+    monitoring_experts: { name: string; email: string } | { name: string; email: string }[] | null
+  }
+
+  const entries = (data as Row[]).map(row => {
+    // supabase-js types this embed as an array for some FK shapes even though
+    // the relationship is one-to-one here; normalize either shape.
+    const expert = Array.isArray(row.monitoring_experts) ? row.monitoring_experts[0] : row.monitoring_experts
+    return {
+      id: row.id,
+      evaluatorName: expert?.name ?? 'Unknown',
+      evaluatorEmail: expert?.email ?? '',
+      savedCount: row.saved_count,
+      clearedCount: row.cleared_count,
+      scores: row.scores ?? {},
+      clearedIds: row.cleared_ids ?? [],
+      createdAt: row.created_at,
+    }
+  })
+
+  return { data: entries, error: null }
+}
