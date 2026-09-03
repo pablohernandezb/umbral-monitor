@@ -387,6 +387,9 @@
   border-top-color: #3a3a42 !important;
 }
 
-.leaflet-control-attribution {
-  display: none !important;
-}
+/* No .leaflet-control-attribution rule here on purpose. The basemap credit
+   required by CARTO's free tier and the OSM licence is rendered as a caption
+   beneath the map in VenezuelaMap.tsx, where it can't be clipped by the
+   card's overflow-hidden. Do not re-add a `display: none` here — that would
+   only hide the in-map control, but it's the kind of rule that gets copied
+   onto the caption later and quietly breaks compliance. */

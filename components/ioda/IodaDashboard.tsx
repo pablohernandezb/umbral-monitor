@@ -336,7 +336,31 @@ export function IodaDashboard({
 
         {/* ── Footer ── */}
         <div className="flex items-center justify-between text-[10px] font-mono text-umbral-muted pt-2 border-t border-umbral-ash/30">
-          <span>{t('ioda.monitor.source')}</span>
+          {/* Basemap credit lives here rather than on the map itself — CARTO's
+              free tier and the OSM licence require it to be visible, and this
+              footer is the dashboard's canonical attribution line. */}
+          <span>
+            {t('ioda.monitor.source')}
+            {' · '}
+            &copy;{' '}
+            <a
+              href="https://carto.com/attributions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-signal-teal transition-colors"
+            >
+              CARTO
+            </a>{' '}
+            &copy;{' '}
+            <a
+              href="https://www.openstreetmap.org/copyright"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-signal-teal transition-colors"
+            >
+              OpenStreetMap
+            </a>
+          </span>
           <span>
             {lastUpdated
               ? `${t('common.lastUpdated')}: ${lastUpdated.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}`

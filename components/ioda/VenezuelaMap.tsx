@@ -67,6 +67,13 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
         center: [7.0, -66.0],
         zoom: 5,
         zoomControl: false,
+        // Leaflet's in-map attribution control is off, but the credit is NOT
+        // suppressed — it's rendered as a caption directly beneath the map
+        // instead (see the JSX below). Inside the map it sat at the bottom
+        // edge of a container whose height collapses to its min-height, so it
+        // fought the card's overflow-hidden. A caption in normal flow can't be
+        // clipped, and adjacent credit satisfies both CARTO's free tier and
+        // the OSM licence.
         attributionControl: false,
         scrollWheelZoom: false,
         dragging: true,
@@ -76,11 +83,19 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
         touchZoom: false,
       })
 
-      // Dark radar-style tiles
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-        { maxZoom: 8, minZoom: 4 }
-      ).addTo(map)
+      // Dark radar-style tiles. The CARTO key is appended only when present —
+      // without it the tiles still render, just with an "API key required"
+      // watermark, so a missing env var degrades rather than breaks the map.
+      //
+      // The key is NEXT_PUBLIC_* on purpose: raster basemaps take it as a URL
+      // query parameter, so it necessarily reaches the browser. CARTO issues it
+      // as a rate-limited, attribution-gated key rather than a secret.
+      const cartoKey = process.env.NEXT_PUBLIC_CARTO_API_KEY
+      const tileUrl =
+        'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png' +
+        (cartoKey ? `?key=${cartoKey}` : '')
+
+      L.tileLayer(tileUrl, { maxZoom: 8, minZoom: 4 }).addTo(map)
 
       mapRef.current = map
 
@@ -223,13 +238,16 @@ export function VenezuelaMap({ scores, hoveredState, onHoverState, loading }: Ve
   }, [hoveredState, scores, ready])
 
   return (
-    <div className="relative w-full h-full min-h-[320px]">
+    // Both the wrapper and the map carry the SAME min-height. They used to
+    // differ (320 vs 280), and since `h-full` collapses to `auto` inside an
+    // auto-height parent, that left ~40px of dead space under the map.
+    <div className="relative w-full h-full min-h-[260px]">
       {loading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-umbral-black/80">
           <div className="animate-spin w-6 h-6 border-2 border-signal-teal border-t-transparent rounded-full" />
         </div>
       )}
-      <div ref={mapContainerRef} className="w-full h-full min-h-[280px] rounded" />
+      <div ref={mapContainerRef} className="w-full h-full min-h-[260px] rounded" />
 
       {/* Legend */}
       <div className="absolute bottom-2 left-2 z-[400] flex items-center gap-2 px-2 py-1 rounded bg-umbral-black/80 border border-umbral-ash/50">
