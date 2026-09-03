@@ -71,7 +71,7 @@ export function ChecklistActionCard({
   return (
     <div
       className={cn(
-        'card p-4 md:p-5 space-y-3',
+        'card p-4 md:p-5 space-y-2.5',
         // Admin-only visual flag (transition_checklist.is_alert) — purely
         // presentational, same red pulse the fact-check feed uses for
         // flagged tweets. No rotation/tilt, no badge/text added. Public-only:
@@ -80,16 +80,34 @@ export function ChecklistActionCard({
       )}
     >
       {/* Expert completion — the PRIMARY signal (monitoring spec §10).
-          Bar + percentage only; the "expert-assessed" label and the
-          evaluator-count/not-evaluated line are covered by the status badge
-          below instead, so they aren't repeated here.
+          The status badge sits on the SAME row as the percentage, directly
+          above the bar it describes, so the three read as one unit.
 
-          Reads ratedItemPct(), NOT aggregate.completionPct — below the rater
-          threshold that returns 0, matching both this card's own badge and
-          the item's (zero) contribution to the headline. */}
+          Badge and % share a gate: the badge comes from expertStatusTone()
+          and the % from ratedItemPct(), both keyed on
+          MIN_EVALUATORS_FOR_ASSESSMENT, so they can never disagree.
+
+          Both are hidden in evaluate mode — redundant there (the
+          LikertSelector already shows the expert's own rating), and showing
+          the public aggregate while someone is actively rating could bias
+          them, same reasoning as hiding the alert pulse. The card then simply
+          opens at the pillar row. */}
       {!evaluate && (
         <div>
-          <div className="flex items-center justify-end mb-1">
+          {/* items-end, not items-center: the badge is a padded pill and the %
+              is bare text, so centring them left the badge's bottom edge
+              sitting closer to the bar than the number's. Aligning bottoms
+              gives both the same gap above the bar, which lifts the taller
+              badge upward. */}
+          <div className="flex items-end justify-between gap-2 mb-1.5">
+            <span
+              className={cn(
+                'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border',
+                EXPERT_STATUS_STYLES[tone]
+              )}
+            >
+              {t(`installingDemocracy.expertStatus.${tone}`)}
+            </span>
             <p className="text-xs font-bold text-white font-mono">{displayPct}%</p>
           </div>
           <div className="h-1.5 rounded-full bg-[#e4e4e7]/80 overflow-hidden">
@@ -101,32 +119,15 @@ export function ChecklistActionCard({
         </div>
       )}
 
-      {/* Status badge — automatic, computed from expertStatusTone(aggregate).
-          Below the rater threshold this always reads "unrated" regardless of
-          mean score (see MIN_EVALUATORS_FOR_ASSESSMENT in lib/transition.ts).
-          The % above is gated on that same threshold via ratedItemPct(), so
-          the two stay in agreement. Hidden in evaluate
-          mode entirely: redundant there (the LikertSelector already shows the
-          expert's own rating), and showing the public aggregate status while
-          someone is actively rating could bias them — same reasoning as
-          hiding the alert pulse in evaluate mode. The admin-curated `status`
-          still exists for internal use (admin panel) but no longer renders
-          on the public card either way. */}
-      <div className="flex items-center justify-between gap-2">
-        {!evaluate && (
-          <span
-            className={cn(
-              'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wide border',
-              EXPERT_STATUS_STYLES[tone]
-            )}
-          >
-            {t(`installingDemocracy.expertStatus.${tone}`)}
-          </span>
-        )}
-        {/* Venezuelan flag colour key: gold = milestone, blue = pillar, red = actors.
-            ml-auto keeps this pinned right whether or not the badge above it
-            is rendered (evaluate mode omits it entirely). */}
-        <span className="ml-auto inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right">
+      {/* Pillar + milestone share a row. Venezuelan flag colour key:
+          gold = milestone, blue = pillar, red = actors. */}
+      <div className="flex items-start justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-umbral-ash/50 border border-umbral-steel text-xs shrink-0">
+          {PillarIcon && <PillarIcon className="w-3.5 h-3.5 text-signal-blue" aria-hidden="true" />}
+          <span className="text-umbral-light">{pillarLabel}</span>
+        </span>
+
+        <span className="inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right pt-1">
           <CalendarDays className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-px" aria-hidden="true" />
           {/* The icon replaces the word "Milestone:", so keep it for screen readers. */}
           <span className="sr-only">{t('installingDemocracy.filters.milestone')}: </span>
@@ -134,14 +135,6 @@ export function ChecklistActionCard({
             {phaseLabel} ·{' '}
             {t('installingDemocracy.action.month').replace('{n}', String(action.month))}
           </span>
-        </span>
-      </div>
-
-      {/* Pillar badge */}
-      <div className="flex items-center gap-2 flex-wrap text-xs text-umbral-muted">
-        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-umbral-ash/50 border border-umbral-steel">
-          {PillarIcon && <PillarIcon className="w-3.5 h-3.5 text-signal-blue" aria-hidden="true" />}
-          <span className="text-umbral-light">{pillarLabel}</span>
         </span>
       </div>
 
