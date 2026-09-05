@@ -29,7 +29,7 @@ import {
   getEvaluationAggregates,
   getTotalEvaluatorCount,
 } from '@/lib/data'
-import { computeProgress } from '@/lib/transition'
+import { computeProgress, expertStatusTone } from '@/lib/transition'
 import { phaseForMonth, TRANSITION_PHASES } from '@/data/transition-phases'
 import type { TransitionAction, EvaluationAggregate } from '@/types'
 
@@ -128,8 +128,11 @@ export default function InstallingDemocracyPage() {
     if (filters.phase !== 'all') {
       result = result.filter(a => phaseForMonth(a.month) === filters.phase)
     }
+    // Matches the badge on the card, which is expertStatusTone(aggregate) —
+    // NOT the admin-curated a.status the card stopped rendering. Actions with
+    // no aggregate row fall through to 'unrated', same as the card.
     if (filters.status !== 'all') {
-      result = result.filter(a => a.status === filters.status)
+      result = result.filter(a => expertStatusTone(aggregateById.get(a.id)) === filters.status)
     }
     if (filters.search.trim()) {
       const q = filters.search.toLowerCase()
@@ -142,7 +145,7 @@ export default function InstallingDemocracyPage() {
     }
 
     return result
-  }, [actions, filters, locale])
+  }, [actions, aggregateById, filters, locale])
 
   // A new filter produces a different list, so an inherited expansion would be
   // meaningless — start each result set at the top. Deliberately keyed on

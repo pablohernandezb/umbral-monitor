@@ -4,16 +4,21 @@ import { Search } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { PILLAR_ICONS } from './icons'
 import { TRANSITION_PHASES } from '@/data/transition-phases'
-import type { TransitionStatus } from '@/types'
+import type { ExpertStatusTone } from '@/lib/transition'
 
 export interface ChecklistFilterState {
   pillar: string | 'all'
   phase: number | 'all'
-  status: TransitionStatus | 'all'
+  /** Expert-derived tone, NOT the admin-curated `TransitionStatus`. The card
+   *  badge is computed from expertStatusTone(aggregate), so filtering on the
+   *  admin column would contradict what's on screen — and does in practice:
+   *  every row is still admin-`pending`, so those options returned 0 results. */
+  status: ExpertStatusTone | 'all'
   search: string
 }
 
-const STATUSES: TransitionStatus[] = ['pending', 'in_progress', 'completed', 'stalled']
+// Same order and labels as the methodology panel legend and the card badge.
+const STATUSES: ExpertStatusTone[] = ['completed', 'inProgress', 'pending', 'unrated']
 
 interface ChecklistFiltersProps {
   value: ChecklistFilterState
@@ -72,7 +77,7 @@ export function ChecklistFilters({ value, onChange }: ChecklistFiltersProps) {
       >
         <option value="all">{t('installingDemocracy.filters.all')} — {t('installingDemocracy.filters.status')}</option>
         {STATUSES.map(s => (
-          <option key={s} value={s}>{t(`installingDemocracy.status.${s}`)}</option>
+          <option key={s} value={s}>{t(`installingDemocracy.expertStatus.${s}`)}</option>
         ))}
       </select>
     </div>
