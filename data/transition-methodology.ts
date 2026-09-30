@@ -298,6 +298,46 @@ export const METHODOLOGY_BLOCKS: MethodologyBlock[] = [
     en: ['The goal is to make visible, as transparently as possible, what is advancing, what is stalled, what remains pending, and where there is a risk of reversal.'],
   },
 
+  // Sits after "¿Por qué expertos?" on purpose: that section establishes WHY
+  // expert judgement is used, and this one explains why those experts stay
+  // anonymous. It also states publicly the same policy the participate flow
+  // promises each evaluator when they register.
+  {
+    type: 'h3',
+    es: ['La reserva como parte del método: una comunidad de evaluación independiente'],
+    en: ['Confidentiality as part of the method: an independent evaluation community'],
+  },
+  {
+    type: 'p',
+    es: ['En Installing Democracy, la evaluación experta tiene una función que va más allá de reunir opiniones individuales: busca construir una lectura colectiva, basada en conocimiento especializado y evidencia, sobre el avance de las condiciones necesarias para una transición democrática.'],
+    en: ['In Installing Democracy, expert evaluation serves a purpose that goes beyond gathering individual opinions: it seeks to build a collective reading, grounded in specialist knowledge and evidence, of how the conditions necessary for a democratic transition are advancing.'],
+  },
+  {
+    type: 'p',
+    es: ['La propuesta de mantener en reserva la identidad de los evaluadores, inspirada en la reflexión sobre modelos como V-Dem, responde a una lógica de independencia y de protección del valor público del ejercicio. La iniciativa no necesita que sus participantes sean figuras públicas ni que sus nombres se conviertan en el centro de la conversación. Su legitimidad descansa en el procedimiento, en la diversidad de perspectivas y en la transparencia de los indicadores y resultados.'],
+    en: ['The decision to keep evaluators’ identities confidential, informed by reflection on models such as V-Dem, follows a logic of independence and of protecting the public value of the exercise. The initiative does not need its participants to be public figures, nor their names to become the centre of the conversation. Its legitimacy rests on the procedure, on the diversity of perspectives, and on the transparency of the indicators and results.'],
+  },
+  {
+    type: 'p',
+    es: ['La reserva también ayuda a evitar que el debate se desplace desde los hallazgos hacia las identidades. Hacer públicos los nombres podría inducir a interpretar cada valoración a partir de la trayectoria, las afiliaciones o las posiciones políticas que se atribuyan a cada experto, en lugar de atender a la evidencia y al resultado agregado. Además, conocer la identidad de los demás participantes podría influir en la dinámica interna de evaluación.'],
+    en: ['Confidentiality also helps keep the debate from shifting away from the findings and onto identities. Making the names public could invite each assessment to be read through the career, affiliations or political positions attributed to a given expert, rather than through the evidence and the aggregate result. Knowing the identity of the other participants could also influence the internal dynamics of the evaluation.'],
+  },
+  {
+    type: 'p',
+    es: ['El valor metodológico reside, precisamente, en la agregación de juicios independientes. La cifra resultante no representa la opinión de una persona ni la postura institucional de un grupo, sino una estimación común construida a partir de múltiples valoraciones. El promedio, como medida de tendencia central, permite sintetizar esas apreciaciones sin convertir los extremos individuales en el mensaje principal.'],
+    en: ['The methodological value lies precisely in the aggregation of independent judgements. The resulting figure represents neither one person’s opinion nor the institutional position of a group, but a common estimate built from multiple assessments. The mean, as a measure of central tendency, makes it possible to synthesise those appraisals without turning individual outliers into the headline message.'],
+  },
+  {
+    type: 'p',
+    es: ['La reserva, por tanto, no significa opacidad sobre el trabajo. El proyecto puede hacer públicos sus criterios, indicadores, metodología y resultados, preservando al mismo tiempo la identidad de quienes participan en la evaluación. Es una distinción entre transparencia del procedimiento y confidencialidad de los evaluadores.'],
+    en: ['Confidentiality therefore does not mean opacity about the work. The project can make its criteria, indicators, methodology and results public while preserving the identity of those taking part in the evaluation. It is a distinction between transparency of the procedure and confidentiality of the evaluators.'],
+  },
+  {
+    type: 'p',
+    es: ['En el contexto venezolano, esta decisión también puede contribuir a proteger a los participantes y a mantener la atención en el propósito del proyecto: observar qué condiciones democráticas se están instalando, cuáles siguen pendientes y qué evidencia respalda cada valoración.'],
+    en: ['In the Venezuelan context, this decision can also help protect participants and keep attention on the project’s purpose: observing which democratic conditions are being installed, which remain outstanding, and what evidence supports each assessment.'],
+  },
+
   {
     type: 'h3',
     es: ['5. Las elecciones son un hito, no el destino. Importa el camino, tanto como el destino'],

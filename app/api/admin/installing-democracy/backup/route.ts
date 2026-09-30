@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createAdminClient, getCurrentUser } from '@/lib/supabase-server'
+import { createAdminClient, fetchAllRows, getCurrentUser } from '@/lib/supabase-server'
 
 /**
  * Installing Democracy module backup — emits a .sql file of INSERT statements
@@ -98,16 +98,28 @@ export async function GET() {
 
   for (const table of EXPORT_ORDER) {
     const columns = COLUMNS[table]
-    const { data, error } = await supabase.from(table).select(columns.join(','))
+    // Paginated: PostgREST silently caps a plain .select() at 1000 rows, so
+    // an unpaginated read here produced a file that claimed to be a full
+    // module backup while dropping every transition_evaluations row past the
+    // first 1000 — the worst possible place for a silent truncation.
+    // Ordered by id so the page windows can't overlap or skip rows.
+    // The `as unknown as` cast is unavoidable: supabase-js can only infer a
+    // row type from a literal column list, and `columns` is built at runtime,
+    // so it degrades to GenericStringError[].
+    const { data, error } = await fetchAllRows<Record<string, unknown>>(
+      (from, to) =>
+        supabase.from(table).select(columns.join(',')).order('id').range(from, to) as unknown as
+          PromiseLike<{ data: Record<string, unknown>[] | null; error: { message: string } | null }>
+    )
 
     if (error) {
       return NextResponse.json(
-        { error: `Failed reading ${table}: ${error.message}` },
+        { error: `Failed reading ${table}: ${error}` },
         { status: 500 }
       )
     }
 
-    const rows = (data ?? []) as unknown as Record<string, unknown>[]
+    const rows = data
     counts[table] = rows.length
 
     lines.push(`-- ---------- ${table} (${rows.length} rows) ----------`)

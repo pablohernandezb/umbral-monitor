@@ -67,6 +67,15 @@ export const TRANSITION_REFERENCES: TransitionReference[] = [
     url: 'https://www.atlanticcouncil.org/content-series/memo-to/the-president-steps-to-secure-a-prosperous-us-aligned-venezuela/'
   },
   {
+    id: 'csis-moving-toward-democracy',
+    title: 'CSIS — Is Venezuela Moving Toward Democracy? (Hernandez-Roy & Navarro)',
+    typeEs: 'Think tank / política pública',
+    typeEn: 'Think tank / public policy',
+    dateEs: 'Septiembre 2026',
+    dateEn: 'September 2026',
+    url: 'https://www.csis.org/analysis/venezuela-moving-toward-democracy',
+  },
+  {
     id: 'chatham-elections-overnight',
     title: 'Chatham House — Democratic elections in Venezuela won’t happen overnight (Sabatini)',
     typeEs: 'Think tank / investigación',

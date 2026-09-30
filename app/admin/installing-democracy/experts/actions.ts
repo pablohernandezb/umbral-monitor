@@ -2,7 +2,7 @@
 
 import crypto from 'crypto'
 import { revalidatePath } from 'next/cache'
-import { createAdminClient } from '@/lib/supabase-server'
+import { createAdminClient, fetchAllRows } from '@/lib/supabase-server'
 import type { MonitoringExpert, MonitoringStatus } from '@/types'
 
 // 31-symbol alphabet, no 0/O/1/I/L — avoids characters an admin could
@@ -66,14 +66,26 @@ export async function listApplications(
 
   // Rated-count per expert (only meaningful for approved ones, but computed
   // uniformly) — a plain per-row count rather than a DB-side group-by, since
-  // this list is small (vetted-expert scale, not public-scale).
+  // the expert list itself is small (vetted-expert scale, not public-scale).
+  //
+  // MUST paginate: the evaluations table holds one row per (expert, action),
+  // so it passed PostgREST's silent 1000-row cap at ~17 completed experts.
+  // Before this, the truncated tail belonged to the most recently added
+  // evaluators, who therefore showed 0 rated actions here while the Activity
+  // tab — which reads transition_save_log — correctly showed their saves.
   const ratedCounts: Record<string, number> = {}
   if (experts.length > 0) {
-    const { data: evalRows } = await supabase
-      .from('transition_evaluations')
-      .select('evaluator_id')
-      .in('evaluator_id', experts.map(e => e.id))
-    for (const row of (evalRows ?? []) as { evaluator_id: string }[]) {
+    const ids = experts.map(e => e.id)
+    const { data: evalRows } = await fetchAllRows<{ evaluator_id: string }>(
+      (from, to) =>
+        supabase
+          .from('transition_evaluations')
+          .select('evaluator_id')
+          .in('evaluator_id', ids)
+          .order('id')
+          .range(from, to)
+    )
+    for (const row of evalRows) {
       ratedCounts[row.evaluator_id] = (ratedCounts[row.evaluator_id] ?? 0) + 1
     }
   }
