@@ -90,7 +90,7 @@ export function InstallingDemocracyHero() {
 
             {/* Same max-width as the Domino bar above so the two align. */}
             <motion.div variants={fadeInUp} className="max-w-5xl mx-auto">
-              <MilestoneCountdownRow variant="chip" />
+              <MilestoneCountdownRow variant="chip" progress={progress} />
             </motion.div>
 
             <motion.div variants={fadeInUp} className="flex justify-center">

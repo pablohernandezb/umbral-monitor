@@ -1092,7 +1092,8 @@
       "daysSingular": "día",
       "hours": "horas",
       "minutes": "minutos",
-      "seconds": "segundos"
+      "seconds": "segundos",
+      "actionsDue": "{count} acciones previstas"
     },
     "action": {
       "month": "Mes {n}",

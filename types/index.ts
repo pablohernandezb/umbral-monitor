@@ -383,12 +383,29 @@ export interface PillarProgress {
   inProgress: number
 }
 
+/**
+ * Expert-assessed completion of the actions falling due by one of the three
+ * calendar countdowns (data/transition-milestones.ts). Keyed by milestone id
+ * so the countdown components can look theirs up without relying on order.
+ */
+export interface DeadlineProgress {
+  milestoneId: string
+  /** Last roadmap month fully elapsed by the deadline (roadmapCutoffMonth). */
+  cutoffMonth: number
+  /** Actions due by that deadline — the bar's denominator. */
+  total: number
+  /** Mean of the threshold-gated item percentages across those actions. */
+  completionPct: number
+}
+
 export interface TransitionProgress {
   total: number             // 60
   completionPct: number     // headline: mean of the item percentages (each item ~1.67%)
   totalEvaluators: number   // distinct experts across the whole checklist
   phases: PhaseProgress[]
   pillars: PillarProgress[]
+  /** One entry per calendar countdown, in TRANSITION_MILESTONES order. */
+  deadlines: DeadlineProgress[]
   /**
    * Expert-assessed tally — the same four badge states expertStatusTone()
    * puts on each action card. These four always sum to `total`, so the public

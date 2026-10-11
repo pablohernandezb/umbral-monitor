@@ -206,7 +206,7 @@ export default function InstallingDemocracyPage() {
           {/* Countdowns */}
           <section className="pb-12">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-              <MilestoneCountdownRow variant="full" />
+              <MilestoneCountdownRow variant="full" progress={progress} />
             </div>
           </section>
 

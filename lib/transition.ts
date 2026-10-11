@@ -3,9 +3,11 @@ import type {
   TransitionProgress,
   PhaseProgress,
   PillarProgress,
+  DeadlineProgress,
   EvaluationAggregate,
 } from '@/types'
-import { TRANSITION_PHASES, phaseForMonth } from '@/data/transition-phases'
+import { TRANSITION_PHASES, phaseForMonth, roadmapCutoffMonth } from '@/data/transition-phases'
+import { TRANSITION_MILESTONES } from '@/data/transition-milestones'
 
 export { phaseForMonth }
 
@@ -152,6 +154,26 @@ export function computeProgress(
     })
   }
 
+  // Per-deadline rollup for the three countdown bars. CUMULATIVE: every action
+  // due on or before the deadline's cutoff month counts, so the longest
+  // deadline covers the whole checklist and its bar equals `completionPct`
+  // above. Uses the same threshold-gated itemPct() as every other rollup, so a
+  // deadline bar can never disagree with the cards it summarises.
+  const deadlines: DeadlineProgress[] = TRANSITION_MILESTONES.map(milestone => {
+    const cutoffMonth = roadmapCutoffMonth(milestone.targetIso)
+    const dueActions = actions.filter(a => a.month <= cutoffMonth)
+    const dTotal = dueActions.length
+    return {
+      milestoneId: milestone.id,
+      cutoffMonth,
+      total: dTotal,
+      completionPct:
+        dTotal > 0
+          ? Math.round(dueActions.reduce((sum, a) => sum + itemPct(a.id), 0) / dTotal)
+          : 0,
+    }
+  })
+
   const pillarKeys = Array.from(new Set(actions.map(a => a.pillar)))
   const pillars: PillarProgress[] = pillarKeys
     .map(pillar => {
@@ -184,6 +206,7 @@ export function computeProgress(
     totalEvaluators,
     phases,
     pillars,
+    deadlines,
     assessedCompleted,
     assessedInProgress,
     assessedPending,

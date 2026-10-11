@@ -49,3 +49,37 @@ export function currentRoadmapMonth(now: Date = new Date()): number {
   const elapsed = (now.getFullYear() - ROADMAP_START_YEAR) * 12 + (now.getMonth() + 1 - ROADMAP_START_MONTH)
   return Math.min(ROADMAP_TOTAL_MONTHS, Math.max(1, elapsed + 1))
 }
+
+/**
+ * The last roadmap month that has FULLY elapsed by `targetIso` — i.e. the
+ * cutoff for "actions that were due by this deadline".
+ *
+ * The three countdowns in data/transition-milestones.ts are calendar dates,
+ * while actions are keyed to roadmap months 1–18, so one of the two has to be
+ * translated into the other's terms. Month boundaries are anchored to
+ * Venezuela midnight (UTC-4), matching how ROADMAP_START is defined.
+ *
+ * "Fully elapsed" is deliberate: the US-midterms deadline falls on Nov 3,
+ * three days into month 4, and counting month 4’s six actions as already due
+ * would overstate what the deadline actually demands. Returns 0 for a date
+ * before the roadmap starts, and clamps at ROADMAP_TOTAL_MONTHS.
+ */
+export function roadmapCutoffMonth(targetIso: string): number {
+  const target = new Date(targetIso).getTime()
+  if (Number.isNaN(target)) return 0
+
+  let cutoff = 0
+  for (let m = 1; m <= ROADMAP_TOTAL_MONTHS; m++) {
+    // Instant at which roadmap month `m` ends = start + m whole months.
+    const offset = ROADMAP_START_MONTH - 1 + m
+    const boundary = Date.UTC(
+      ROADMAP_START_YEAR + Math.floor(offset / 12),
+      offset % 12,
+      1,
+      4 // 00:00 Venezuela time (UTC-4)
+    )
+    if (boundary > target) break
+    cutoff = m
+  }
+  return cutoff
+}
