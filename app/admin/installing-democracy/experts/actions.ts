@@ -46,12 +46,18 @@ function mapExpert(row: MonitoringExpertRow): MonitoringExpert {
 
 export async function listApplications(
   status?: MonitoringStatus
-): Promise<{ data: MonitoringExpert[]; ratedCounts: Record<string, number>; error: string | null }> {
+): Promise<{
+  data: MonitoringExpert[]
+  ratedCounts: Record<string, number>
+  /** Each expert's most recent save, for the recency-decay freshness column. */
+  lastSavedAt: Record<string, string>
+  error: string | null
+}> {
   const supabase = createAdminClient()
   if (!supabase) {
     // Mock mode: no persistent expert store — the admin screen renders
     // empty lists rather than fabricating applicants that were never real.
-    return { data: [], ratedCounts: {}, error: null }
+    return { data: [], ratedCounts: {}, lastSavedAt: {}, error: null }
   }
 
   let query = supabase.from('monitoring_experts').select('*').order('created_at', { ascending: false })
@@ -59,7 +65,7 @@ export async function listApplications(
 
   const { data, error } = await query
   if (error || !data) {
-    return { data: [], ratedCounts: {}, error: error?.message ?? null }
+    return { data: [], ratedCounts: {}, lastSavedAt: {}, error: error?.message ?? null }
   }
 
   const experts = (data as MonitoringExpertRow[]).map(mapExpert)
@@ -74,23 +80,30 @@ export async function listApplications(
   // evaluators, who therefore showed 0 rated actions here while the Activity
   // tab — which reads transition_save_log — correctly showed their saves.
   const ratedCounts: Record<string, number> = {}
+  const lastSavedAt: Record<string, string> = {}
   if (experts.length > 0) {
     const ids = experts.map(e => e.id)
-    const { data: evalRows } = await fetchAllRows<{ evaluator_id: string }>(
+    const { data: evalRows } = await fetchAllRows<{ evaluator_id: string; updated_at: string }>(
       (from, to) =>
         supabase
           .from('transition_evaluations')
-          .select('evaluator_id')
+          .select('evaluator_id, updated_at')
           .in('evaluator_id', ids)
           .order('id')
           .range(from, to)
     )
     for (const row of evalRows) {
       ratedCounts[row.evaluator_id] = (ratedCounts[row.evaluator_id] ?? 0) + 1
+      // Max updated_at per expert — the same clock the recency-decay weighting
+      // uses in SQL (transition_evaluator_weights). Computed here from rows we
+      // already fetched rather than querying that view, so the admin list stays
+      // one round-trip.
+      const prev = lastSavedAt[row.evaluator_id]
+      if (!prev || row.updated_at > prev) lastSavedAt[row.evaluator_id] = row.updated_at
     }
   }
 
-  return { data: experts, ratedCounts, error: null }
+  return { data: experts, ratedCounts, lastSavedAt, error: null }
 }
 
 export async function approveApplication(

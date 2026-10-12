@@ -42,6 +42,41 @@ function itemPctLookup(aggregates: EvaluationAggregate[]): Map<string, Evaluatio
  */
 export const MIN_EVALUATORS_FOR_ASSESSMENT = 2
 
+/**
+ * Recency decay. An expert's influence fades linearly from their last
+ * submission and reaches zero at this many days, so the published figures
+ * describe current conditions rather than accumulating every opinion ever
+ * given.
+ *
+ *   weight = max(0, 1 - daysSinceTheirLastSave / EVALUATION_DECAY_DAYS)
+ *
+ * MUST stay in step with the 45.0 hardcoded in the
+ * `transition_evaluator_weights` view (SCHEMA_SQL in lib/supabase.ts). The
+ * weighting itself happens in SQL — it has to, because the public aggregate
+ * view is what the anon client reads.
+ *
+ * ADMIN-ONLY. The mechanism is deliberately invisible to the public page and
+ * to the experts themselves: it is not described in the methodology panel, and
+ * getMyProfile() does not return an expert's freshness clock to their browser.
+ * The helpers below exist solely for the admin Experts screen — do not wire
+ * them into any public or expert-facing surface.
+ */
+export const EVALUATION_DECAY_DAYS = 45
+
+/** An expert's weight today, given days since their last save. 1 -> 0. */
+export function evaluationWeight(daysSince: number): number {
+  if (!Number.isFinite(daysSince) || daysSince <= 0) return 1
+  return Math.max(0, 1 - daysSince / EVALUATION_DECAY_DAYS)
+}
+
+/** Whole days until an expert's scores stop counting; 0 once expired. */
+export function daysUntilExpiry(lastSavedAt: string | null | undefined): number {
+  if (!lastSavedAt) return 0
+  const elapsedDays = (Date.now() - new Date(lastSavedAt).getTime()) / 86400000
+  if (!Number.isFinite(elapsedDays)) return 0
+  return Math.max(0, Math.ceil(EVALUATION_DECAY_DAYS - elapsedDays))
+}
+
 export type ExpertStatusTone = 'completed' | 'inProgress' | 'pending' | 'unrated'
 
 /**

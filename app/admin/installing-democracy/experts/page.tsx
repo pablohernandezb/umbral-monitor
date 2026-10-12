@@ -10,6 +10,7 @@ import {
   listSaveLog,
 } from './actions'
 import { Toast } from '@/components/admin/Toast'
+import { daysUntilExpiry, evaluationWeight, EVALUATION_DECAY_DAYS } from '@/lib/transition'
 import type { MonitoringExpert, MonitoringStatus, AdminSaveLogEntry } from '@/types'
 
 type ToastState = { message: string; type: 'success' | 'error' } | null
@@ -132,6 +133,7 @@ function CopyButton({ text }: { text: string }) {
 export default function MonitoringExpertsAdminPage() {
   const [experts, setExperts] = useState<MonitoringExpert[]>([])
   const [ratedCounts, setRatedCounts] = useState<Record<string, number>>({})
+  const [lastSavedAt, setLastSavedAt] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('pending')
   const [toast, setToast] = useState<ToastState>(null)
@@ -147,6 +149,7 @@ export default function MonitoringExpertsAdminPage() {
     const res = await listApplications()
     setExperts(res.data)
     setRatedCounts(res.ratedCounts)
+    setLastSavedAt(res.lastSavedAt)
     if (res.error) setToast({ message: res.error, type: 'error' })
     setLoading(false)
   }
@@ -343,6 +346,31 @@ export default function MonitoringExpertsAdminPage() {
                 <span className="text-xs text-gray-400 shrink-0">
                   {ratedCounts[expert.id] ?? 0}/60 rated
                 </span>
+                {/* Recency decay: this expert's scores lose weight linearly
+                    from their last save and stop counting entirely at
+                    EVALUATION_DECAY_DAYS. Shown so the admin can see who needs
+                    chasing before their input drops out of the averages. */}
+                {lastSavedAt[expert.id] &&
+                  (() => {
+                    const left = daysUntilExpiry(lastSavedAt[expert.id])
+                    const weightPct = Math.round(
+                      evaluationWeight(EVALUATION_DECAY_DAYS - left) * 100
+                    )
+                    return (
+                      <span
+                        className={`text-xs shrink-0 font-mono ${
+                          left === 0
+                            ? 'text-red-400'
+                            : left <= 14
+                              ? 'text-amber-400'
+                              : 'text-gray-400'
+                        }`}
+                        title={`Last saved ${new Date(lastSavedAt[expert.id]).toLocaleDateString()} — counts at ${weightPct}% weight`}
+                      >
+                        {left === 0 ? 'expired' : `${left}d left · ${weightPct}%`}
+                      </span>
+                    )
+                  })()}
                 <button
                   onClick={() => handleRegenerate(expert)}
                   disabled={busyId === expert.id}

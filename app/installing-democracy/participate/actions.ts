@@ -362,5 +362,9 @@ export async function getMyProfile(
     .maybeSingle()
 
   if (error || !data) return { ok: false }
+
+  // Deliberately returns the name ONLY. Recency decay is admin-side: the
+  // expert's freshness clock is never sent to their browser, so it can't be
+  // read out of this response in devtools either.
   return { ok: true, name: data.name as string }
 }

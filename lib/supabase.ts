@@ -776,14 +776,48 @@ ALTER TABLE transition_evaluations ENABLE ROW LEVEL SECURITY;
 -- view itself computes the aggregate with full access to the base tables,
 -- and only its own column list — which never includes evaluator identity —
 -- is what the anon GRANT below exposes.
+-- Recency decay: an expert's influence fades linearly from their last save and
+-- hits zero at 45 days (EVALUATION_DECAY_DAYS in lib/transition.ts — keep the
+-- two in step). The clock is PER EXPERT, so one save refreshes all their scores.
+-- These views read NOW(), so published percentages move daily with no new data.
+CREATE OR REPLACE VIEW transition_evaluator_weights AS
+SELECT
+  evaluator_id,
+  MAX(updated_at) AS last_saved_at,
+  EXTRACT(EPOCH FROM (NOW() - MAX(updated_at))) / 86400.0 AS days_since,
+  GREATEST(
+    0,
+    1 - (EXTRACT(EPOCH FROM (NOW() - MAX(updated_at))) / 86400.0) / 45.0
+  )::NUMERIC(5,4) AS weight
+FROM transition_evaluations
+GROUP BY evaluator_id;
+
+-- evaluator_count counts experts with ANY weight left, so the 2-rater minimum
+-- keeps its meaning; only fully expired experts stop counting toward it.
 CREATE OR REPLACE VIEW transition_evaluation_aggregates AS
 SELECT
-  a.id                                    AS action_id,
-  COUNT(e.score)                          AS evaluator_count,
-  COALESCE(AVG(e.score), 0)::NUMERIC(4,3) AS mean_score,
-  ROUND(COALESCE(AVG(e.score), 0) / 4.0 * 100)::INT AS completion_pct
+  a.id AS action_id,
+  -- NO ::INT cast. The view this replaces returned a bare COUNT(), i.e. bigint,
+  -- and CREATE OR REPLACE VIEW cannot change an existing column's type
+  -- ("cannot change data type of view column ... from bigint to integer").
+  -- Leaving it bigint keeps the replacement in place, preserving grants and
+  -- any dependents; PostgREST serialises it as a JSON number either way.
+  COUNT(e.score) FILTER (WHERE w.weight > 0) AS evaluator_count,
+  COALESCE(
+    SUM(e.score * w.weight) FILTER (WHERE w.weight > 0)
+      / NULLIF(SUM(w.weight) FILTER (WHERE w.weight > 0), 0),
+    0
+  )::NUMERIC(4,3) AS mean_score,
+  ROUND(
+    COALESCE(
+      SUM(e.score * w.weight) FILTER (WHERE w.weight > 0)
+        / NULLIF(SUM(w.weight) FILTER (WHERE w.weight > 0), 0),
+      0
+    ) / 4.0 * 100
+  )::INT AS completion_pct
 FROM transition_checklist a
 LEFT JOIN transition_evaluations e ON e.action_id = a.id
+LEFT JOIN transition_evaluator_weights w ON w.evaluator_id = e.evaluator_id
 GROUP BY a.id;
 GRANT SELECT ON transition_evaluation_aggregates TO anon, authenticated;
 
@@ -792,6 +826,9 @@ GRANT SELECT ON transition_evaluation_aggregates TO anon, authenticated;
 -- DISTINCT over evaluator_id — still zero identity exposed (a single count),
 -- but kept as its own grant so the per-action view's shape stays a clean
 -- one-row-per-action list. Same security_invoker reasoning as above.
+-- Counts everyone who has ever submitted, NOT only those inside the 45-day
+-- decay window: the stat measures participation, and an expert whose scores
+-- have aged out still participated. Decay governs the percentages, not this.
 CREATE OR REPLACE VIEW transition_evaluator_total AS
 SELECT COUNT(DISTINCT evaluator_id)::INT AS total_evaluators
 FROM transition_evaluations;
