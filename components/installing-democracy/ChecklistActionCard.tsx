@@ -119,15 +119,17 @@ export function ChecklistActionCard({
         </div>
       )}
 
-      {/* Pillar + milestone share a row. Venezuelan flag colour key:
-          gold = milestone, blue = pillar, red = actors. */}
-      <div className="flex items-start justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-umbral-ash/50 border border-umbral-steel text-xs shrink-0">
-          {PillarIcon && <PillarIcon className="w-3.5 h-3.5 text-signal-blue" aria-hidden="true" />}
-          <span className="text-umbral-light">{pillarLabel}</span>
-        </span>
+      {/* Milestone and pillar each get their OWN line. They used to share one
+          row with justify-between, which worked while pillar names were short;
+          the Oct 2026 regrouping brought in labels like "Transparencia y
+          rendición de cuentas" that pushed the milestone into a second line and
+          left the row visibly ragged. Separate lines also let the pillar badge
+          take the width it needs without ever squeezing the date.
 
-        <span className="inline-flex items-start justify-end gap-1.5 text-[10px] text-umbral-muted font-mono text-right pt-1">
+          Venezuelan flag colour key: gold = milestone, blue = pillar,
+          red = actors. */}
+      <div className="flex justify-end">
+        <span className="inline-flex items-start gap-1.5 text-[10px] text-umbral-muted font-mono text-right">
           <CalendarDays className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-px" aria-hidden="true" />
           {/* The icon replaces the word "Milestone:", so keep it for screen readers. */}
           <span className="sr-only">{t('installingDemocracy.filters.milestone')}: </span>
@@ -135,6 +137,15 @@ export function ChecklistActionCard({
             {phaseLabel} ·{' '}
             {t('installingDemocracy.action.month').replace('{n}', String(action.month))}
           </span>
+        </span>
+      </div>
+
+      <div className="flex">
+        {/* Not shrink-0: on a narrow card a long pillar name should wrap inside
+            its own badge rather than overflow the card. */}
+        <span className="inline-flex items-start gap-1.5 px-2 py-1 rounded-md bg-umbral-ash/50 border border-umbral-steel text-xs">
+          {PillarIcon && <PillarIcon className="w-3.5 h-3.5 text-signal-blue shrink-0 mt-px" aria-hidden="true" />}
+          <span className="text-umbral-light">{pillarLabel}</span>
         </span>
       </div>
 

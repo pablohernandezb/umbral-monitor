@@ -30,9 +30,9 @@ export interface MethodologyStatusItem {
 /** A pillar chip: the document's own wording plus the glyph to show with it. */
 export interface MethodologyChip {
   /**
-   * Key into PILLAR_ICONS. The document groups the tracker's 19 pillars into 11
-   * broader areas, so one chip can stand for more than one pillar — the icon is
-   * chosen for the leading concept in the label.
+   * Key into PILLAR_ICONS. Since Oct 2026 the chips are exactly the tracker's
+   * ten pillars, one chip per pillar, so these labels and the pillar filter can
+   * no longer drift apart.
    */
   icon: string
   es: string
@@ -102,20 +102,18 @@ export const METHODOLOGY_BLOCKS: MethodologyBlock[] = [
   },
   {
     type: 'chips',
+    // One chip per pillar, in the spreadsheet's 1-10 order.
     items: [
-      // Covers both `freedoms` and `humanRights` on the tracker; the Feather
-      // glyph is used because the label leads with "Libertades".
-      { icon: 'freedoms', es: 'Libertades y derechos humanos', en: 'Freedoms and human rights' },
-      { icon: 'security', es: 'Seguridad', en: 'Security' },
-      { icon: 'institutions', es: 'Instituciones', en: 'Institutions' },
-      { icon: 'governance', es: 'Gobernabilidad', en: 'Governance' },
-      { icon: 'civilSociety', es: 'Sociedad civil', en: 'Civil society' },
-      { icon: 'information', es: 'Información y libertad de prensa', en: 'Information and press freedom' },
-      { icon: 'politicalCompetition', es: 'Competencia política', en: 'Political competition' },
-      { icon: 'elections', es: 'Elecciones', en: 'Elections' },
-      { icon: 'justice', es: 'Justicia', en: 'Justice' },
-      { icon: 'economy', es: 'Economía', en: 'Economy' },
-      { icon: 'internationalRelations', es: 'Relaciones internacionales', en: 'International relations' },
+      { icon: 'electoral', es: 'Electoral', en: 'Electoral' },
+      { icon: 'libertiesHumanRights', es: 'Libertades y derechos humanos', en: 'Liberties and human rights' },
+      { icon: 'securityCivilianControl', es: 'Seguridad y control civil', en: 'Security and civilian control' },
+      { icon: 'ruleOfLaw', es: 'Estado de derecho y justicia', en: 'Rule of law and justice' },
+      { icon: 'institutionsGovernance', es: 'Institucionalidad y gobernabilidad', en: 'Institutions and governance' },
+      { icon: 'informationPluralism', es: 'Libertad de información y pluralismo mediático', en: 'Information freedom and media pluralism' },
+      { icon: 'civilSociety', es: 'Sociedad civil y participación ciudadana', en: 'Civil society and citizen participation' },
+      { icon: 'economicRecovery', es: 'Recuperación económica y servicios públicos', en: 'Economic recovery and public services' },
+      { icon: 'transparencyAccountability', es: 'Transparencia y rendición de cuentas', en: 'Transparency and accountability' },
+      { icon: 'internationalCooperation', es: 'Cooperación internacional y recuperación humanitaria', en: 'International cooperation and humanitarian recovery' },
     ],
   },
   {

@@ -1,27 +1,25 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
 import { useTranslation } from '@/i18n'
 import { PILLAR_ICONS } from './icons'
 import type { PillarProgress } from '@/types'
-
-const COLLAPSED_COUNT = 6
 
 interface PillarProgressPanelProps {
   pillars: PillarProgress[]
 }
 
+/**
+ * Every pillar, always. This used to show 6 behind a "show more" toggle, which
+ * made sense against the original 19 pillars; since the Oct 2026 regrouping
+ * there are only 10, so the whole set fits and hiding any of it would just
+ * cost a click.
+ */
 export function PillarProgressPanel({ pillars }: PillarProgressPanelProps) {
   const { t } = useTranslation()
-  const [expanded, setExpanded] = useState(false)
-
-  const visible = expanded ? pillars : pillars.slice(0, COLLAPSED_COUNT)
-  const hasMore = pillars.length > COLLAPSED_COUNT
 
   return (
     <div className="space-y-2">
-      {visible.map(pillar => {
+      {pillars.map(pillar => {
         const Icon = PILLAR_ICONS[pillar.pillar]
         return (
           <div key={pillar.pillar} className="flex items-center gap-3">
@@ -47,18 +45,6 @@ export function PillarProgressPanel({ pillars }: PillarProgressPanelProps) {
           </div>
         )
       })}
-
-      {hasMore && (
-        <button
-          onClick={() => setExpanded(prev => !prev)}
-          className="flex items-center gap-1 text-xs text-signal-teal hover:underline pt-1"
-        >
-          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`} />
-          {expanded
-            ? t('installingDemocracy.showLess')
-            : `${t('installingDemocracy.showMore')} (+${pillars.length - COLLAPSED_COUNT})`}
-        </button>
-      )}
     </div>
   )
 }

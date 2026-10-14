@@ -41,27 +41,23 @@ import {
   CalendarCheck,
 } from 'lucide-react'
 
-/** Pillar key -> icon (§3 of the spec). */
+/**
+ * Pillar key -> icon. TEN pillars, regrouped from the original 19 in Oct 2026
+ * (see others/migrations/2026-10-14-ten-pillars.sql). Declaration order is the
+ * spreadsheet's 1-10 order and is load-bearing: ChecklistFilters and the admin
+ * page build their dropdowns from Object.keys(PILLAR_ICONS).
+ */
 export const PILLAR_ICONS: Record<string, LucideIcon> = {
-  freedoms: Feather,
-  security: Shield,
-  humanRights: HeartHandshake,
-  transitionalJustice: Scale,
-  justice: Gavel,
-  institutions: Landmark,
-  governance: Building2,
+  electoral: Vote,
+  libertiesHumanRights: Feather,
+  securityCivilianControl: Shield,
+  ruleOfLaw: Scale,
+  institutionsGovernance: Landmark,
+  informationPluralism: Newspaper,
   civilSociety: Users,
-  information: Newspaper,
-  politicalCompetition: Swords,
-  elections: Vote,
-  electoralJustice: ScrollText,
-  observation: Eye,
-  economy: TrendingUp,
-  antiCorruption: ShieldAlert,
-  internationalRelations: Globe,
-  humanitarian: HandHeart,
-  powerTransfer: ArrowLeftRight,
-  evaluation: ClipboardCheck,
+  economicRecovery: TrendingUp,
+  transparencyAccountability: SearchCheck,
+  internationalCooperation: Globe,
 }
 
 /**
